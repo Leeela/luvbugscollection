@@ -7,7 +7,6 @@ each one once the English page exists.
 
 | Currently links to                                  | Should eventually become           |
 |-----------------------------------------------------|------------------------------------|
-| https://bacillerna.se/Memory/                       | (English Memory game)              |
 | https://bacillerna.se/Tandlakaren/                  | (English Dentist game)             |
 | https://bacillerna.se/bocker.html                   | books.html                         |
 | https://bacillerna.se/dansbacillen.html             | dance-bug.html                     |

@@ -6,4 +6,7 @@ Thumbs.db
 
 # Subprojects not part of this site (kept locally, not deployed)
 Tandlakaren/
-Memory/
+
+# Memory game ships, but unused source images stay local
+Memory/godisar/
+Memory/.DS_Store
