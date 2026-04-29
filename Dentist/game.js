@@ -448,7 +448,7 @@
     if (n === 1) {
       // Hastighetsboost vid milstolpe 1
       state.speed = Math.min(state.speed * 1.4, state.config.maxSpeed());
-      spawnPopup('🔥 Snabbare!', VW / 2, VH * 0.3);
+      spawnPopup('🔥 Faster!', VW / 2, VH * 0.3);
     } else if (n === 2) {
       state.bonusBounce = true;
       spawnPopup('🍬 What is going on?!', VW / 2, VH * 0.3);
@@ -655,7 +655,7 @@
       state.streak++;
       if (state.streak > state.bestStreak) state.bestStreak = state.streak;
       const popupY = Math.max(PR * 2, player.y - PR * 3);
-      if (state.streak === 3)  spawnPopup('3 i rad! 🔥', player.x, popupY);
+      if (state.streak === 3)  spawnPopup('3 in a row! 🔥', player.x, popupY);
       if (state.streak === 5)  spawnPopup('x2 BONUS! 🔥🔥', player.x, popupY);
       if (state.streak === 10) spawnPopup('STREAKMASTER! 🌟', player.x, popupY);
     }
@@ -727,7 +727,7 @@
     gameoverTitle.textContent = '🎉 Du vann!';
     finalScoreEl.textContent = state.score;
     starsEl.textContent = '⭐⭐⭐';
-    if (bestStreakEl) bestStreakEl.textContent = `🔥 Bästa streak: ${state.bestStreak}`;
+    if (bestStreakEl) bestStreakEl.textContent = `🔥 Best streak: ${state.bestStreak}`;
     const hsKey = 'dentist_hs_' + state.difficulty;
     const prev = parseInt(localStorage.getItem(hsKey) || '0', 10);
     if (state.score > prev) {
@@ -879,14 +879,14 @@
       ctx.fillText('🎉 BRAVOOOO! 🎉', VW/2, VH*.07);
       ctx.font=`${Math.round(VH*.035)}px Arial`;
       ctx.fillStyle='#388e3c';
-      ctx.fillText('Supert borstat! 🦷✨', VW/2, VH*.13);
+      ctx.fillText('Awesome brushing! 🦷✨', VW/2, VH*.13);
     } else {
       ctx.fillStyle='#e91e63';
       ctx.font=`bold ${Math.round(VH*.055)}px Arial`;
       ctx.fillText('🦷 BRUSH YOUR TEETH!', VW/2, VH*.07);
       ctx.fillStyle='#5d4037';
       ctx.font=`${Math.round(VH*.03)}px Arial`;
-      ctx.fillText('Gnugga med fingret fram och tillbaka!', VW/2, VH*.13);
+      ctx.fillText('Rub your finger back and forth!', VW/2, VH*.13);
     }
 
     // Godisbacillen-bild (riktig karaktär)
@@ -972,7 +972,7 @@
       ctx.fillStyle='#43a047'; ctx.beginPath(); ctx.roundRect(bX,bY,bW*prog,bH,bH/2); ctx.fill();
     }
     ctx.fillStyle='#5d4037'; ctx.font=`bold ${Math.round(VH*.026)}px Arial`;
-    ctx.fillText(`🦷 ${cleanN}/${brushState.teeth.length} borstad`, VW/2, bY-VH*.01);
+    ctx.fillText(`🦷 ${cleanN}/${brushState.teeth.length} brushed`, VW/2, bY-VH*.01);
   }
 
   function finishBrushing() {
@@ -993,7 +993,7 @@
       const [s1,s2,s3] = state.config.starThresholds;
       const stars = state.score>=s3?3:state.score>=s2?2:state.score>=s1?1:0;
       starsEl.textContent = '⭐'.repeat(stars)+'☆'.repeat(3-stars);
-      if (bestStreakEl) bestStreakEl.textContent = `🔥 Bästa streak: ${state.bestStreak}`;
+      if (bestStreakEl) bestStreakEl.textContent = `🔥 Best streak: ${state.bestStreak}`;
       finalScoreEl.textContent = state.score;
       const hsKey = 'dentist_hs_'+state.difficulty;
       const prev = parseInt(localStorage.getItem(hsKey)||'0',10);
@@ -1042,7 +1042,7 @@
     const [s1,s2,s3] = state.config.starThresholds;
     let stars = state.score>=s3?3:state.score>=s2?2:state.score>=s1?1:0;
     starsEl.textContent = '⭐'.repeat(stars)+'☆'.repeat(3-stars);
-    if (bestStreakEl) bestStreakEl.textContent = `🔥 Bästa streak: ${state.bestStreak}`;
+    if (bestStreakEl) bestStreakEl.textContent = `🔥 Best streak: ${state.bestStreak}`;
     finalScoreEl.textContent = state.score;
     const hsKey = 'dentist_hs_'+state.difficulty;
     const prev = parseInt(localStorage.getItem(hsKey)||'0',10);
@@ -1533,7 +1533,7 @@
       ctx.fillStyle='white';
       ctx.font=`bold ${Math.round(VH*0.06)}px Arial`;
       ctx.textAlign='center';
-      ctx.fillText('⏸ PAUSAD', VW/2, VH/2);
+      ctx.fillText('⏸ PAUSED', VW/2, VH/2);
       ctx.font=`${Math.round(VH*0.03)}px Arial`;
       ctx.fillText('Press ▶ to continue', VW/2, VH/2+VH*0.06);
     }
