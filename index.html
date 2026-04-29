@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUV BUGS — Meet the Luv Bugs!</title>
+<meta name="description" content="Luv Bugs Collection is a Swedish-born children's brand for ages 3 to 8. Six bugs, six superpowers, endless mischief. Listen to the podcast, read the books, or play the games.">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============================================
+     LUV BUGS DESIGN SYSTEM v1.0
+     ============================================ */
+  :root {
+    --color-bg: #ffffff;
+    --color-bg-soft: #fafafa;
+    --color-text-primary: #2a2a2a;
+    --color-text-secondary: #555555;
+    --color-text-tertiary: #888888;
+    --color-border: #f0f0f0;
+    --color-border-strong: #e0e0e0;
+
+    --brand-light: #FFD9CE;
+    --brand-mid: #FF8A75;
+    --brand-deep: #E55A40;
+    --brand-text-on-light: #B53B26;
+
+    --candy: #7BC142;
+    --candy-deep: #5C9B22;
+    --love: #FF6B9D;
+    --love-deep: #D63A75;
+    --happy: #FFB347;
+    --happy-deep: #C97D00;
+    --tease: #FFD93D;
+    --tease-deep: #B89400;
+    --dance: #4ECDC4;
+    --dance-deep: #2BA89F;
+    --wealth: #D4A017;
+    --wealth-deep: #A07A0A;
+
+    --font-heading: 'Fredoka', sans-serif;
+    --font-body: 'Nunito', sans-serif;
+
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-pill: 999px;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    background: var(--color-bg);
+    color: var(--color-text-primary);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+  }
+  a { color: inherit; }
+
+  /* === HEADER === */
+  .site-header {
+    background: white;
+    border-bottom: 1px solid var(--color-border);
+    padding: 18px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .site-logo {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: 1.5px;
+    color: var(--color-text-primary);
+    text-decoration: none;
+  }
+  .site-nav {
+    display: flex;
+    gap: 22px;
+    font-size: 14px;
+    font-weight: 600;
+    flex-wrap: wrap;
+  }
+  .site-nav a {
+    text-decoration: none;
+    color: var(--color-text-secondary);
+    padding: 4px 0;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .site-nav a:hover { color: var(--brand-deep); }
+  .site-nav a.active { color: var(--brand-deep); border-bottom-color: var(--brand-deep); }
+  .site-lang { font-size: 12px; font-weight: 700; color: var(--color-text-secondary); letter-spacing: 1.5px; text-decoration: none; transition: color 0.15s; }
+  .site-lang:hover { color: var(--brand-deep); }
+
+  /* === MOBILE NAV === */
+  .menu-btn {
+    display: none;
+    background: none;
+    border: 2px solid var(--color-border-strong);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  @media (max-width: 720px) {
+    .site-header { flex-wrap: nowrap; }
+    .site-nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border-bottom: 1px solid var(--color-border);
+      padding: 16px 32px;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 99;
+    }
+    .site-nav.open { display: flex; }
+    .menu-btn { display: block; }
+  }
+
+  /* === HERO === */
+  section.hero {
+    background-color: var(--brand-light) !important;
+    background-image: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.5) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.3) 0%, transparent 50%) !important;
+    padding: 80px 32px 100px;
+    text-align: center;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--brand-deep);
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 64px;
+    line-height: 1.05;
+    margin: 0 0 18px 0;
+    letter-spacing: 1px;
+    color: var(--color-text-primary);
+  }
+  .hero-tagline {
+    font-family: var(--font-heading);
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--color-text-secondary);
+    max-width: 580px;
+    margin: 0 auto 32px auto;
+    line-height: 1.4;
+  }
+  .hero-ctas {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 50px;
+  }
+  .btn {
+    display: inline-block;
+    padding: 16px 32px;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 16px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
+  .btn-primary { background: var(--brand-mid); color: white; }
+  .btn-primary:hover { background: var(--brand-deep); }
+  .btn-secondary { background: white; border: 2px solid var(--brand-deep); color: var(--brand-deep); padding: 14px 30px; }
+  .btn-secondary:hover { background: var(--brand-light); }
+
+  .hero-group-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    display: block;
+  }
+  .hero-group-wrap img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  @media (max-width: 720px) {
+    .hero h1 { font-size: 40px; }
+    .hero-tagline { font-size: 18px; }
+    .hero { padding: 40px 20px 56px; }
+  }
+
+  /* === SECTIONS === */
+  section { padding: 72px 32px; }
+  section:nth-child(even) { background: var(--color-bg-soft); }
+
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .section-eyebrow {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--brand-deep);
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 38px;
+    margin: 0 0 16px 0;
+    color: var(--color-text-primary);
+    line-height: 1.15;
+  }
+  .section-text {
+    font-size: 17px;
+    color: var(--color-text-secondary);
+    max-width: 640px;
+    margin: 0 0 40px 0;
+    line-height: 1.7;
+  }
+  .section-header-center { text-align: center; }
+  .section-header-center .section-text { margin-left: auto; margin-right: auto; }
+
+  /* === VALUES GRID === */
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 32px;
+  }
+  .value-card {
+    background: white;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 32px 28px;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  }
+  .value-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.09); border-color: var(--brand-mid); }
+  .value-icon { font-size: 44px; margin-bottom: 16px; }
+  .value-card h3 { font-family: var(--font-heading); font-weight: 700; font-size: 20px; margin: 0 0 10px 0; }
+  .value-card p { font-size: 14px; color: var(--color-text-secondary); line-height: 1.6; margin: 0; }
+
+  /* === CHARACTER GRID === */
+  .char-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .char-card {
+    background: white;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 28px 24px;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  }
+  .char-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.09); }
+  .char-card.candy:hover { border-color: var(--candy); }
+  .char-card.love:hover { border-color: var(--love); }
+  .char-card.happy:hover { border-color: var(--happy); }
+  .char-card.tease:hover { border-color: var(--tease); }
+  .char-card.dance:hover { border-color: var(--dance); }
+  .char-card.wealth:hover { border-color: var(--wealth); }
+  .char-card .portrait {
+    width: 140px;
+    height: 140px;
+    object-fit: contain;
+    margin-bottom: 16px;
+  }
+  .char-card .name {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .char-card .power {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .char-card.candy .power { color: var(--candy-deep); }
+  .char-card.love .power { color: var(--love-deep); }
+  .char-card.happy .power { color: var(--happy-deep); }
+  .char-card.tease .power { color: var(--tease-deep); }
+  .char-card.dance .power { color: var(--dance-deep); }
+  .char-card.wealth .power { color: var(--wealth-deep); }
+  .char-card .desc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; margin-bottom: 16px; }
+  .char-card .more { font-family: var(--font-body); font-weight: 700; font-size: 13px; color: var(--brand-deep); }
+
+  /* === SAGA LIST === */
+  .saga-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .saga-card {
+    background: white;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .saga-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+  .saga-num {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--brand-deep);
+    margin-bottom: 8px;
+  }
+  .saga-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 19px;
+    margin-bottom: 8px;
+    line-height: 1.25;
+  }
+  .saga-meta { font-size: 13px; color: var(--color-text-tertiary); margin-bottom: 16px; }
+  .saga-listen {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--brand-deep);
+    text-decoration: none;
+    padding: 8px 16px;
+    border: 2px solid var(--brand-deep);
+    border-radius: var(--radius-pill);
+    transition: background 0.15s, color 0.15s;
+  }
+  .saga-listen:hover { background: var(--brand-deep); color: white; }
+
+  /* === FEATURE GRID === */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-top: 32px;
+  }
+  .feature-card {
+    background: white;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 36px 32px;
+    text-align: center;
+  }
+  .feature-emoji { font-size: 48px; margin-bottom: 16px; }
+  .feature-card h3 { font-family: var(--font-heading); font-weight: 700; font-size: 22px; margin: 0 0 12px 0; }
+  .feature-card p { font-size: 15px; color: var(--color-text-secondary); margin-bottom: 20px; line-height: 1.6; }
+
+  /* === YOUTUBE === */
+  .yt-embed-wrap {
+    max-width: 800px;
+    margin: 32px auto 0;
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+  }
+  .yt-embed-wrap iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: 0;
+  }
+
+  /* === PARENTS BLOCK === */
+  .parents-block {
+    background: var(--color-text-primary);
+    color: white;
+    border-radius: var(--radius-lg);
+    padding: 56px 48px;
+    text-align: center;
+  }
+  .parents-block h2 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 32px;
+    margin: 0 0 16px 0;
+    color: white;
+  }
+  .parents-block p {
+    font-size: 17px;
+    color: #c0c0c0;
+    max-width: 580px;
+    margin: 0 auto 28px auto;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 720px) {
+    .values-grid { grid-template-columns: 1fr; }
+    .char-grid { grid-template-columns: 1fr; }
+    .saga-list { grid-template-columns: 1fr; }
+    .feature-grid { grid-template-columns: 1fr; }
+    section { padding: 56px 20px; }
+    .section-title { font-size: 28px; }
+    .parents-block { padding: 40px 24px; }
+    .parents-block h2 { font-size: 24px; }
+  }
+
+  /* === FOOTER === */
+  .site-footer { background: #1a1a1a; color: #999; padding: 48px 32px 32px; }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+  .footer-brand h3 { font-family: var(--font-heading); font-weight: 700; font-size: 22px; color: white; letter-spacing: 1px; margin: 0 0 8px 0; }
+  .footer-brand p { font-size: 13px; line-height: 1.6; margin: 0; }
+  .footer-col h4 { font-family: var(--font-heading); font-weight: 600; font-size: 14px; color: white; margin: 0 0 12px 0; letter-spacing: 0.5px; }
+  .footer-col ul { list-style: none; padding: 0; margin: 0; }
+  .footer-col li { margin-bottom: 8px; }
+  .footer-col a { text-decoration: none; color: #aaa; font-size: 13px; transition: color 0.15s; }
+  .footer-col a:hover { color: var(--brand-mid); }
+  .footer-bottom { max-width: 1100px; margin: 32px auto 0; padding-top: 24px; border-top: 1px solid #333; text-align: center; font-size: 12px; color: #888; }
+  .footer-bottom strong { color: white; letter-spacing: 1px; }
+  @media (max-width: 720px) { .footer-inner { grid-template-columns: 1fr 1fr; gap: 24px; } }
+</style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <a href="index.html" class="site-logo">LUV BUGS</a>
+    <button class="menu-btn" onclick="document.querySelector('.site-nav').classList.toggle('open')">Menu</button>
+    <nav class="site-nav">
+      <a href="characters.html">Characters</a>
+      <a href="stories.html">Stories</a>
+      <a href="books.html">Books</a>
+      <a href="games.html">Games</a>
+      <a href="watch.html">Watch</a>
+      <a href="parents.html">For Parents</a>
+    </nav>
+    <a href="https://bacillerna.se" class="site-lang" title="Swedish version">EN / SV</a>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow">Welcome to the Luv Bugs</div>
+    <h1>MEET THE LUV BUGS!</h1>
+    <p class="hero-tagline">Six little bugs, six superpowers, endless mischief. A Swedish-born world for ages 3 to 8, made with heart.</p>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href="characters.html">Meet the bugs</a>
+      <a class="btn btn-secondary" href="stories.html">Listen to the stories</a>
+    </div>
+    <div class="hero-group-wrap">
+      <img src="bilder/bacillerna%20i%20rad.png" alt="All the Luv Bugs together">
+    </div>
+  </section>
+
+  <!-- WHAT IS LUV BUGS -->
+  <section>
+    <div class="section-inner section-header-center">
+      <div class="section-eyebrow">A world for ages 3 to 8</div>
+      <h2 class="section-title">A playful world with heart</h2>
+      <p class="section-text">Luv Bugs Collection is a Swedish-born children's brand where six colorful characters teach kids about friendship, joy, love, and sharing. Completely ad-free.</p>
+      <div class="values-grid">
+        <a class="value-card" href="stories.html">
+          <div class="value-icon">🎙️</div>
+          <h3>Stories to fall asleep to</h3>
+          <p>Ten podcast episodes with warm storytelling, soft voices, and gentle background sounds.</p>
+        </a>
+        <a class="value-card" href="books.html">
+          <div class="value-icon">📚</div>
+          <h3>Books to read together</h3>
+          <p>Beautiful picture books that connect what kids hear with what they see.</p>
+        </a>
+        <a class="value-card" href="games.html">
+          <div class="value-icon">🎮</div>
+          <h3>Games with no in-app purchases</h3>
+          <p>Three interactive games that spark curiosity without stress or paywalls.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHARACTERS -->
+  <section id="characters">
+    <div class="section-inner">
+      <div class="section-eyebrow">Six characters</div>
+      <h2 class="section-title">Meet the Luv Bugs</h2>
+      <p class="section-text">Every bug has its own superpower, its own style, and its own way of seeing the world. Tap a bug to learn more.</p>
+
+      <div class="char-grid">
+        <a class="char-card candy" href="candy-bug.html">
+          <img src="bilder/godisbacillen.png" alt="Candy Bug" class="portrait">
+          <div class="name">CANDY BUG</div>
+          <div class="power">The Sugar Wave</div>
+          <div class="desc">The lime green bug that wakes up every Saturday with brand new plans.</div>
+          <span class="more">Read more →</span>
+        </a>
+        <a class="char-card love" href="love-bug.html">
+          <img src="bilder/karleksbacillen.png" alt="Love Bug" class="portrait">
+          <div class="name">LOVE BUG</div>
+          <div class="power">The Love Wave</div>
+          <div class="desc">The pink bug with wild fluff and a heart of gold.</div>
+          <span class="more">Read more →</span>
+        </a>
+        <a class="char-card happy" href="happy-bug.html">
+          <img src="bilder/gladjebacillen.png" alt="Happy Bug" class="portrait">
+          <div class="name">HAPPY BUG</div>
+          <div class="power">Joy Rush</div>
+          <div class="desc">The orange bug who simply can't stop spreading joy.</div>
+          <span class="more">Read more →</span>
+        </a>
+        <a class="char-card tease" href="tease-bug.html">
+          <img src="bilder/retbacillen.png" alt="Tease Bug" class="portrait">
+          <div class="name">TEASE BUG</div>
+          <div class="power">The Tease Move</div>
+          <div class="desc">The bright yellow bug that teases with love, never with meanness.</div>
+          <span class="more">Read more →</span>
+        </a>
+        <a class="char-card dance" href="dance-bug.html">
+          <img src="bilder/dansbacillen.png" alt="Dance Bug" class="portrait">
+          <div class="name">DANCE BUG</div>
+          <div class="power">The Dance Wave</div>
+          <div class="desc">The turquoise bug with a boombox who gets everyone moving.</div>
+          <span class="more">Read more →</span>
+        </a>
+        <a class="char-card wealth" href="rich-bug.html">
+          <img src="bilder/rikedomsbacillen.png" alt="Rich Bug" class="portrait">
+          <div class="name">RICH BUG</div>
+          <div class="power">The Money Rain</div>
+          <div class="desc">The gold glittering bug who knows that real wealth is what you give away.</div>
+          <span class="more">Read more →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- STORIES -->
+  <section id="stories">
+    <div class="section-inner">
+      <div class="section-eyebrow">Candy Stories with Candy Bug</div>
+      <h2 class="section-title">Stories that follow you into your dreams</h2>
+      <p class="section-text">Ten episodes are out now, and a brand new adventure drops every Saturday. Told with warm voices and soft background sounds.</p>
+
+      <div class="saga-list">
+        <div class="saga-card">
+          <div class="saga-num">Episode 1</div>
+          <div class="saga-title">The sweetest secret of the night</div>
+          <div class="saga-meta">8 min · Candy Bug sneaks down to the kitchen</div>
+          <a class="saga-listen" href="https://open.spotify.com/show/2X0WwBDFy6mdud7rfAIzrZ" target="_blank">▶ Listen on Spotify</a>
+        </div>
+        <div class="saga-card">
+          <div class="saga-num">Episode 3</div>
+          <div class="saga-title">The candy factory break-in</div>
+          <div class="saga-meta">9 min · a daring adventure inside the night factory</div>
+          <a class="saga-listen" href="https://open.spotify.com/show/2X0WwBDFy6mdud7rfAIzrZ" target="_blank">▶ Listen on Spotify</a>
+        </div>
+        <div class="saga-card">
+          <div class="saga-num">Episode 9</div>
+          <div class="saga-title">Candy Bug and the Candy Dinner</div>
+          <div class="saga-meta">8 min · when the whole dinner turns into candy</div>
+          <a class="saga-listen" href="https://open.spotify.com/show/2X0WwBDFy6mdud7rfAIzrZ" target="_blank">▶ Listen on Spotify</a>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:36px;">
+        <a class="btn btn-secondary" href="stories.html">See all 10 episodes</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOKS & GAMES -->
+  <section id="books">
+    <div class="section-inner">
+      <div class="section-eyebrow">More from the Luv Bugs</div>
+      <h2 class="section-title">Read, play, watch</h2>
+      <p class="section-text">The Luv Bugs live in many worlds. Pick your favorite.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-emoji">📚</div>
+          <h3>Picture books</h3>
+          <p>Two books are out now: The Sweetest Secret of the Night and Candy Bug and the Candy Dinner. More are on the way.</p>
+          <a class="btn btn-primary" href="books.html">See the books</a>
+        </div>
+        <div class="feature-card">
+          <div class="feature-emoji">🎮</div>
+          <h3>Play with the bugs</h3>
+          <p>Three interactive games: Feed Candy Bug, Memory, and Run from the Dentist.</p>
+          <a class="btn btn-primary" href="games.html">Play now</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- WATCH -->
+  <section id="watch">
+    <div class="section-inner section-header-center">
+      <div class="section-eyebrow">YouTube</div>
+      <h2 class="section-title">Watch the Luv Bugs</h2>
+      <p class="section-text">Short clips and full episodes on YouTube. Subscribe so you never miss a new release!</p>
+
+      <div class="yt-embed-wrap">
+        <iframe
+          src="https://www.youtube.com/embed/videoseries?list=PL-8MlwtgM26Qcwr6RluZ3_WKKNOuDS8RQ"
+          title="Luv Bugs Collection on YouTube"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PARENTS -->
+  <section id="parents">
+    <div class="section-inner">
+      <div class="parents-block">
+        <h2>For parents and educators</h2>
+        <p>The Luv Bugs are built with care for kids' wellbeing. No in-app purchases, no ads, no data collection. Just stories, play, and brand values we believe in.</p>
+        <a class="btn btn-secondary" href="parents.html">Read about the brand</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h3>LUV BUGS</h3>
+        <p>A Swedish-born children's brand for ages 3 to 8. Six bugs, six superpowers, endless mischief.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="characters.html">Characters</a></li>
+          <li><a href="stories.html">Stories</a></li>
+          <li><a href="books.html">Books</a></li>
+          <li><a href="games.html">Games</a></li>
+          <li><a href="watch.html">Watch</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Follow Us</h4>
+        <ul>
+          <li><a href="https://www.tiktok.com/@luvbugscollection" target="_blank">TikTok</a></li>
+          <li><a href="https://www.instagram.com/bacillerna/" target="_blank">Instagram</a></li>
+          <li><a href="https://www.youtube.com/@LuvbugsBacillerna" target="_blank">YouTube</a></li>
+          <li><a href="https://open.spotify.com/show/2X0WwBDFy6mdud7rfAIzrZ" target="_blank">Spotify</a></li>
+          <li><a href="https://podcasts.apple.com/us/podcast/candy-bug/id1895298876" target="_blank">Apple Podcasts</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Information</h4>
+        <ul>
+          <li><a href="parents.html">For Parents</a></li>
+          <li><a href="about.html">About the Brand</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2026 <strong>LUV BUGS</strong> — Luv Bugs Collection
+    </div>
+  </footer>
+
+<script>
+  document.querySelectorAll('.site-nav a').forEach(link => {
+    link.addEventListener('click', () => {
+      document.querySelector('.site-nav').classList.remove('open');
+    });
+  });
+</script>
+</body>
+</html>

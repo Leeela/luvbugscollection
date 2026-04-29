@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Books — LUV BUGS</title>
+<meta name="description" content="Picture books with the Luv Bugs. Beautiful books to read together with kids ages 3 to 8.">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-bg: #ffffff; --color-bg-soft: #fafafa;
+    --color-text-primary: #2a2a2a; --color-text-secondary: #555555; --color-text-tertiary: #888888;
+    --color-border: #f0f0f0; --color-border-strong: #e0e0e0;
+    --brand-light: #FFD9CE; --brand-mid: #FF8A75; --brand-deep: #E55A40;
+    --candy: #7BC142; --candy-light: #E5F4D6; --candy-deep: #5C9B22; --candy-text-on-light: #3F6A18;
+    --love: #FF6B9D; --love-deep: #D63A75; --happy: #FFB347; --happy-deep: #C97D00;
+    --tease: #FFD93D; --tease-deep: #B89400; --dance: #4ECDC4; --dance-deep: #2BA89F;
+    --wealth: #D4A017; --wealth-deep: #A07A0A;
+    --font-heading: 'Fredoka', sans-serif; --font-body: 'Nunito', sans-serif;
+    --radius-sm: 8px; --radius-md: 14px; --radius-lg: 20px; --radius-xl: 32px; --radius-pill: 999px;
+    --char-color: var(--brand-mid); --char-color-light: var(--brand-light);
+    --char-color-deep: var(--brand-deep); --char-color-text-on-light: #B53B26;
+  }
+  * { box-sizing: border-box; } html { scroll-behavior: smooth; }
+  body { font-family: var(--font-body); background: var(--color-bg); color: var(--color-text-primary); margin: 0; padding: 0; line-height: 1.6; }
+  a { color: inherit; }
+
+  .site-header { background: white; border-bottom: 1px solid var(--color-border); padding: 18px 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; position: sticky; top: 0; z-index: 100; }
+  .site-logo { font-family: var(--font-heading); font-weight: 700; font-size: 26px; letter-spacing: 1.5px; color: var(--color-text-primary); text-decoration: none; }
+  .site-nav { display: flex; gap: 22px; font-size: 14px; font-weight: 600; flex-wrap: wrap; }
+  .site-nav a { text-decoration: none; color: var(--color-text-secondary); padding: 4px 0; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; }
+  .site-nav a:hover { color: var(--char-color-deep); }
+  .site-nav a.active { color: var(--char-color-deep); border-bottom-color: var(--char-color-deep); }
+  .site-lang { font-size: 12px; font-weight: 700; color: var(--color-text-secondary); letter-spacing: 1.5px; text-decoration: none; transition: color 0.15s; }
+  .site-lang:hover { color: var(--char-color-deep); }
+  .menu-btn { display: none; background: none; border: 2px solid var(--color-border-strong); border-radius: var(--radius-sm); padding: 8px 12px; font-family: var(--font-body); font-weight: 700; font-size: 14px; cursor: pointer; }
+  @media (max-width: 720px) { .site-nav { display: none; width: 100%; flex-direction: column; gap: 12px; padding-top: 12px; } .site-nav.open { display: flex; } .menu-btn { display: block; } }
+
+  .breadcrumb { padding: 16px 32px; background: var(--color-bg-soft); font-size: 13px; color: var(--color-text-tertiary); }
+  .breadcrumb a { color: var(--color-text-secondary); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--char-color-deep); }
+
+  .hero-char { background: var(--char-color-light); background-image: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.5) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.3) 0%, transparent 50%); padding: 80px 32px 100px; text-align: center; }
+  .hero-eyebrow { font-family: var(--font-body); font-weight: 700; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--char-color-deep); margin-bottom: 12px; }
+  .hero-char h1 { font-family: var(--font-heading); font-weight: 700; font-size: 64px; line-height: 1.05; margin: 0 0 18px 0; letter-spacing: 1px; color: var(--color-text-primary); }
+  .hero-tagline { font-family: var(--font-heading); font-weight: 500; font-size: 24px; color: var(--color-text-secondary); max-width: 580px; margin: 0 auto; line-height: 1.4; }
+
+  .btn { display: inline-block; padding: 16px 32px; border-radius: var(--radius-pill); font-family: var(--font-body); font-weight: 700; font-size: 16px; text-decoration: none; border: none; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.15); }
+  .btn-primary { background: var(--char-color); color: white; }
+  .btn-primary:hover { background: var(--char-color-deep); }
+  .btn-secondary { background: white; border: 3px solid var(--char-color); color: var(--char-color-deep); padding: 13px 30px; }
+  .btn-secondary:hover { background: var(--char-color-light); }
+
+  section { padding: 80px 32px; }
+  section:nth-child(even) { background: var(--color-bg-soft); }
+  .section-inner { max-width: 1000px; margin: 0 auto; }
+  .section-eyebrow { font-family: var(--font-body); font-weight: 700; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--char-color-deep); margin-bottom: 8px; }
+  .section-title { font-family: var(--font-heading); font-weight: 700; font-size: 38px; margin: 0 0 16px 0; color: var(--color-text-primary); line-height: 1.15; }
+  .section-text { font-size: 17px; color: var(--color-text-secondary); max-width: 640px; margin: 0 0 40px 0; line-height: 1.7; }
+
+  /* === BOOK GRID === */
+  .book-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .book-card { background: white; border: 2px solid var(--color-border); border-radius: var(--radius-lg); padding: 36px 28px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.2s, box-shadow 0.2s; }
+  .book-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.09); border-color: var(--char-color); }
+
+  .book-cover { width: 150px; height: 210px; background: var(--char-color-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 64px; margin-bottom: 24px; box-shadow: 4px 6px 20px rgba(0,0,0,0.13); border: 2px dashed var(--char-color); }
+  .book-cover-note { font-size: 11px; color: var(--color-text-tertiary); margin-top: 8px; font-style: italic; }
+  .book-cover-img { width: 180px; height: auto; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 8px; margin-bottom: 24px; box-shadow: 4px 8px 24px rgba(0,0,0,0.15); }
+
+  .book-episode { font-family: var(--font-body); font-weight: 700; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--char-color-deep); margin-bottom: 8px; }
+  .book-title { font-family: var(--font-heading); font-weight: 700; font-size: 22px; margin: 0 0 8px 0; line-height: 1.2; }
+  .book-meta { font-size: 13px; color: var(--color-text-tertiary); margin-bottom: 14px; }
+  .book-desc { font-size: 14px; color: var(--color-text-secondary); line-height: 1.6; margin-bottom: 24px; }
+  .book-ctas { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+  /* === COMING BOOKS === */
+  .coming-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .coming-card { background: white; border: 2px dashed var(--color-border-strong); border-radius: var(--radius-lg); padding: 28px 20px; text-align: center; }
+  .coming-emoji { font-size: 40px; margin-bottom: 10px; }
+  .coming-card h4 { font-family: var(--font-heading); font-weight: 700; font-size: 16px; margin: 0 0 6px 0; color: var(--color-text-secondary); }
+  .coming-card p { font-size: 12px; color: var(--color-text-tertiary); margin: 0; }
+
+  @media (max-width: 720px) {
+    .book-grid { grid-template-columns: 1fr; }
+    .coming-grid { grid-template-columns: repeat(2, 1fr); }
+    .hero-char { padding: 48px 20px 64px; }
+    .hero-char h1 { font-size: 40px; }
+    .hero-tagline { font-size: 18px; }
+    section { padding: 56px 20px; }
+    .section-title { font-size: 28px; }
+  }
+
+  .site-footer { background: #1a1a1a; color: #999; padding: 48px 32px 32px; }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+  .footer-brand h3 { font-family: var(--font-heading); font-weight: 700; font-size: 22px; color: white; letter-spacing: 1px; margin: 0 0 8px 0; }
+  .footer-brand p { font-size: 13px; line-height: 1.6; margin: 0; }
+  .footer-col h4 { font-family: var(--font-heading); font-weight: 600; font-size: 14px; color: white; margin: 0 0 12px 0; letter-spacing: 0.5px; }
+  .footer-col ul { list-style: none; padding: 0; margin: 0; }
+  .footer-col li { margin-bottom: 8px; }
+  .footer-col a { text-decoration: none; color: #aaa; font-size: 13px; transition: color 0.15s; }
+  .footer-col a:hover { color: var(--brand-mid); }
+  .footer-bottom { max-width: 1100px; margin: 32px auto 0; padding-top: 24px; border-top: 1px solid #333; text-align: center; font-size: 12px; color: #888; }
+  .footer-bottom strong { color: white; letter-spacing: 1px; }
+  @media (max-width: 720px) { .footer-inner { grid-template-columns: 1fr 1fr; gap: 24px; } }
+</style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="index.html" class="site-logo">LUV BUGS</a>
+    <button class="menu-btn" onclick="document.querySelector('.site-nav').classList.toggle('open')">Menu</button>
+    <nav class="site-nav">
+      <a href="characters.html">Characters</a>
+      <a href="stories.html">Stories</a>
+      <a href="books.html" class="active">Books</a>
+      <a href="games.html">Games</a>
+      <a href="watch.html">Watch</a>
+      <a href="parents.html">For Parents</a>
+    </nav>
+    <a href="https://bacillerna.se/bocker.html" class="site-lang" title="Swedish version">EN / SV</a>
+  </header>
+
+  <div class="breadcrumb">
+    <a href="index.html">Home</a> · BOOKS
+  </div>
+
+  <section class="hero-char">
+    <div class="hero-eyebrow">Picture books</div>
+    <h1>PICTURE BOOKS WITH THE LUV BUGS</h1>
+    <p class="hero-tagline">Beautiful books to read together, based on the most loved podcast episodes.</p>
+  </section>
+
+  <section>
+    <div class="section-inner">
+      <div class="section-eyebrow">Out now</div>
+      <h2 class="section-title">Books are coming soon</h2>
+      <p class="section-text">Listen to the stories the books are based on.</p>
+
+      <div class="book-grid">
+
+        <div class="book-card">
+          <img src="bilder/bok-avsnitt-1.jpg" alt="The sweetest secret of the night, book cover" class="book-cover-img">
+          <div class="book-episode">Based on episode 1</div>
+          <div class="book-title">The sweetest secret of the night</div>
+          <div class="book-meta">32 pages · ages 3–6</div>
+          <p class="book-desc">Candy Bug sneaks down to the kitchen in the middle of the night. But what does it actually find there? A soft and funny picture book with big illustrations.</p>
+          <div class="book-ctas">
+            <!-- TODO: Paste Amazon KDP link for book 1 -->
+            <!-- <a class="btn btn-primary" href="YOUR_AMAZON_LINK_HERE" target="_blank">Buy the book</a> -->
+            <a class="btn btn-secondary" href="stories.html">Listen to the story</a>
+          </div>
+        </div>
+
+        <div class="book-card">
+          <img src="bilder/bok-avsnitt-2.jpg" alt="The Night of the Candy Mountain, book cover" class="book-cover-img">
+          <div class="book-episode">Based on episode 2</div>
+          <div class="book-title">The Night of the Candy Mountain</div>
+          <div class="book-meta">32 pages · ages 3–6</div>
+          <p class="book-desc">The candy mountain is gone, and Candy Bug has to find it before the night is over. A dreamy and magical picture book that takes kids along on a bedtime adventure.</p>
+          <div class="book-ctas">
+            <!-- TODO: Paste Amazon KDP link for book 2 (episode 2) -->
+            <!-- <a class="btn btn-primary" href="YOUR_AMAZON_LINK_HERE" target="_blank">Buy the book</a> -->
+            <a class="btn btn-secondary" href="stories.html">Listen to the story</a>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-inner">
+      <div class="section-eyebrow">On the way</div>
+      <h2 class="section-title">More books are coming</h2>
+      <p class="section-text">The plan is one picture book per podcast episode. New bugs, new books.</p>
+
+      <div class="coming-grid">
+        <div class="coming-card"><div class="coming-emoji">📖</div><h4>Episode 3</h4><p>The candy factory break-in</p></div>
+        <div class="coming-card"><div class="coming-emoji">📖</div><h4>Episode 4</h4><p>The Candy Bug at the grocery store</p></div>
+        <div class="coming-card"><div class="coming-emoji">📖</div><h4>Episode 5</h4><p>Candy Bug at Preschool</p></div>
+        <div class="coming-card"><div class="coming-emoji">📖</div><h4>Episode 6</h4><p>Candy Bug at the Playground</p></div>
+        <div class="coming-card"><div class="coming-emoji">📖</div><h4>Episodes 7–10</h4><p>And more to come…</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand"><h3>LUV BUGS</h3><p>A Swedish-born children's brand for ages 3 to 8, full of bugs with superpowers and mischief.</p></div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="characters.html">Characters</a></li>
+          <li><a href="stories.html">Stories</a></li>
+          <li><a href="books.html">Books</a></li>
+          <li><a href="games.html">Games</a></li>
+          <li><a href="watch.html">Watch</a></li>
+          <li><a href="parents.html">For Parents</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Follow Us</h4>
+        <ul>
+          <li><a href="https://www.tiktok.com/@luvbugscollection" target="_blank">TikTok @luvbugscollection</a></li>
+          <li><a href="https://www.tiktok.com/@bacillerna" target="_blank">TikTok @bacillerna</a></li>
+          <li><a href="https://www.instagram.com/bacillerna/" target="_blank">Instagram @bacillerna</a></li>
+          <li><a href="https://www.instagram.com/godisbacillen/" target="_blank">Instagram @godisbacillen</a></li>
+          <li><a href="https://www.youtube.com/@LuvbugsBacillerna" target="_blank">YouTube</a></li>
+          <li><a href="https://open.spotify.com/show/2X0WwBDFy6mdud7rfAIzrZ" target="_blank">Spotify</a></li>
+          <li><a href="https://podcasts.apple.com/us/podcast/candy-bug/id1895298876" target="_blank">Apple Podcasts</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>More</h4>
+        <ul>
+          <li><a href="about.html">About the Brand</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="parents.html">For Parents</a></li>
+          <li><a href="index.html">Home</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 <strong>LUV BUGS</strong> — Luv Bugs Collection</div>
+  </footer>
+
+</body>
+</html>

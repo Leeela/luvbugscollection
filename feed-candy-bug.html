@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GJG476R480"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-GJG476R480');
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Feed Candy Bug! 🍬</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #fff9f0;
+      overflow: hidden;
+      touch-action: none;
+      font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+    }
+    canvas { display: block; }
+
+    /* ── Reaction video overlay ── */
+    #video-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 10;
+      background: rgba(255,255,255,0.96);
+      justify-content: center;
+      align-items: center;
+    }
+    #video-overlay.active { display: flex; }
+    #reaction-video {
+      max-width: 92%; max-height: 92%;
+      border-radius: 24px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+    }
+
+    /* ── Start screen ── */
+    #start-screen {
+      position: fixed; inset: 0; z-index: 20;
+      background: linear-gradient(160deg, #fff8e1 0%, #fce4ec 50%, #e8f5e9 100%);
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      cursor: pointer; overflow: hidden;
+      user-select: none;
+    }
+
+    /* Falling candy in the background */
+    .bg-candy {
+      position: absolute; top: -80px;
+      font-size: 48px;
+      animation: fall linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+    @keyframes fall {
+      from { transform: translateY(0) rotate(0deg); opacity: 1; }
+      to   { transform: translateY(110vh) rotate(360deg); opacity: 0.6; }
+    }
+
+    /* Candy Bug on the start screen */
+    #start-bug {
+      width: min(42vw, 220px);
+      pointer-events: none;
+      mix-blend-mode: multiply;
+      animation: bounce 1.6s ease-in-out infinite;
+      position: relative;
+      z-index: 1;
+    }
+    @keyframes bounce {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-14px); }
+    }
+
+    .start-title {
+      font-size: clamp(28px, 7vw, 52px);
+      font-weight: 900;
+      color: #fff;
+      position: relative; z-index: 1;
+      text-shadow:
+        3px 3px 0 #e91e63,
+        -1px -1px 0 #e91e63,
+        1px -1px 0 #e91e63,
+        -1px 1px 0 #e91e63;
+      letter-spacing: 2px;
+      text-align: center;
+      line-height: 1.15;
+      margin: 12px 20px 6px;
+    }
+
+    .start-sub {
+      font-size: clamp(16px, 3.5vw, 24px);
+      color: #5d4037;
+      margin-bottom: 24px;
+      text-align: center;
+      position: relative; z-index: 1;
+    }
+
+    .start-btn {
+      position: relative; z-index: 1;
+      background: linear-gradient(135deg, #66bb6a, #43a047);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 16px 48px;
+      font-size: clamp(20px, 4.5vw, 32px);
+      font-weight: 900;
+      letter-spacing: 1px;
+      box-shadow: 0 6px 0 #2e7d32, 0 8px 20px rgba(0,0,0,0.2);
+      cursor: pointer;
+      animation: pulse 1.2s ease-in-out infinite;
+      border: 3px solid rgba(255,255,255,0.4);
+    }
+    @keyframes pulse {
+      0%,100% { transform: scale(1);    box-shadow: 0 6px 0 #2e7d32, 0 8px 20px rgba(0,0,0,0.2); }
+      50%      { transform: scale(1.06); box-shadow: 0 4px 0 #2e7d32, 0 6px 24px rgba(0,0,0,0.25); }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- Loop video — hidden, drawn onto canvas -->
+  <!-- MOV (HEVC+alpha) for Safari/iOS, WebM (VP9+alpha) for Chrome/Android, MP4 fallback -->
+  <video id="bug-loop"
+    crossorigin="anonymous"
+    muted loop playsinline webkit-playsinline style="display:none">
+    <source src="bug_loop.mp4"  type="video/mp4">
+  </video>
+
+  <!-- Reaction video -->
+  <div id="video-overlay">
+    <video id="reaction-video" playsinline webkit-playsinline></video>
+  </div>
+
+  <!-- Crash video (Falls asleep) -->
+  <video id="crash-video" muted playsinline webkit-playsinline style="display:none"></video>
+
+  <!-- 🎮 Back to the games portal -->
+  <a href="games.html" style="
+    position: fixed; bottom: 18px; right: 16px; z-index: 9;
+    background: #9c27b0; color: white;
+    border-radius: 50px; padding: 10px 18px;
+    font-size: 16px; font-weight: 900;
+    text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    opacity: 0.85;
+    transition: opacity 0.2s, transform 0.2s;
+  "
+  onmouseenter="this.style.opacity='1';this.style.transform='scale(1.05)'"
+  onmouseleave="this.style.opacity='0.85';this.style.transform='scale(1)'"
+  >🎮 More games!</a>
+
+  <!-- 🅰️ Permanent YouTube button (bottom left) -->
+  <a id="yt-btn" href="https://www.youtube.com/@LuvbugsBacillerna/playlists" target="_blank" rel="noopener"
+    style="
+      position: fixed; bottom: 18px; left: 16px; z-index: 9;
+      background: #ff0000; color: white;
+      border-radius: 50px; padding: 10px 18px;
+      font-size: 16px; font-weight: 900;
+      text-decoration: none;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      opacity: 0.85;
+      transition: opacity 0.2s, transform 0.2s;
+    "
+    onmouseenter="this.style.opacity='1';this.style.transform='scale(1.05)'"
+    onmouseleave="this.style.opacity='0.85';this.style.transform='scale(1)'"
+  >
+    <svg width="22" height="16" viewBox="0 0 22 16" fill="white">
+      <path d="M21.5 2.5s-.2-1.5-.9-2.1C19.8-.3 18.9-.3 18.5-.3 15.5-.5 11-.5 11-.5S6.5-.5 3.5-.3C3.1-.3 2.2-.3 1.4.4.7 1 .5 2.5.5 2.5S.3 4.2.3 6v1.7c0 1.7.2 3.5.2 3.5s.2 1.5.9 2.1c.8.7 1.9.7 2.4.7C5.3 14.2 11 14.2 11 14.2s4.5 0 7.5-.3c.4 0 1.3-.1 2.1-.8.7-.6.9-2.1.9-2.1s.2-1.8.2-3.5V6C21.7 4.2 21.5 2.5 21.5 2.5zM8.8 9.7V4.5l6 2.6-6 2.6z"/>
+    </svg>
+    Watch more!
+  </a>
+
+  <!-- 🅱️ YouTube CTA after sugar crash -->
+  <div id="yt-cta" style="
+    display: none; position: fixed; inset: 0; z-index: 15;
+    background: rgba(0,0,0,0.55);
+    justify-content: center; align-items: center;
+  ">
+    <div style="
+      background: white; border-radius: 28px;
+      padding: 32px 28px; text-align: center;
+      max-width: 340px; width: 88%;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+      animation: popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+    ">
+      <div style="font-size: 52px; margin-bottom: 8px;">🎉</div>
+      <div style="font-size: 22px; font-weight: 900; color: #333; margin-bottom: 6px;">
+        Want to watch more videos?
+      </div>
+      <div style="font-size: 16px; color: #666; margin-bottom: 20px;">
+        Candy Bug has lots of fun adventures on YouTube!
+      </div>
+      <a href="https://www.youtube.com/@LuvbugsBacillerna/playlists" target="_blank" rel="noopener"
+        style="
+          display: block; background: #ff0000; color: white;
+          border-radius: 50px; padding: 14px 24px;
+          font-size: 20px; font-weight: 900;
+          text-decoration: none; margin-bottom: 12px;
+        "
+        onclick="document.getElementById('yt-cta').style.display='none'"
+      >
+        ▶ &nbsp;Open YouTube!
+      </a>
+      <button onclick="document.getElementById('yt-cta').style.display='none'; if(window.restartGame) window.restartGame();"
+        style="
+          background: none; border: 2px solid #ddd; border-radius: 50px;
+          padding: 10px 24px; font-size: 16px; color: #999;
+          cursor: pointer; width: 100%;
+        "
+      >Keep playing 🍬</button>
+    </div>
+  </div>
+  <style>
+    @keyframes popIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+  </style>
+
+  <!-- ══ START SCREEN ══ -->
+  <div id="start-screen">
+
+    <!-- Falling candy in the background -->
+    <span class="bg-candy" style="left:5%;  animation-duration:3.2s; animation-delay:0s;   font-size:52px;">🍭</span>
+    <span class="bg-candy" style="left:18%; animation-duration:4.1s; animation-delay:0.5s; font-size:40px;">🍫</span>
+    <span class="bg-candy" style="left:33%; animation-duration:2.9s; animation-delay:1.2s; font-size:44px;">🍬</span>
+    <span class="bg-candy" style="left:52%; animation-duration:3.7s; animation-delay:0.3s; font-size:36px;">🧁</span>
+    <span class="bg-candy" style="left:68%; animation-duration:4.4s; animation-delay:0.8s; font-size:48px;">🍩</span>
+    <span class="bg-candy" style="left:82%; animation-duration:3.1s; animation-delay:1.6s; font-size:42px;">🍪</span>
+    <span class="bg-candy" style="left:91%; animation-duration:3.9s; animation-delay:0.2s; font-size:38px;">🌟</span>
+
+    <!-- Candy Bug bouncing — reuses the same file as bug-loop -->
+    <video id="start-bug"
+      autoplay muted loop playsinline webkit-playsinline></video>
+
+    <div class="start-title">FEED<br>CANDY BUG!</div>
+    <div class="start-sub">🍬 Drag candy to its mouth! 🍬</div>
+
+    <button class="start-btn">▶ &nbsp;START!</button>
+  </div>
+
+  <script src="game.js?v=3"></script>
+</body>
+</html>

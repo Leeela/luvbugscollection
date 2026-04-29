@@ -1,0 +1,9 @@
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+
+# Subprojects not part of this site (kept locally, not deployed)
+Tandlakaren/
+Memory/
