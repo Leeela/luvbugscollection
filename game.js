@@ -499,8 +499,10 @@ const YUCKY_IMGS = [
   loadImg('Morot.png'),
   loadImg('Broccoli.png'),
 ];
-const SALIM_IMG  = loadImg('Salim.png');
-// Selma.png is in the root folder, not in Godisar och veggies/
+// Salim.png and Selma.png are in the root folder, not in Godisar och veggies/
+const SALIM_IMG  = { raw: new Image(), processed: null };
+SALIM_IMG.raw.onload = () => { SALIM_IMG.processed = processImage(SALIM_IMG.raw); };
+SALIM_IMG.raw.src = 'Salim.png';
 const SELMA_IMG  = { raw: new Image(), processed: null };
 SELMA_IMG.raw.onload = () => { SELMA_IMG.processed = processImage(SELMA_IMG.raw); };
 SELMA_IMG.raw.src = 'Selma.png';
