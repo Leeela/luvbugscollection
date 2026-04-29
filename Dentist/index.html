@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <base href="/Dentist/">
+  <title>Dentist — LUV BUGS 🦷</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    body {
+      background: linear-gradient(160deg, #fff8e1 0%, #fce4ec 50%, #e8f5e9 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    canvas {
+      display: block;
+      width: 100vw !important;
+      height: 100vh !important;
+      background: #b3e5fc;
+      border-radius: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Menu overlay */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(160deg, #fff8e1 0%, #fce4ec 50%, #e8f5e9 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 10;
+      overflow-y: auto;
+    }
+    .overlay.hidden { display: none; }
+
+    .overlay h1 {
+      font-size: clamp(24px, 6vw, 42px);
+      font-weight: 900;
+      color: #fff;
+      text-shadow:
+        3px 3px 0 #e91e63,
+        -1px -1px 0 #e91e63,
+        1px -1px 0 #e91e63,
+        -1px 1px 0 #e91e63;
+      letter-spacing: 2px;
+      text-align: center;
+      margin-bottom: 8px;
+      line-height: 1.1;
+    }
+
+    .overlay .subtitle {
+      font-size: clamp(14px, 3.5vw, 18px);
+      color: #5d4037;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .diff-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .diff-btn {
+      border: none;
+      border-radius: 24px;
+      padding: 18px 20px;
+      font-size: clamp(18px, 5vw, 22px);
+      font-weight: 900;
+      cursor: pointer;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+      transition: transform 0.1s, box-shadow 0.1s;
+      letter-spacing: 1px;
+      font-family: inherit;
+    }
+    .diff-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 3px 0 rgba(0,0,0,0.2);
+    }
+    .diff-btn .emoji { font-size: 32px; }
+    .diff-btn .meta {
+      font-size: 13px;
+      opacity: 0.9;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+    .diff-btn .labels {
+      text-align: left;
+      flex: 1;
+    }
+
+    .diff-btn.easy   { background: linear-gradient(135deg, #66bb6a, #43a047); box-shadow: 0 6px 0 #2e7d32; }
+    .diff-btn.medium { background: linear-gradient(135deg, #42a5f5, #1e88e5); box-shadow: 0 6px 0 #1565c0; }
+    .diff-btn.hard   { background: linear-gradient(135deg, #ef5350, #e53935); box-shadow: 0 6px 0 #c62828; }
+
+    .diff-btn .char-img {
+      height: 52px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25));
+    }
+
+    /* Back link */
+    .back-link {
+      margin-top: 24px;
+      color: #5d4037;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+      background: white;
+      padding: 10px 20px;
+      border-radius: 50px;
+      box-shadow: 0 3px 0 rgba(0,0,0,0.15);
+    }
+    .back-link:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.15); }
+
+    /* HUD (in-game) */
+    .hud {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      z-index: 5;
+      pointer-events: none;
+      gap: 10px;
+    }
+    .hud > div:first-child {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .hud .pill {
+      background: rgba(255,255,255,0.95);
+      border-radius: 50px;
+      padding: 8px 16px;
+      font-size: clamp(14px, 3.5vw, 18px);
+      font-weight: 900;
+      color: #5d4037;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    }
+    .hud .lives { color: #e53935; margin-top: 50px; }
+
+    /* Pause button */
+    .pause-btn {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      z-index: 6;
+      background: rgba(255,255,255,0.95);
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+      display: none;
+      pointer-events: auto;
+    }
+    .pause-btn.show { display: block; }
+
+    /* Game over */
+    .gameover {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      padding: 20px;
+    }
+    .gameover.show { display: flex; }
+
+    .gameover-card {
+      background: white;
+      border-radius: 28px;
+      padding: 28px 24px;
+      text-align: center;
+      max-width: 320px;
+      width: 100%;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.3);
+    }
+
+    .gameover-card h2 {
+      font-size: clamp(22px, 6vw, 30px);
+      color: #e91e63;
+      margin-bottom: 8px;
+    }
+
+    .gameover-card .score-big {
+      font-size: clamp(40px, 12vw, 60px);
+      font-weight: 900;
+      color: #43a047;
+      margin: 12px 0;
+    }
+
+    .gameover-card .stars {
+      font-size: 36px;
+      margin: 8px 0 16px;
+      letter-spacing: 6px;
+    }
+
+    .gameover-card p {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      flex-direction: column;
+    }
+
+    .big-btn {
+      border: none;
+      border-radius: 50px;
+      padding: 14px 22px;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      color: white;
+      letter-spacing: 1px;
+      font-family: inherit;
+    }
+    .big-btn.play-again { background: linear-gradient(135deg, #66bb6a, #43a047); box-shadow: 0 4px 0 #2e7d32; }
+    .big-btn.next-level { background: linear-gradient(135deg, #ffb74d, #fb8c00); box-shadow: 0 4px 0 #ef6c00; }
+    .big-btn.menu-btn   { background: linear-gradient(135deg, #90a4ae, #607d8b); box-shadow: 0 4px 0 #455a64; }
+    .big-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.3); }
+
+    /* Instruction */
+    .instruction {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,0.95);
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-size: 14px;
+      color: #5d4037;
+      font-weight: 700;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+      z-index: 5;
+      pointer-events: none;
+      display: none;
+    }
+    .instruction.show { display: block; animation: fadeOut 3s forwards; animation-delay: 2s; }
+    @keyframes fadeOut {
+      to { opacity: 0; transform: translate(-50%, 20px); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MENU -->
+  <div class="overlay" id="menu">
+    <h1>🪥 DENTIST 🦷</h1>
+    <p class="subtitle">Jump over the toothbrushes and collect candy!</p>
+
+    <div class="diff-buttons">
+      <button class="diff-btn easy" data-diff="easy">
+        <img class="char-img" src="sprites/Godisbacillen springer.png" alt="">
+        <span class="labels">
+          EASY
+          <span class="meta">For the youngest 🌟</span>
+        </span>
+      </button>
+
+      <button class="diff-btn medium" data-diff="medium">
+        <img class="char-img" src="sprites/Godisbacillen springer.png" alt="">
+        <span class="labels">MEDIUM</span>
+      </button>
+
+      <button class="diff-btn hard" data-diff="hard">
+        <img class="char-img" src="sprites/Godisbacillen springer snabbt.png" alt="">
+        <span class="labels">HARD</span>
+      </button>
+    </div>
+
+    <a class="back-link" href="../index.html">🏠 Home</a>
+  </div>
+
+  <!-- HUD (in-game) -->
+  <div class="hud" id="hud" style="display:none;">
+    <div>
+      <div class="pill">🍬 <span id="score">0</span></div>
+      <div class="pill" id="brushCount">🪥 0/10</div>
+      <div class="pill" id="streakPill" style="display:none;">🔥 <span id="streakCount">0</span></div>
+    </div>
+    <div class="pill lives" id="livesPill">❤️❤️❤️</div>
+  </div>
+
+  <button class="pause-btn" id="pauseBtn">⏸</button>
+
+  <!-- CANVAS -->
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- INSTRUCTION -->
+  <div class="instruction" id="instruction">👆 Tap to jump!</div>
+
+  <!-- GAME OVER -->
+  <div class="gameover" id="gameover">
+    <div class="gameover-card">
+      <h2 id="gameoverTitle">🎉 Great job!</h2>
+      <div class="score-big"><span id="finalScore">0</span> 🍬</div>
+      <div class="stars" id="stars">⭐ ⭐ ⭐</div>
+      <p id="bestStreakText" style="font-size:16px; font-weight:700; color:#e91e63; margin: 4px 0 12px;">🔥 Best streak: 0</p>
+      <p id="highscoreText">New record! 🏆</p>
+      <div class="btn-row">
+        <button class="big-btn play-again" id="playAgain">▶ PLAY AGAIN</button>
+        <button class="big-btn next-level" id="nextLevel" style="display:none;">⬆ NEXT LEVEL</button>
+        <button class="big-btn menu-btn" id="toMenu">🏠 Choose difficulty</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js?v=13"></script>
+</body>
+</html>

@@ -4,9 +4,13 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Subprojects not part of this site (kept locally, not deployed)
-Tandlakaren/
-
 # Memory game ships, but unused source images stay local
 Memory/godisar/
 Memory/.DS_Store
+
+# Dentist game ships, but dev-only files stay local
+Dentist/.claude/
+Dentist/docs/
+Dentist/FIXES.md
+Dentist/.DS_Store
+Dentist/sprites/.DS_Store
