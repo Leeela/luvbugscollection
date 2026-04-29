@@ -17,7 +17,6 @@ each one once the English page exists.
 | https://bacillerna.se/karaktarer.html               | characters.html                    |
 | https://bacillerna.se/karleksbacillen.html          | love-bug.html                      |
 | https://bacillerna.se/kontakt.html                  | contact.html                       |
-| https://bacillerna.se/mata-godisbacillen.html       | feed-candy-bug.html                |
 | https://bacillerna.se/om.html                       | about.html                         |
 | https://bacillerna.se/retbacillen.html              | tease-bug.html                     |
 | https://bacillerna.se/rikedomsbacillen.html         | rich-bug.html                      |
