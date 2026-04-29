@@ -94,7 +94,7 @@ const VIDEOS = {
   merMore: 'EN_Mer_godis!.mp4',
   wow:     'Wow!_Tack!.mp4',
   win:     'Win_star_Perfekt!.mp4',
-  yuck:    'NEj_jag_vill_ha_godis.mp4',
+  yuck:    'EN_Nej_jag_vill_ha_godis.mp4',
   salim:   'EN_Nej_jag_kan_inte_äta_Salim.mp4'
 };
 

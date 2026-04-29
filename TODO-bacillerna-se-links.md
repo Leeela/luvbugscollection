@@ -27,6 +27,6 @@ each one once the English page exists.
 
 Also pending:
 - `href="YOUR_AMAZON_LINK_HERE"` placeholder is still in the HTML.
-- `yuck` reaction in game.js still points to `NEj_jag_vill_ha_godis.mp4`
-  (Swedish file, not present locally). English VO needed — see comment
-  in game.js around line 90.
+- `wow` and `win` reactions in game.js still play the Swedish files
+  (`Wow!_Tack!.mp4`, `Win_star_Perfekt!.mp4`). English VO needed —
+  see comment in game.js around line 90.
