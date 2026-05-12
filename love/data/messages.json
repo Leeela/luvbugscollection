@@ -1,0 +1,116 @@
+{
+  "_kommentar": "Datakällan för Bacillerna/Luv Bugs Collection love-kampanjen. Aktivera nya baciller genom att sätta 'aktiv': true.",
+  "_version": "1.0",
+  "_uppdaterad": "2026-05-11",
+
+  "baciller": {
+    "karlek": {
+      "namn_sv": "Kärleksbacillen",
+      "namn_en": "Love Bug",
+      "slug_sv": "karleksbacillen",
+      "slug_en": "lovebug",
+      "farg_primar": "#FF6B6B",
+      "farg_mjuk": "#FFE5E5",
+      "emoji": "💖",
+      "beskrivning_sv": "Skicka kärlek",
+      "beskrivning_en": "Send love",
+      "aktiv": true,
+      "meddelanden": [
+        {
+          "id": 1,
+          "titel_sv": "Du duger",
+          "titel_en": "You are enough",
+          "forhandsvisning_sv": "Du är alldeles extra älskad idag. Du duger som du är.",
+          "forhandsvisning_en": "You are extra loved today. You are enough just as you are.",
+          "video_sv": "karleksbacillen_v1_sv.mp4",
+          "video_en": "lovebug_v1_en.mp4",
+          "poster_sv": "karleksbacillen_v1_poster.jpg",
+          "poster_en": "lovebug_v1_poster.jpg",
+          "aktiv": true
+        },
+        {
+          "id": 2,
+          "titel_sv": "Extra älskad",
+          "titel_en": "Extra loved",
+          "forhandsvisning_sv": "Någon tänkte på dig precis nu. Du är sedd. Du är saknad.",
+          "forhandsvisning_en": "Someone was thinking of you just now. You are seen. You are missed.",
+          "video_sv": "karleksbacillen_v2_sv.mp4",
+          "video_en": "lovebug_v2_en.mp4",
+          "poster_sv": "karleksbacillen_v2_poster.jpg",
+          "poster_en": "lovebug_v2_poster.jpg",
+          "aktiv": true
+        }
+      ]
+    },
+
+    "gladje": {
+      "namn_sv": "Glädjebacillen",
+      "namn_en": "Happy Bug",
+      "slug_sv": "gladjebacillen",
+      "slug_en": "happybug",
+      "farg_primar": "#FFB84D",
+      "farg_mjuk": "#FFF1DD",
+      "emoji": "😄",
+      "beskrivning_sv": "Sprid glädje",
+      "beskrivning_en": "Spread joy",
+      "aktiv": false,
+      "meddelanden": []
+    },
+
+    "ret": {
+      "namn_sv": "Retbacillen",
+      "namn_en": "Tease Bug",
+      "slug_sv": "retbacillen",
+      "slug_en": "teasebug",
+      "farg_primar": "#FFD93D",
+      "farg_mjuk": "#FFF8D6",
+      "emoji": "😝",
+      "beskrivning_sv": "Skicka något busigt",
+      "beskrivning_en": "Send something playful",
+      "aktiv": false,
+      "meddelanden": []
+    },
+
+    "godis": {
+      "namn_sv": "Godisbacillen",
+      "namn_en": "Candy Bug",
+      "slug_sv": "godisbacillen",
+      "slug_en": "candybug",
+      "farg_primar": "#7ED957",
+      "farg_mjuk": "#E5F5DC",
+      "emoji": "🍬",
+      "beskrivning_sv": "Skicka en söt hälsning",
+      "beskrivning_en": "Send a sweet greeting",
+      "aktiv": false,
+      "meddelanden": []
+    },
+
+    "dans": {
+      "namn_sv": "Dansbacillen",
+      "namn_en": "Dance Bug",
+      "slug_sv": "dansbacillen",
+      "slug_en": "dancebug",
+      "farg_primar": "#4DD0E1",
+      "farg_mjuk": "#D9F2F4",
+      "emoji": "🪩",
+      "beskrivning_sv": "Få någon att röra på sig",
+      "beskrivning_en": "Get someone moving",
+      "aktiv": false,
+      "meddelanden": []
+    },
+
+    "rikedom": {
+      "namn_sv": "Rikedomsbacillen",
+      "namn_en": "Rich Bug",
+      "slug_sv": "rikedomsbacillen",
+      "slug_en": "richbug",
+      "farg_primar": "#D4AF37",
+      "farg_mjuk": "#F5EDD1",
+      "emoji": "💰",
+      "beskrivning_sv": "Skicka tur och välsignelse",
+      "beskrivning_en": "Send luck and blessings",
+      "aktiv": false,
+      "meddelanden": []
+    }
+  }
+}

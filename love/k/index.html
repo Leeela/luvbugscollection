@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A greeting for you · Luv Bugs Collection</title>
+<meta name="description" content="You got a secret greeting from Luv Bugs Collection.">
+
+<meta property="og:title" content="You got a greeting 💖">
+<meta property="og:description" content="Someone sent you a secret greeting.">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --coral: #FF6B6B;
+    --coral-dark: #E85555;
+    --coral-soft: #FFE5E5;
+    --ink: #2D2D2D;
+    --ink-soft: #6B6B6B;
+    --bg: #FFF8F8;
+    --white: #FFFFFF;
+    --border: #F0E8E8;
+    --primary: var(--coral);
+    --primary-soft: var(--coral-soft);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(180deg, var(--primary-soft) 0%, var(--bg) 60%);
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  .page {
+    min-height: 100vh;
+    padding: 32px 20px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .logo {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--primary);
+    letter-spacing: 2px;
+    margin-bottom: 32px;
+    opacity: 0.7;
+  }
+
+  .container {
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .to-label {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ink-soft);
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+
+  .recipient {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: 56px;
+    line-height: 1.1;
+    color: var(--primary);
+    margin-bottom: 16px;
+    word-break: break-word;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: var(--ink-soft);
+    margin-bottom: 28px;
+  }
+
+  .video-wrap {
+    width: 100%;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    background: var(--white);
+    margin-bottom: 24px;
+    aspect-ratio: 9 / 16;
+    max-height: 70vh;
+  }
+
+  .video-wrap video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .sender {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--ink);
+    margin-bottom: 32px;
+  }
+
+  .sender em {
+    font-style: normal;
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .action {
+    display: inline-block;
+    padding: 16px 24px;
+    border-radius: 14px;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    text-decoration: none;
+    transition: transform 0.1s, background 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+
+  .action.primary {
+    background: var(--primary);
+    color: var(--white);
+  }
+
+  .action.primary:hover { background: var(--coral-dark); }
+  .action.primary:active { transform: scale(0.98); }
+
+  .action.secondary {
+    background: var(--white);
+    color: var(--ink);
+    border: 2px solid var(--border);
+  }
+
+  .action.secondary:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  .error {
+    background: var(--white);
+    border: 2px solid var(--border);
+    padding: 24px;
+    border-radius: 16px;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+
+  .footer {
+    margin-top: 32px;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+
+  .footer a { color: var(--ink-soft); text-decoration: none; }
+
+  @media (max-width: 480px) {
+    .recipient { font-size: 44px; }
+    .video-wrap { max-height: 65vh; }
+  }
+
+  @media (max-width: 360px) {
+    .recipient { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="logo">LUV BUGS COLLECTION</div>
+
+  <div class="container" id="content">
+    <div class="to-label">TO</div>
+    <div class="recipient" id="recipient">YOU</div>
+    <div class="subtitle" id="subtitle">You got a secret greeting</div>
+
+    <div class="video-wrap" id="video-wrap">
+      <video
+        id="message-video"
+        controls
+        playsinline
+        preload="metadata">
+        Your browser does not support video.
+      </video>
+    </div>
+
+    <div class="sender" id="sender-line">
+      from <em id="sender">someone thinking of you</em>
+    </div>
+
+    <div class="actions">
+      <a href="/love/" class="action primary" id="reply-button">Send a greeting back 💖</a>
+      <a href="/love/" class="action secondary">Meet all the bugs</a>
+    </div>
+
+    <div class="footer">
+      Luv Bugs Collection · <a href="/">luvbugscollection.com</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  // Support both English keys (bug, to, from) and Swedish keys (bacill, till, fran) for cross-language compatibility
+  const bacillKey = params.get('bug') || params.get('bacill') || 'karlek';
+  const messageId = parseInt(params.get('v')) || 1;
+  const to = params.get('to') || params.get('till');
+  const from = params.get('from') || params.get('fran');
+
+  // Map English bug names to internal keys
+  const bugMap = {
+    'love': 'karlek',
+    'happy': 'gladje',
+    'tease': 'ret',
+    'candy': 'godis',
+    'dance': 'dans',
+    'rich': 'rikedom'
+  };
+  const internalKey = bugMap[bacillKey] || bacillKey;
+
+  fetch('../data/messages.json')
+    .then(r => r.json())
+    .then(data => {
+      const bacill = data.baciller[internalKey];
+      if (!bacill || !bacill.aktiv) {
+        showError('This greeting could not be found.');
+        return;
+      }
+
+      const message = bacill.meddelanden.find(m => m.id === messageId);
+      if (!message) {
+        showError('This message could not be found.');
+        return;
+      }
+
+      document.documentElement.style.setProperty('--primary', bacill.farg_primar);
+      document.documentElement.style.setProperty('--primary-soft', bacill.farg_mjuk);
+
+      if (to && to.length > 0 && to.length <= 30) {
+        document.getElementById('recipient').textContent = to.toUpperCase();
+        document.title = 'A greeting for ' + to + ' ' + bacill.emoji;
+      }
+
+      if (from && from.length > 0 && from.length <= 30) {
+        document.getElementById('sender').textContent = from;
+      }
+
+      document.getElementById('subtitle').textContent =
+        bacill.namn_en + ' has delivered a greeting for you';
+
+      const video = document.getElementById('message-video');
+      video.src = '../videos/' + message.video_en;
+      if (message.poster_en) {
+        video.poster = '../videos/' + message.poster_en;
+      }
+    })
+    .catch(err => {
+      console.error('Could not load message:', err);
+      showError('Could not load the greeting. Try again.');
+    });
+
+  function showError(msg) {
+    document.getElementById('content').innerHTML =
+      '<div class="error">' + msg + '<br><br>' +
+      '<a href="/love/" style="color: #FF6B6B; font-weight: 600; text-decoration: none;">Go to Luv Bugs →</a>' +
+      '</div>';
+  }
+</script>
+
+</body>
+</html>

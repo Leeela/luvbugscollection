@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Send a bug greeting · Luv Bugs Collection</title>
+<meta name="description" content="Send a secret greeting from the Luv Bugs to someone you care about.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --coral: #FF6B6B;
+    --coral-dark: #E85555;
+    --ink: #2D2D2D;
+    --ink-soft: #6B6B6B;
+    --bg: #FFF8F8;
+    --white: #FFFFFF;
+    --border: #F0E8E8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    min-height: 100vh;
+    padding: 32px 20px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .logo {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--coral);
+    letter-spacing: 2px;
+    margin-bottom: 32px;
+  }
+
+  .container { max-width: 520px; width: 100%; }
+
+  h1 {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 30px;
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .intro {
+    font-size: 16px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .card {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    padding: 24px 16px;
+    text-align: center;
+    text-decoration: none;
+    color: var(--ink);
+    transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1 / 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card.active:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  }
+
+  .card-emoji {
+    font-size: 48px;
+    margin-bottom: 12px;
+    line-height: 1;
+  }
+
+  .card-name {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 6px;
+    line-height: 1.1;
+  }
+
+  .card-description {
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-weight: 400;
+  }
+
+  .card.inactive {
+    opacity: 0.5;
+    pointer-events: none;
+    background: #FAFAFA;
+  }
+
+  .card.inactive::after {
+    content: 'Coming soon';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--ink-soft);
+    color: var(--white);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .footer {
+    margin-top: 48px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+
+  .footer a { color: var(--ink-soft); text-decoration: none; }
+
+  .lang-switch {
+    margin-top: 12px;
+    font-size: 13px;
+  }
+
+  .lang-switch a {
+    color: var(--coral);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  @media (max-width: 480px) {
+    h1 { font-size: 24px; }
+    .card-emoji { font-size: 40px; }
+    .card-name { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="logo">LUV BUGS COLLECTION</div>
+
+  <div class="container">
+
+    <h1>Send a secret greeting</h1>
+    <p class="intro">Choose which bug should deliver your message.</p>
+
+    <div class="grid" id="bacill-grid">
+      <!-- Filled dynamically from messages.json -->
+    </div>
+
+    <div class="footer">
+      Luv Bugs Collection · <a href="/">luvbugscollection.com</a>
+      <div class="lang-switch">
+        <a href="https://bacillerna.se/love/">Svenska →</a>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  fetch('data/messages.json')
+    .then(r => r.json())
+    .then(data => {
+      const grid = document.getElementById('bacill-grid');
+      const baciller = data.baciller;
+
+      for (const key in baciller) {
+        const b = baciller[key];
+        const isActive = b.aktiv;
+        const card = document.createElement(isActive ? 'a' : 'div');
+        card.className = 'card ' + (isActive ? 'active' : 'inactive');
+
+        if (isActive) {
+          card.href = b.slug_en + '/';
+          card.style.borderColor = b.farg_mjuk;
+        }
+
+        card.innerHTML =
+          '<div class="card-emoji">' + b.emoji + '</div>' +
+          '<div class="card-name">' + b.namn_en.toUpperCase() + '</div>' +
+          '<div class="card-description">' + b.beskrivning_en + '</div>';
+
+        grid.appendChild(card);
+      }
+    })
+    .catch(err => {
+      console.error('Could not load messages:', err);
+      document.getElementById('bacill-grid').innerHTML =
+        '<p style="grid-column: 1 / -1; text-align: center; color: #888;">Could not load bugs. Try again later.</p>';
+    });
+</script>
+
+</body>
+</html>
