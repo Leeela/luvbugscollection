@@ -12,6 +12,8 @@
       "farg_primar": "#FF6B6B",
       "farg_mjuk": "#FFE5E5",
       "emoji": "💖",
+      "image_sv": "images/karleksbacillen.png",
+      "image_en": "images/lovebug.png",
       "beskrivning_sv": "Skicka kärlek",
       "beskrivning_en": "Send love",
       "aktiv": true,
