@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Spread the Love – Love Bug | Luv Bugs Collection</title>
+<meta name="description" content="Help Love Bug spread the love! Draw love lines to all the lonely characters and trigger the Love Wave!">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%; background: #1a0812;
+  display: flex; flex-direction: column; align-items: center;
+  font-family: 'Nunito', sans-serif; overflow: hidden;
+}
+#page {
+  width: 100%; max-width: 430px; height: 100dvh;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 10px 10px 14px; gap: 5px;
+}
+#top-bar {
+  width: 100%; display: flex; align-items: center;
+  justify-content: space-between; padding: 0 2px;
+}
+#brand { font-family: 'Fredoka', sans-serif; font-size: 17px; color: #ffb3d1; }
+#level-text { font-size: 13px; color: #ff80b4; font-weight: 700; }
+#hearts-display { font-size: 20px; letter-spacing: 3px; text-align: center; width: 100%; }
+#msg {
+  font-size: 14px; font-weight: 900; color: #ff80b4;
+  text-align: center; min-height: 20px;
+  text-shadow: 0 1px 8px rgba(255,80,160,0.5);
+}
+#canvas-wrap {
+  position: relative; width: 100%; flex: 1; min-height: 0;
+  border-radius: 22px; overflow: hidden; touch-action: none;
+  box-shadow: 0 6px 32px rgba(255,80,160,0.3);
+}
+#game-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+#video-overlay {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 54%;
+  display: none; flex-direction: column; align-items: center;
+  justify-content: center; gap: 6px;
+  background: linear-gradient(to bottom, rgba(26,8,18,0) 0%, rgba(26,8,18,0.97) 16%);
+  border-radius: 0 0 22px 22px; z-index: 10; padding: 10px 14px 14px;
+}
+#love-video { width: 88%; border-radius: 14px; object-fit: contain; max-height: 88%; }
+#video-label {
+  font-family: 'Fredoka', sans-serif; font-size: 15px; color: #ff80b4;
+  letter-spacing: 1px; text-shadow: 0 0 14px rgba(255,100,168,0.9);
+}
+#footer { font-size: 11px; color: #661133; text-align: center; }
+#footer a { color: #ff80b4; text-decoration: none; }
+
+/* ── Desktop layout ── */
+@media (min-width: 500px) {
+  body {
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(255,80,150,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(255,80,150,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 40%, #3d0a28 0%, #1a0812 70%);
+    position: relative;
+  }
+  body::before, body::after {
+    content: '💖';
+    position: fixed;
+    font-size: 120px;
+    opacity: 0.04;
+    pointer-events: none;
+    animation: floatHeart 8s ease-in-out infinite;
+  }
+  body::before { left: 5%; top: 20%; animation-delay: 0s; }
+  body::after  { right: 5%; bottom: 25%; font-size: 90px; animation-delay: -4s; }
+  @keyframes floatHeart {
+    0%,100% { transform: translateY(0) rotate(-10deg); }
+    50%      { transform: translateY(-20px) rotate(10deg); }
+  }
+  #page {
+    border-radius: 28px;
+    box-shadow:
+      0 0 80px rgba(255,80,150,0.2),
+      0 0 200px rgba(255,80,150,0.08),
+      inset 0 0 0 1px rgba(255,80,150,0.12);
+    margin: 16px 0;
+    height: calc(100dvh - 32px);
+  }
+}
+</style>
+</head>
+<body>
+<div id="page">
+  <div id="top-bar">
+    <div id="brand">💖 Luv Bugs Collection</div>
+    <div id="level-text">Level 1</div>
+  </div>
+  <div id="hearts-display">🤍🤍🤍</div>
+  <div id="msg">Draw a love line to every lonely character!</div>
+  <div id="canvas-wrap">
+    <canvas id="game-canvas"></canvas>
+    <div id="video-overlay">
+      <video id="love-video" playsinline webkit-playsinline src="lovewave.mp4"></video>
+      <div id="video-label">💖 Love Wave!</div>
+    </div>
+  </div>
+  <div id="footer">Discover all bugs at <a href="https://luvbugscollection.com">luvbugscollection.com</a></div>
+</div>
+
+<!-- 🏠 Home -->
+<a href="/index.html" style="
+  position:fixed;top:14px;left:14px;z-index:99;
+  background:#c0165a;color:white;
+  border-radius:50px;padding:9px 16px;
+  font-size:14px;font-weight:900;
+  text-decoration:none;display:flex;align-items:center;gap:6px;
+  box-shadow:0 4px 14px rgba(0,0,0,0.4);opacity:0.85;
+  transition:opacity 0.2s,transform 0.2s;
+" onmouseenter="this.style.opacity='1';this.style.transform='scale(1.05)'"
+   onmouseleave="this.style.opacity='0.85';this.style.transform='scale(1)'">🏠 Home</a>
+
+<!-- 🎮 More games -->
+<a href="/games.html" style="
+  position:fixed;bottom:14px;right:14px;z-index:99;
+  background:#9c27b0;color:white;
+  border-radius:50px;padding:9px 16px;
+  font-size:14px;font-weight:900;
+  text-decoration:none;display:flex;align-items:center;gap:6px;
+  box-shadow:0 4px 14px rgba(0,0,0,0.4);opacity:0.85;
+  transition:opacity 0.2s,transform 0.2s;
+" onmouseenter="this.style.opacity='1';this.style.transform='scale(1.05)'"
+   onmouseleave="this.style.opacity='0.85';this.style.transform='scale(1)'">🎮 More games!</a>
+
+<!-- ▶ YouTube -->
+<a href="https://www.youtube.com/@LuvbugsBacillerna/playlists" target="_blank" rel="noopener" style="
+  position:fixed;bottom:14px;left:14px;z-index:99;
+  background:#ff0000;color:white;
+  border-radius:50px;padding:9px 16px;
+  font-size:14px;font-weight:900;
+  text-decoration:none;display:flex;align-items:center;gap:6px;
+  box-shadow:0 4px 14px rgba(0,0,0,0.4);opacity:0.85;
+  transition:opacity 0.2s,transform 0.2s;
+" onmouseenter="this.style.opacity='1';this.style.transform='scale(1.05)'"
+   onmouseleave="this.style.opacity='0.85';this.style.transform='scale(1)'">
+  <svg width="20" height="14" viewBox="0 0 22 16" fill="white"><path d="M21.5 2.5s-.2-1.5-.9-2.1C19.8-.3 18.9-.3 18.5-.3 15.5-.5 11-.5 11-.5S6.5-.5 3.5-.3C3.1-.3 2.2-.3 1.4.4.7 1 .5 2.5.5 2.5S.3 4.2.3 6v1.7c0 1.7.2 3.5.2 3.5s.2 1.5.9 2.1c.8.7 1.9.7 2.4.7C5.3 14.2 11 14.2 11 14.2s4.5 0 7.5-.3c.4 0 1.3-.1 2.1-.8.7-.6.9-2.1.9-2.1s.2-1.8.2-3.5V6C21.7 4.2 21.5 2.5 21.5 2.5zM8.8 9.7V4.5l6 2.6-6 2.6z"/></svg>
+  Watch more!
+</a>
+<script>
+const canvas = document.getElementById('game-canvas');
+const ctx = canvas.getContext('2d');
+const wrap = document.getElementById('canvas-wrap');
+const videoOverlay = document.getElementById('video-overlay');
+const loveVideo = document.getElementById('love-video');
+
+const TARGET_SETS = [
+  [{sad:'👧',happy:'🥰'},{sad:'🐶',happy:'🐕'},{sad:'👦',happy:'😄'}],
+  [{sad:'👧',happy:'🥰'},{sad:'🐱',happy:'😸'},{sad:'👴',happy:'😊'},{sad:'🐰',happy:'🐇'}],
+  [{sad:'👧',happy:'🥰'},{sad:'👦',happy:'😄'},{sad:'🐶',happy:'🐕'},{sad:'👵',happy:'😊'},{sad:'🐱',happy:'😸'}]
+];
+
+let state='playing', dragging=false, dragStart=null, dragCurrent=null;
+let connectedTargets=new Set(), totalTargets=0, level=1;
+let particles=[], figureHearts=[], chains=[], targets=[];
+let figureReact=false, animating=false, bug={};
+
+const bugImg = new Image();
+bugImg.src = 'lovebug.jpg'; // byt till transparent PNG om den finns
+
+function cW(){ return canvas.width/(window.devicePixelRatio||1); }
+function cH(){ return canvas.height/(window.devicePixelRatio||1); }
+function dist(a,b){ return Math.sqrt((a.x-b.x)**2+(a.y-b.y)**2); }
+
+function resize(){
+  const rect=wrap.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
+  canvas.width=rect.width*dpr; canvas.height=rect.height*dpr;
+  canvas.style.width=rect.width+'px'; canvas.style.height=rect.height+'px';
+  ctx.scale(dpr,dpr); initLevel();
+}
+
+function getPos(e){
+  const rect=canvas.getBoundingClientRect(), t=e.touches?e.touches[0]:e;
+  return {x:t.clientX-rect.left, y:t.clientY-rect.top};
+}
+
+function initLevel(){
+  const w=cW(), h=cH();
+  connectedTargets=new Set(); chains=[]; particles=[]; figureHearts=[]; figureReact=false;
+  const idx=Math.min(level-1,2), set=TARGET_SETS[idx];
+  totalTargets=set.length;
+  bug={x:w/2, y:h*0.76, r:46, pulse:0};
+  const posMap=[
+    [{x:.22,y:.10},{x:.78,y:.10},{x:.50,y:.27}],
+    [{x:.17,y:.09},{x:.83,y:.09},{x:.30,y:.27},{x:.70,y:.27}],
+    [{x:.12,y:.09},{x:.50,y:.07},{x:.88,y:.09},{x:.25,y:.26},{x:.75,y:.26}]
+  ];
+  targets=posMap[idx].map((p,i)=>({
+    x:p.x*w, y:p.y*h, r:28,
+    sad:set[i].sad, happy:set[i].happy,
+    connected:false, bounce:0
+  }));
+  updateUI(); state='playing';
+  if(!animating){animating=true; loop();}
+}
+
+function updateUI(){
+  const n=connectedTargets.size;
+  document.getElementById('hearts-display').textContent=
+    Array.from({length:totalTargets},(_,i)=>i<n?'💖':'🤍').join('');
+  document.getElementById('level-text').textContent='Level '+level;
+}
+
+loveVideo.addEventListener('ended',()=>{
+  videoOverlay.style.display='none';
+  figureReact=false; figureHearts=[];
+  setTimeout(nextLevel,500);
+});
+
+function triggerWave(){
+  state='wave'; figureReact=true;
+  document.getElementById('msg').textContent='💖 Love Wave!';
+  targets.forEach(t=>{
+    for(let i=0;i<7;i++){
+      const a=-Math.PI/2+(Math.random()-.5)*Math.PI*.9, sp=2+Math.random()*3.5;
+      figureHearts.push({
+        x:t.x,y:t.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-1,
+        life:1,decay:.012+Math.random()*.01,size:12+Math.random()*14,
+        rot:Math.random()*Math.PI*2,rotV:(Math.random()-.5)*.12,
+        color:['#ff4488','#ff80b4','#ffb3d1','#ff2266','#ffaacc'][Math.floor(Math.random()*5)]
+      });
+    }
+  });
+  videoOverlay.style.display='flex';
+  loveVideo.currentTime=0; loveVideo.play().catch(()=>{});
+}
+
+function drawHeart(x,y,size,color,alpha,rot){
+  ctx.save(); ctx.globalAlpha=alpha; ctx.translate(x,y); ctx.rotate(rot);
+  const s=size/2;
+  ctx.beginPath(); ctx.moveTo(0,s*.4);
+  ctx.bezierCurveTo(-s*1.1,-s*.3,-s*1.1,-s*1.1,0,-s*.5);
+  ctx.bezierCurveTo(s*1.1,-s*1.1,s*1.1,-s*.3,0,s*.4);
+  ctx.fillStyle=color; ctx.fill(); ctx.restore();
+}
+
+function drawBug(){
+  const {x,y,r,pulse}=bug;
+  const sc=1+Math.sin(pulse)*.03;
+  // Glow
+  if(connectedTargets.size>0||state==='wave'){
+    ctx.save();
+    const grd=ctx.createRadialGradient(x,y,r*.8,x,y,r*2);
+    grd.addColorStop(0,'rgba(255,80,150,0.3)'); grd.addColorStop(1,'rgba(255,80,150,0)');
+    ctx.beginPath(); ctx.arc(x,y,r*2,0,Math.PI*2);
+    ctx.fillStyle=grd; ctx.fill(); ctx.restore();
+  }
+  // Image clipped to circle
+  const size=r*2.8*sc;
+  ctx.save();
+  ctx.beginPath(); ctx.arc(x,y-r*.05,r*1.4,0,Math.PI*2); ctx.clip();
+  if(bugImg.complete&&bugImg.naturalWidth>0){
+    const aspect=bugImg.naturalWidth/bugImg.naturalHeight;
+    let dw=size, dh=size/aspect;
+    if(dh<size){dh=size; dw=size*aspect;}
+    ctx.drawImage(bugImg,x-dw/2,y-dh*.72,dw,dh);
+  } else {
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle='#e8548a'; ctx.fill();
+    ctx.fillStyle='#fff'; ctx.font=`${r*.6}px serif`;
+    ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('💖',x,y);
+  }
+  ctx.restore();
+  // Hint text
+  if(connectedTargets.size===0&&state==='playing'){
+    ctx.save(); ctx.globalAlpha=0.5+Math.sin(pulse*2)*.3;
+    ctx.fillStyle='#ffb3d1'; ctx.font='12px Nunito,sans-serif';
+    ctx.textAlign='center'; ctx.fillText('press & drag',x,y+r*1.75); ctx.restore();
+  }
+}
+
+function drawTarget(t){
+  const bounce=t.connected?Math.sin(t.bounce)*4:0;
+  ctx.save(); ctx.translate(t.x,t.y+bounce);
+  if(t.connected){
+    const g=ctx.createRadialGradient(0,0,t.r*.5,0,0,t.r+12);
+    g.addColorStop(0,'rgba(255,150,180,0.4)'); g.addColorStop(1,'rgba(255,150,180,0)');
+    ctx.beginPath(); ctx.arc(0,0,t.r+12,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+  }
+  ctx.beginPath(); ctx.arc(0,0,t.r,0,Math.PI*2);
+  ctx.fillStyle=t.connected?'rgba(255,220,235,0.95)':'rgba(40,10,25,0.88)'; ctx.fill();
+  ctx.strokeStyle=t.connected?'#ff6fa8':'#661133'; ctx.lineWidth=2; ctx.stroke();
+  ctx.font=`${t.r*1.15}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(t.connected?t.happy:t.sad,0,2); ctx.restore();
+}
+
+function drawChain(c){
+  if(c.points.length<2) return;
+  ctx.save();
+  ctx.beginPath(); ctx.moveTo(c.points[0].x,c.points[0].y);
+  c.points.forEach(p=>ctx.lineTo(p.x,p.y));
+  ctx.strokeStyle='rgba(255,100,168,0.18)'; ctx.lineWidth=8; ctx.lineCap='round'; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(c.points[0].x,c.points[0].y);
+  c.points.forEach(p=>ctx.lineTo(p.x,p.y));
+  ctx.strokeStyle='rgba(255,80,150,0.8)'; ctx.lineWidth=2.5; ctx.stroke();
+  c.points.forEach((p,i)=>{
+    if(i%5===0){ctx.beginPath();ctx.arc(p.x,p.y,2.5,0,Math.PI*2);ctx.fillStyle='rgba(255,160,200,0.8)';ctx.fill();}
+  }); ctx.restore();
+}
+
+function spawnParticles(x,y){
+  for(let i=0;i<14;i++){
+    const a=Math.random()*Math.PI*2,sp=1.5+Math.random()*4;
+    particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,
+      decay:.025+Math.random()*.02,size:3+Math.random()*5,
+      color:['#ff6fa8','#ff4488','#ffb3d1','#ff2266'][Math.floor(Math.random()*4)]});
+  }
+}
+
+function buildPath(from,to){
+  const pts=[],steps=28;
+  const cx=(from.x+to.x)/2+(Math.random()-.5)*60;
+  const cy=(from.y+to.y)/2-60-Math.random()*30;
+  for(let i=0;i<=steps;i++){
+    const t=i/steps;
+    pts.push({
+      x:(1-t)*(1-t)*from.x+2*(1-t)*t*cx+t*t*to.x,
+      y:(1-t)*(1-t)*from.y+2*(1-t)*t*cy+t*t*to.y
+    });
+  }
+  return pts;
+}
+
+function loop(){
+  const w=cW(),h=cH();
+  ctx.clearRect(0,0,w,h);
+  const bg=ctx.createLinearGradient(0,0,0,h);
+  bg.addColorStop(0,'#2a0818'); bg.addColorStop(1,'#1a0812');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
+  [[.1,.06,70],[.9,.09,55],[.2,.48,40],[.8,.42,60],[.5,.65,45],[.3,.86,35]].forEach(([cx,cy,cr],i)=>{
+    ctx.save(); ctx.globalAlpha=0.04+i*.007; ctx.fillStyle='#ff4488';
+    ctx.beginPath(); ctx.arc(cx*w,cy*h,cr,0,Math.PI*2); ctx.fill(); ctx.restore();
+  });
+  if(state==='wave'){
+    ctx.save(); ctx.strokeStyle='rgba(255,80,150,0.12)'; ctx.lineWidth=1; ctx.setLineDash([6,6]);
+    ctx.beginPath(); ctx.moveTo(16,h*.47); ctx.lineTo(w-16,h*.47); ctx.stroke();
+    ctx.setLineDash([]); ctx.restore();
+  }
+  chains.forEach(drawChain);
+  targets.forEach(t=>{if(t.connected)t.bounce+=.13; drawTarget(t);});
+  if(figureReact){
+    if(Math.random()<.04){
+      targets.forEach(t=>{
+        const a=-Math.PI/2+(Math.random()-.5)*Math.PI*.8,sp=1.5+Math.random()*2.5;
+        figureHearts.push({x:t.x,y:t.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-.5,
+          life:1,decay:.016+Math.random()*.01,size:9+Math.random()*10,
+          rot:Math.random()*Math.PI*2,rotV:(Math.random()-.5)*.1,
+          color:['#ff4488','#ff80b4','#ffb3d1'][Math.floor(Math.random()*3)]});
+      });
+    }
+    figureHearts=figureHearts.filter(h=>h.life>0);
+    figureHearts.forEach(h=>{
+      drawHeart(h.x,h.y,h.size,h.color,h.life*.9,h.rot);
+      h.x+=h.vx; h.y+=h.vy; h.vy+=.04; h.rot+=h.rotV; h.life-=h.decay;
+    });
+  }
+  if(dragging&&dragStart&&dragCurrent){
+    ctx.save(); ctx.setLineDash([8,5]);
+    ctx.beginPath(); ctx.moveTo(dragStart.x,dragStart.y); ctx.lineTo(dragCurrent.x,dragCurrent.y);
+    ctx.strokeStyle='rgba(255,100,168,0.8)'; ctx.lineWidth=3; ctx.lineCap='round'; ctx.stroke();
+    ctx.setLineDash([]); ctx.restore();
+  }
+  bug.pulse+=.06;
+  if(state!=='wave') drawBug();
+  particles=particles.filter(p=>p.life>0);
+  particles.forEach(p=>{
+    ctx.save(); ctx.globalAlpha=p.life; ctx.fillStyle=p.color;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill(); ctx.restore();
+    p.x+=p.vx; p.y+=p.vy; p.vy+=.06; p.life-=p.decay;
+  });
+  requestAnimationFrame(loop);
+}
+
+function onDown(e){
+  e.preventDefault(); if(state!=='playing') return;
+  const pos=getPos(e);
+  if(dist(pos,bug)<=bug.r*1.65){dragging=true;dragStart={x:bug.x,y:bug.y};dragCurrent={...pos};}
+}
+function onMove(e){e.preventDefault();if(!dragging)return;dragCurrent=getPos(e);}
+function onUp(e){
+  e.preventDefault(); if(!dragging)return; dragging=false;
+  const pos=getPos(e);
+  let hit=null;
+  for(const t of targets){if(!t.connected&&dist(pos,{x:t.x,y:t.y})<=t.r+16){hit=t;break;}}
+  if(hit){
+    hit.connected=true; connectedTargets.add(targets.indexOf(hit));
+    chains.push({points:buildPath(bug,hit)});
+    spawnParticles(hit.x,hit.y); updateUI();
+    if(connectedTargets.size===totalTargets){
+      document.getElementById('msg').textContent='💖 Everyone got love!';
+      setTimeout(triggerWave,350);
+    } else {
+      document.getElementById('msg').textContent='💖 Keep going!';
+    }
+  }
+  dragStart=null; dragCurrent=null;
+}
+
+function nextLevel(){
+  if(level>=3)level=1; else level++;
+  initLevel(); state='playing';
+  document.getElementById('msg').textContent='Draw a love line to every lonely character!';
+}
+
+canvas.addEventListener('mousedown',onDown);
+canvas.addEventListener('mousemove',onMove);
+canvas.addEventListener('mouseup',onUp);
+canvas.addEventListener('touchstart',onDown,{passive:false});
+canvas.addEventListener('touchmove',onMove,{passive:false});
+canvas.addEventListener('touchend',onUp,{passive:false});
+window.addEventListener('resize',resize);
+resize();
+</script>
+</body>
+</html>

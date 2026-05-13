@@ -79,6 +79,11 @@
   .game-card.candy { border-color: var(--candy); }
   .game-card.dance { border-color: var(--brand-mid); }
   .game-card.brand { border-color: var(--candy); }
+  .game-card.love { border-color: var(--love); }
+  .game-card.love .game-thumb { background: #FFE5F0; }
+  .game-card.love .game-age { background: var(--love); color: white; }
+  .btn-love { background: var(--love); color: white; }
+  .btn-love:hover { background: var(--love-deep); }
 
   .game-thumb { width: 140px; height: 140px; border-radius: var(--radius-lg); flex-shrink: 0; object-fit: contain; display: block; }
   .game-card.candy .game-thumb { background: var(--candy-light); }
@@ -173,6 +178,21 @@
               <span class="game-tag">Endless play</span>
             </div>
             <a class="btn btn-candy" href="feed-candy-bug.html">Play now →</a>
+          </div>
+        </div>
+
+        <div class="game-card love">
+          <img src="bilder/karleksbacillen.png" alt="Spread the Love – Love Bug" class="game-thumb">
+          <div>
+            <div class="game-age">ages 3–6</div>
+            <div class="game-title">Spread the Love!</div>
+            <p class="game-desc">Draw love lines from Love Bug to all the lonely characters and trigger the magical Love Wave. How fast can you spread the love?</p>
+            <div class="game-tags">
+              <span class="game-tag">Draw &amp; connect</span>
+              <span class="game-tag">Love Wave</span>
+              <span class="game-tag">3 levels</span>
+            </div>
+            <a class="btn btn-love" href="love-bug-game/">Play now →</a>
           </div>
         </div>
 
