@@ -1,7 +1,7 @@
 {
   "_kommentar": "Datakällan för Bacillerna/Luv Bugs Collection love-kampanjen. Aktivera nya baciller genom att sätta 'aktiv': true.",
   "_version": "1.0",
-  "_uppdaterad": "2026-05-11",
+  "_uppdaterad": "2026-05-13",
 
   "baciller": {
     "karlek": {
@@ -67,10 +67,33 @@
       "farg_primar": "#FFD93D",
       "farg_mjuk": "#FFF8D6",
       "emoji": "😝",
+      "image_sv": "images/retbacillen.png",
+      "image_en": "images/teasebug.png",
       "beskrivning_sv": "Skicka något busigt",
       "beskrivning_en": "Send something playful",
-      "aktiv": false,
-      "meddelanden": []
+      "aktiv": true,
+      "meddelanden": [
+        {
+          "id": 1,
+          "titel_sv": "Den fegisen",
+          "titel_en": "The chicken",
+          "forhandsvisning_sv": "Jag har fått ett hemligt uppdrag. Någon ville inte säga 'jag tycker om dig' rakt ut. Kram från mig och den fegisen!",
+          "forhandsvisning_en": "I've got a secret mission. Someone didn't want to say 'I like you' out loud. Hugs from me and the chicken!",
+          "video_sv": "retbacillen_v1_sv.mp4",
+          "video_en": "teasebug_v1_en.mp4",
+          "aktiv": true
+        },
+        {
+          "id": 2,
+          "titel_sv": "Retälskad",
+          "titel_en": "Tease love",
+          "forhandsvisning_sv": "Någon retas med dig hela tiden. Det är för att den tycker om dig. Jättemycket.",
+          "forhandsvisning_en": "Someone teases you all the time. It's because they like you. A whole lot actually.",
+          "video_sv": "retbacillen_v2_sv.mp4",
+          "video_en": "teasebug_v2_en.mp4",
+          "aktiv": true
+        }
+      ]
     },
 
     "godis": {
@@ -81,10 +104,43 @@
       "farg_primar": "#7ED957",
       "farg_mjuk": "#E5F5DC",
       "emoji": "🍬",
+      "image_sv": "images/godisbacillen.png",
+      "image_en": "images/candybug.png",
       "beskrivning_sv": "Skicka en söt hälsning",
       "beskrivning_en": "Send a sweet greeting",
-      "aktiv": false,
-      "meddelanden": []
+      "aktiv": true,
+      "meddelanden": [
+        {
+          "id": 1,
+          "titel_sv": "Äntligen lördag!",
+          "titel_en": "It's Saturday!",
+          "forhandsvisning_sv": "Äntligen lördag! Nu ska jag hitta goooodis!",
+          "forhandsvisning_en": "It's Saturday! Now I'm going to find candy!",
+          "video_sv": "godisbacillen_v1_sv.mp4",
+          "video_en": "candybug_v1_en.mp4",
+          "aktiv": true
+        },
+        {
+          "id": 2,
+          "titel_sv": "DET VAR INTE JAG!",
+          "titel_en": "IT WASN'T ME!",
+          "forhandsvisning_sv": "Någon känner sig orättvist anklagad för att godiset är borta... DET VAR INTE JAG! Hehehe!",
+          "forhandsvisning_en": "Someone is feeling unfairly accused of the candy going missing... IT WASN'T ME! Hehehe!",
+          "video_sv": "godisbacillen_v2_sv.mp4",
+          "video_en": "candybug_v2_en.mp4",
+          "aktiv": true
+        },
+        {
+          "id": 3,
+          "titel_sv": "Vem tog godiset?",
+          "titel_en": "Who took the candy?",
+          "forhandsvisning_sv": "Vem tog godiset? Inte jag! Heheheheee",
+          "forhandsvisning_en": "Who took the candy? Not me! Heheheheee",
+          "video_sv": "godisbacillen_v3_sv.mp4",
+          "video_en": "candybug_v3_en.mp4",
+          "aktiv": true
+        }
+      ]
     },
 
     "dans": {
