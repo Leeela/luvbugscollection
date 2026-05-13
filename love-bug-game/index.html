@@ -167,10 +167,18 @@ function cW(){ return canvas.width/(window.devicePixelRatio||1); }
 function cH(){ return canvas.height/(window.devicePixelRatio||1); }
 function dist(a,b){ return Math.sqrt((a.x-b.x)**2+(a.y-b.y)**2); }
 
+function applyCanvasSize(){
+  canvas.style.width=''; canvas.style.height='';
+  const wrapH=wrap.clientHeight, aspect=canvas.width/canvas.height;
+  canvas.style.width=(wrapH*aspect)+'px'; canvas.style.height=wrapH+'px';
+}
+
 function resize(){
-  const rect=wrap.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
-  canvas.width=rect.width*dpr; canvas.height=rect.height*dpr;
-  canvas.style.width=rect.width+'px'; canvas.style.height=rect.height+'px';
+  const dpr=window.devicePixelRatio||1;
+  canvas.style.width=''; canvas.style.height='';
+  const wrapW=wrap.clientWidth, wrapH=wrap.clientHeight;
+  canvas.width=wrapW*dpr; canvas.height=wrapH*dpr;
+  applyCanvasSize();
   ctx.scale(dpr,dpr); initLevel();
 }
 
@@ -403,6 +411,7 @@ function onUp(e){
 
 function nextLevel(){
   if(level>=3)level=1; else level++;
+  applyCanvasSize();
   initLevel(); state='playing';
   document.getElementById('msg').textContent='Draw a love line to every lonely character!';
 }
