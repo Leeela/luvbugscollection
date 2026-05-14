@@ -8,100 +8,48 @@
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body {
-  height: 100%; background: #FFF0F6;
-  display: flex; flex-direction: column; align-items: center;
-  font-family: 'Nunito', sans-serif; overflow: hidden;
+html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Nunito', sans-serif; }
+#game-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; touch-action: none; display: block; }
+#ui {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+  pointer-events: none; padding: 10px 80px 0;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
 }
-#page {
-  width: 100%; max-width: 430px; height: 100dvh;
-  display: flex; flex-direction: column; align-items: center;
-  padding: 10px 10px 14px; gap: 5px;
-}
-#top-bar {
-  width: 100%; display: flex; align-items: center;
-  justify-content: space-between; padding: 0 2px;
-}
+#top-bar { width: 100%; display: flex; align-items: center; justify-content: space-between; }
 #brand { font-family: 'Fredoka', sans-serif; font-size: 17px; color: #ffb3d1; }
 #level-text { font-size: 13px; color: #ff80b4; font-weight: 700; }
-#hearts-display { font-size: 20px; letter-spacing: 3px; text-align: center; width: 100%; }
+#hearts-display { font-size: 20px; letter-spacing: 3px; }
 #msg {
   font-size: 14px; font-weight: 900; color: #ff80b4;
-  text-align: center; min-height: 20px;
   text-shadow: 0 1px 8px rgba(255,80,160,0.5);
 }
-#canvas-wrap {
-  position: relative; width: 100%; flex: 1; min-height: 0;
-  border-radius: 22px; overflow: hidden; touch-action: none;
-  box-shadow: 0 6px 32px rgba(255,80,160,0.3);
-}
-#game-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 #video-overlay {
-  position: absolute; left: 0; right: 0; bottom: 0; height: 54%;
+  position: fixed; left: 0; right: 0; bottom: 0; height: 54%;
   display: none; flex-direction: column; align-items: center;
   justify-content: center; gap: 6px;
-  background: linear-gradient(to bottom, rgba(26,8,18,0) 0%, rgba(26,8,18,0.97) 16%);
-  border-radius: 0 0 22px 22px; z-index: 10; padding: 10px 14px 14px;
+  background: linear-gradient(to bottom, rgba(255,180,210,0) 0%, rgba(245,168,188,0.97) 16%);
+  z-index: 10; padding: 10px 14px 14px;
 }
-#love-video { width: 88%; border-radius: 14px; object-fit: contain; max-height: 88%; }
+#love-video { width: min(88%, 400px); border-radius: 14px; object-fit: contain; max-height: 88%; }
 #video-label {
-  font-family: 'Fredoka', sans-serif; font-size: 15px; color: #ff80b4;
-  letter-spacing: 1px; text-shadow: 0 0 14px rgba(255,100,168,0.9);
-}
-#footer { font-size: 11px; color: #661133; text-align: center; }
-#footer a { color: #ff80b4; text-decoration: none; }
-
-/* ── Desktop layout ── */
-@media (min-width: 500px) {
-  body {
-    background:
-      radial-gradient(ellipse at 20% 30%, rgba(255,107,157,0.15) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 70%, rgba(255,107,157,0.15) 0%, transparent 50%),
-      radial-gradient(ellipse at 50% 40%, #FFE5F0 0%, #FFF0F6 70%);
-    position: relative;
-  }
-  body::before, body::after {
-    content: '💖';
-    position: fixed;
-    font-size: 120px;
-    opacity: 0.10;
-    pointer-events: none;
-    animation: floatHeart 8s ease-in-out infinite;
-  }
-  body::before { left: 5%; top: 20%; animation-delay: 0s; }
-  body::after  { right: 5%; bottom: 25%; font-size: 90px; animation-delay: -4s; }
-  @keyframes floatHeart {
-    0%,100% { transform: translateY(0) rotate(-10deg); }
-    50%      { transform: translateY(-20px) rotate(10deg); }
-  }
-  #page {
-    border-radius: 28px;
-    box-shadow:
-      0 0 80px rgba(255,80,150,0.2),
-      0 0 200px rgba(255,80,150,0.08),
-      inset 0 0 0 1px rgba(255,80,150,0.12);
-    margin: 16px 0;
-    height: calc(100dvh - 32px);
-  }
+  font-family: 'Fredoka', sans-serif; font-size: 15px; color: #ff4488;
+  letter-spacing: 1px; text-shadow: 0 0 14px rgba(255,100,168,0.6);
 }
 </style>
 </head>
 <body>
-<div id="page">
+<canvas id="game-canvas"></canvas>
+<div id="ui">
   <div id="top-bar">
     <div id="brand">💖 Luv Bugs Collection</div>
     <div id="level-text">Level 1</div>
   </div>
   <div id="hearts-display">🤍🤍🤍</div>
   <div id="msg">Draw a love line to every lonely character!</div>
-  <div id="canvas-wrap">
-    <canvas id="game-canvas"></canvas>
-    <div id="video-overlay">
-      <video id="love-video" playsinline webkit-playsinline src="lovewave.mp4"></video>
-      <div id="video-label">💖 Love Wave!</div>
-    </div>
-  </div>
-  <div id="footer">Discover all bugs at <a href="https://luvbugscollection.com">luvbugscollection.com</a></div>
+</div>
+<div id="video-overlay">
+  <video id="love-video" playsinline webkit-playsinline src="lovewave.mp4"></video>
+  <div id="video-label">💖 Love Wave!</div>
 </div>
 
 <!-- 🏠 Home -->
@@ -145,7 +93,6 @@ html, body {
 <script>
 const canvas = document.getElementById('game-canvas');
 const ctx = canvas.getContext('2d');
-const wrap = document.getElementById('canvas-wrap');
 const videoOverlay = document.getElementById('video-overlay');
 const loveVideo = document.getElementById('love-video');
 
@@ -160,30 +107,31 @@ let connectedTargets=new Set(), totalTargets=0, level=1;
 let particles=[], figureHearts=[], chains=[], targets=[];
 let figureReact=false, animating=false, bug={};
 
-const bugImg = new Image();
-bugImg.src = 'lovebug.jpg'; // byt till transparent PNG om den finns
+const TOP_PAD = 100;
 
-function cW(){ return canvas.width/(window.devicePixelRatio||1); }
-function cH(){ return canvas.height/(window.devicePixelRatio||1); }
+const bugImg = new Image();
+bugImg.src = 'lovebug.jpg';
+
+function cW(){ return window.innerWidth; }
+function cH(){ return window.innerHeight; }
 function dist(a,b){ return Math.sqrt((a.x-b.x)**2+(a.y-b.y)**2); }
 
-function applyCanvasSize(){
-  canvas.style.width=''; canvas.style.height='';
-  const wrapH=wrap.clientHeight, aspect=canvas.width/canvas.height;
-  canvas.style.width=(wrapH*aspect)+'px'; canvas.style.height=wrapH+'px';
+function resize(){
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width  = window.innerWidth  * dpr;
+  canvas.height = window.innerHeight * dpr;
+  ctx.scale(dpr, dpr);
 }
 
-function resize(){
-  const dpr=window.devicePixelRatio||1;
-  canvas.style.width=''; canvas.style.height='';
-  const wrapW=wrap.clientWidth, wrapH=wrap.clientHeight;
-  canvas.width=wrapW*dpr; canvas.height=wrapH*dpr;
-  applyCanvasSize();
-  ctx.scale(dpr,dpr); initLevel();
+let _resizeTimer;
+function onResize(){
+  clearTimeout(_resizeTimer);
+  _resizeTimer=setTimeout(resize, 200);
 }
 
 function getPos(e){
-  const rect=canvas.getBoundingClientRect(), t=e.touches?e.touches[0]:e;
+  const rect=canvas.getBoundingClientRect();
+  const t=e.changedTouches?.[0]??e.touches?.[0]??e;
   return {x:t.clientX-rect.left, y:t.clientY-rect.top};
 }
 
@@ -193,13 +141,14 @@ function initLevel(){
   const idx=Math.min(level-1,2), set=TARGET_SETS[idx];
   totalTargets=set.length;
   bug={x:w/2, y:h*0.76, r:46, pulse:0};
+  const playH = h - TOP_PAD;
   const posMap=[
     [{x:.22,y:.10},{x:.78,y:.10},{x:.50,y:.27}],
     [{x:.17,y:.09},{x:.83,y:.09},{x:.30,y:.27},{x:.70,y:.27}],
     [{x:.12,y:.09},{x:.50,y:.07},{x:.88,y:.09},{x:.25,y:.26},{x:.75,y:.26}]
   ];
   targets=posMap[idx].map((p,i)=>({
-    x:p.x*w, y:p.y*h, r:28,
+    x:p.x*w, y:TOP_PAD + p.y*playH, r:28,
     sad:set[i].sad, happy:set[i].happy,
     connected:false, bounce:0
   }));
@@ -235,7 +184,13 @@ function triggerWave(){
     }
   });
   videoOverlay.style.display='flex';
-  loveVideo.currentTime=0; loveVideo.play().catch(()=>{});
+  loveVideo.currentTime=0; loveVideo.play().catch(()=>{
+    setTimeout(()=>{
+      videoOverlay.style.display='none';
+      figureReact=false; figureHearts=[];
+      setTimeout(nextLevel,500);
+    },1500);
+  });
 }
 
 function drawHeart(x,y,size,color,alpha,rot){
@@ -250,7 +205,6 @@ function drawHeart(x,y,size,color,alpha,rot){
 function drawBug(){
   const {x,y,r,pulse}=bug;
   const sc=1+Math.sin(pulse)*.03;
-  // Glow
   if(connectedTargets.size>0||state==='wave'){
     ctx.save();
     const grd=ctx.createRadialGradient(x,y,r*.8,x,y,r*2);
@@ -258,7 +212,6 @@ function drawBug(){
     ctx.beginPath(); ctx.arc(x,y,r*2,0,Math.PI*2);
     ctx.fillStyle=grd; ctx.fill(); ctx.restore();
   }
-  // Image clipped to circle
   const size=r*2.8*sc;
   ctx.save();
   ctx.beginPath(); ctx.arc(x,y-r*.05,r*1.4,0,Math.PI*2); ctx.clip();
@@ -266,7 +219,7 @@ function drawBug(){
     const aspect=bugImg.naturalWidth/bugImg.naturalHeight;
     let dw=size, dh=size/aspect;
     if(dh<size){dh=size; dw=size*aspect;}
-    ctx.drawImage(bugImg,x-dw/2,y-dh*.72,dw,dh);
+    ctx.drawImage(bugImg,x-dw/2,y-r*.05-dh/2,dw,dh);
   } else {
     ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
     ctx.fillStyle='#e8548a'; ctx.fill();
@@ -274,7 +227,6 @@ function drawBug(){
     ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('💖',x,y);
   }
   ctx.restore();
-  // Hint text
   if(connectedTargets.size===0&&state==='playing'){
     ctx.save(); ctx.globalAlpha=0.5+Math.sin(pulse*2)*.3;
     ctx.fillStyle='#ffb3d1'; ctx.font='12px Nunito,sans-serif';
@@ -291,8 +243,8 @@ function drawTarget(t){
     ctx.beginPath(); ctx.arc(0,0,t.r+12,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
   }
   ctx.beginPath(); ctx.arc(0,0,t.r,0,Math.PI*2);
-  ctx.fillStyle=t.connected?'rgba(255,220,235,0.95)':'rgba(40,10,25,0.88)'; ctx.fill();
-  ctx.strokeStyle=t.connected?'#ff6fa8':'#661133'; ctx.lineWidth=2; ctx.stroke();
+  ctx.fillStyle=t.connected?'rgba(255,220,235,0.95)':'rgba(230,160,185,0.4)'; ctx.fill();
+  ctx.strokeStyle=t.connected?'#ff6fa8':'#e88aaa'; ctx.lineWidth=2; ctx.stroke();
   ctx.font=`${t.r*1.15}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
   ctx.fillText(t.connected?t.happy:t.sad,0,2); ctx.restore();
 }
@@ -338,7 +290,7 @@ function loop(){
   const w=cW(),h=cH();
   ctx.clearRect(0,0,w,h);
   const bg=ctx.createLinearGradient(0,0,0,h);
-  bg.addColorStop(0,'#2a0818'); bg.addColorStop(1,'#1a0812');
+  bg.addColorStop(0,'#f9c6d0'); bg.addColorStop(1,'#f5a8bc');
   ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
   [[.1,.06,70],[.9,.09,55],[.2,.48,40],[.8,.42,60],[.5,.65,45],[.3,.86,35]].forEach(([cx,cy,cr],i)=>{
     ctx.save(); ctx.globalAlpha=0.04+i*.007; ctx.fillStyle='#ff4488';
@@ -411,7 +363,6 @@ function onUp(e){
 
 function nextLevel(){
   if(level>=3)level=1; else level++;
-  applyCanvasSize();
   initLevel(); state='playing';
   document.getElementById('msg').textContent='Draw a love line to every lonely character!';
 }
@@ -422,8 +373,13 @@ canvas.addEventListener('mouseup',onUp);
 canvas.addEventListener('touchstart',onDown,{passive:false});
 canvas.addEventListener('touchmove',onMove,{passive:false});
 canvas.addEventListener('touchend',onUp,{passive:false});
-window.addEventListener('resize',resize);
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize',onResize);
+} else {
+  window.addEventListener('resize',onResize);
+}
 resize();
+initLevel();
 </script>
 </body>
 </html>
