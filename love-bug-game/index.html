@@ -109,6 +109,20 @@ let figureReact=false, animating=false, bug={};
 
 const TOP_PAD = 100;
 
+const audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+function playPling(i=0){
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(660 + i*110, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(880 + i*110, audioCtx.currentTime + 0.12);
+  gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+  osc.start(audioCtx.currentTime);
+  osc.stop(audioCtx.currentTime + 0.35);
+}
+
 const bugImg = new Image();
 bugImg.src = 'lovebug.jpg';
 
@@ -350,7 +364,9 @@ function onUp(e){
   if(hit){
     hit.connected=true; connectedTargets.add(targets.indexOf(hit));
     chains.push({points:buildPath(bug,hit)});
-    spawnParticles(hit.x,hit.y); updateUI();
+    spawnParticles(hit.x,hit.y);
+    playPling(connectedTargets.size - 1);
+    updateUI();
     if(connectedTargets.size===totalTargets){
       document.getElementById('msg').textContent='💖 Everyone got love!';
       setTimeout(triggerWave,350);
