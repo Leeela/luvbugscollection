@@ -462,6 +462,61 @@
   .footer-bottom { max-width: 1100px; margin: 32px auto 0; padding-top: 24px; border-top: 1px solid #333; text-align: center; font-size: 12px; color: #888; }
   .footer-bottom strong { color: white; letter-spacing: 1px; }
   @media (max-width: 720px) { .footer-inner { grid-template-columns: 1fr 1fr; gap: 24px; } }
+
+  /* === ETSY SHOP === */
+  .etsy-section { background: #FFF8F5; }
+  .etsy-product-card {
+    display: flex;
+    gap: 48px;
+    align-items: center;
+    max-width: 860px;
+    margin: 40px auto 0;
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+  .etsy-product-img {
+    width: 260px;
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+    display: block;
+  }
+  .etsy-product-info { flex: 1; }
+  .etsy-product-info h3 {
+    font-family: var(--font-heading);
+    font-size: 26px;
+    font-weight: 700;
+    margin: 8px 0 12px;
+    color: var(--color-text-primary);
+  }
+  .etsy-product-info p {
+    color: var(--color-text-secondary);
+    margin: 0 0 4px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .btn-etsy {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #F1641E;
+    color: white;
+    padding: 16px 32px;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 16px;
+    text-decoration: none;
+    margin-top: 20px;
+    transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+  }
+  .btn-etsy:hover { background: #d4521a; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(241,100,30,0.3); }
+  @media (max-width: 720px) {
+    .etsy-product-card { flex-direction: column; gap: 24px; padding: 24px; }
+    .etsy-product-img { width: 100%; max-width: 320px; margin: 0 auto; }
+  }
 </style>
   <link rel="alternate" hreflang="sv" href="https://bacillerna.se/index.html" />
   <link rel="alternate" hreflang="en" href="https://luvbugscollection.com/index.html" />
@@ -503,6 +558,7 @@
       <a href="games.html">Games</a>
       <a href="watch.html">Watch</a>
       <a href="parents.html">For Parents</a>
+      <a href="#shop" style="color:#F1641E;font-weight:700;">🛒 Shop</a>
     </nav>
     <a href="https://bacillerna.se" class="site-lang" title="Swedish version">EN / SV</a>
   </header>
@@ -691,6 +747,25 @@
     </div>
   </section>
 
+  <!-- ETSY SHOP -->
+  <section id="shop" class="etsy-section">
+    <div class="section-inner">
+      <div class="section-eyebrow">Our shop</div>
+      <h2 class="section-title">Buy on Etsy</h2>
+      <p class="section-text">Download instantly and print at home – perfect for a rainy afternoon!</p>
+      <div class="etsy-product-card">
+        <img src="Aktivitetsblad LuvBugs.png" alt="Luv Bugs Collection Activity Sheets – 6 characters to draw" class="etsy-product-img">
+        <div class="etsy-product-info">
+          <div class="section-eyebrow">Digital download · Print at home</div>
+          <h3>Activity Sheets – 6 Luv Bugs to draw!</h3>
+          <p>Draw and colour all six Luv Bugs! The perfect activity for kids aged 3–8.</p>
+          <p>Download instantly after purchase – print and draw!</p>
+          <a href="https://www.etsy.com/se-en/listing/4504992081/luv-bugs-collection-activity-sheets-6" target="_blank" rel="noopener" class="btn btn-etsy">🛒 Buy now on Etsy</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- FOOTER -->
   <footer class="site-footer">
     <div class="footer-inner">
@@ -706,6 +781,7 @@
           <li><a href="books.html">Books</a></li>
           <li><a href="games.html">Games</a></li>
           <li><a href="watch.html">Watch</a></li>
+          <li><a href="#shop">Shop</a></li>
         </ul>
       </div>
       <div class="footer-col">
