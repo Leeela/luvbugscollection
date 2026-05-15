@@ -151,10 +151,23 @@
       "farg_primar": "#4DD0E1",
       "farg_mjuk": "#D9F2F4",
       "emoji": "🪩",
+      "image_sv": "images/dansbacillen.png",
+      "image_en": "images/dancebug.png",
       "beskrivning_sv": "Få någon att röra på sig",
       "beskrivning_en": "Get someone moving",
-      "aktiv": false,
-      "meddelanden": []
+      "aktiv": true,
+      "meddelanden": [
+        {
+          "id": 1,
+          "titel_sv": "Två vänsterfötter?",
+          "titel_en": "Two left feet?",
+          "forhandsvisning_sv": "Jag har fått ett hemligt uppdrag. Någon påstår att du har två vänsterfötter. Jag tror inte på det. Vi får ta reda på det tillsammans!",
+          "forhandsvisning_en": "I've been given a secret mission. Someone claims you have two left feet. I don't believe it. We'll find out together!",
+          "video_sv": "dansbacillen_v1_sv.mp4",
+          "video_en": "dancebug_v1_en.mp4",
+          "aktiv": true
+        }
+      ]
     },
 
     "rikedom": {
