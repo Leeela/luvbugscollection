@@ -305,8 +305,9 @@
           card.style.borderColor = b.farg_mjuk;
         }
 
-        const visual = b.image_en
-          ? '<div class="card-emoji"><img src="' + b.image_en + '" alt="' + b.namn_en + '"></div>'
+        const imgSrc = b.image_en ? '/love/' + b.image_en : null;
+        const visual = imgSrc
+          ? '<div class="card-emoji"><img src="' + imgSrc + '" alt="' + b.namn_en + '"></div>'
           : '<div class="card-emoji">' + b.emoji + '</div>';
         card.innerHTML =
           visual +
