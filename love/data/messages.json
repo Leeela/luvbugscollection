@@ -178,10 +178,33 @@
       "farg_primar": "#D4AF37",
       "farg_mjuk": "#F5EDD1",
       "emoji": "💰",
+      "image_sv": "images/rikedomsbacillen.png",
+      "image_en": "images/richbug.png",
       "beskrivning_sv": "Skicka tur och välsignelse",
       "beskrivning_en": "Send luck and blessings",
-      "aktiv": false,
-      "meddelanden": []
+      "aktiv": true,
+      "meddelanden": [
+        {
+          "id": 1,
+          "titel_sv": "Du är rik",
+          "titel_en": "You are rich",
+          "forhandsvisning_sv": "Någon påstår att de är fattiga idag. Det stämmer inte. De har dig. Kram från mig och från den rikaste personen jag känner!",
+          "forhandsvisning_en": "Someone claims they're poor today. That's not true. They have you. Hugs from me and from the richest person I know!",
+          "video_sv": "rikedomsbacillen_v1_sv.mp4",
+          "video_en": "richbug_v1_en.mp4",
+          "aktiv": true
+        },
+        {
+          "id": 2,
+          "titel_sv": "Ovärderlig",
+          "titel_en": "Priceless",
+          "forhandsvisning_sv": "Någon ville köpa något fint till dig. Men de hittade inget som var fint nog. Så de skickade mig att säga det istället. Kram från mig och den som tycker du är ovärderlig!",
+          "forhandsvisning_en": "Someone wanted to buy you something nice. But they couldn't find anything nice enough. So they sent me to say it instead. Hugs from me and whoever thinks you're priceless!",
+          "video_sv": "rikedomsbacillen_v2_sv.mp4",
+          "video_en": "richbug_v2_en.mp4",
+          "aktiv": true
+        }
+      ]
     }
   }
 }
