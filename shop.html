@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop – Luv Bugs Collection</title>
+<meta name="description" content="Buy digital downloads from Luv Bugs Collection – activity sheets and birthday pack for kids aged 3–8. Download and print at home instantly!">
+<link rel="canonical" href="https://luvbugscollection.com/shop.html" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-bg: #ffffff;
+    --color-bg-soft: #fafafa;
+    --color-text-primary: #2a2a2a;
+    --color-text-secondary: #555555;
+    --color-text-tertiary: #888888;
+    --color-border: #f0f0f0;
+    --color-border-strong: #e0e0e0;
+    --brand-light: #FFD9CE;
+    --brand-mid: #FF8A75;
+    --brand-deep: #E55A40;
+    --font-heading: 'Fredoka', sans-serif;
+    --font-body: 'Nunito', sans-serif;
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font-body); background: var(--color-bg); color: var(--color-text-primary); line-height: 1.6; }
+
+  /* NAV */
+  .site-header {
+    background: white;
+    border-bottom: 1px solid var(--color-border);
+    padding: 18px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    gap: 16px;
+  }
+  .site-logo { font-family: var(--font-heading); font-weight: 700; font-size: 26px; letter-spacing: 1.5px; color: var(--color-text-primary); text-decoration: none; }
+  .site-nav { display: flex; gap: 22px; font-size: 14px; font-weight: 600; }
+  .site-nav a { text-decoration: none; color: var(--color-text-secondary); padding: 4px 0; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; }
+  .site-nav a:hover { color: var(--brand-deep); }
+  .site-nav a.active { color: var(--brand-deep); border-bottom-color: var(--brand-deep); }
+  .site-lang { font-size: 12px; font-weight: 700; color: var(--color-text-secondary); letter-spacing: 1.5px; text-decoration: none; }
+  .menu-btn { display: none; background: none; border: 2px solid var(--color-border-strong); border-radius: var(--radius-sm); padding: 8px 12px; font-family: var(--font-body); font-weight: 700; font-size: 14px; cursor: pointer; }
+  @media (max-width: 720px) {
+    .site-header { flex-wrap: nowrap; }
+    .site-nav { display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border-bottom: 1px solid var(--color-border); padding: 16px 32px; flex-direction: column; gap: 12px; z-index: 99; }
+    .site-nav.open { display: flex; }
+    .menu-btn { display: block; }
+  }
+
+  /* HERO */
+  .shop-hero {
+    background: var(--brand-light);
+    text-align: center;
+    padding: 64px 24px 48px;
+  }
+  .shop-hero h1 { font-family: var(--font-heading); font-size: clamp(32px, 6vw, 52px); font-weight: 700; color: var(--brand-deep); margin-bottom: 12px; }
+  .shop-hero p { font-size: 17px; color: var(--color-text-secondary); max-width: 480px; margin: 0 auto; }
+
+  /* PRODUCTS */
+  .shop-section { padding: 60px 24px 80px; max-width: 1100px; margin: 0 auto; }
+  .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 32px; margin-top: 40px; }
+
+  .product-card {
+    background: white;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+  .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); border-color: var(--brand-mid); }
+
+  .product-img-wrap { aspect-ratio: 4/3; overflow: hidden; background: #fafafa; }
+  .product-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+  .product-card:hover .product-img-wrap img { transform: scale(1.03); }
+
+  .product-body { padding: 24px; flex: 1; display: flex; flex-direction: column; }
+  .product-tag { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--brand-deep); text-transform: uppercase; margin-bottom: 8px; }
+  .product-name { font-family: var(--font-heading); font-size: 22px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 10px; line-height: 1.2; }
+  .product-desc { font-size: 14px; color: var(--color-text-secondary); line-height: 1.6; flex: 1; margin-bottom: 20px; }
+  .product-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .product-price { font-family: var(--font-heading); font-size: 24px; font-weight: 700; color: var(--color-text-primary); }
+  .btn-buy {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #F1641E; color: white; border: none;
+    padding: 12px 20px; border-radius: var(--radius-md);
+    font-family: var(--font-body); font-weight: 700; font-size: 14px;
+    text-decoration: none; cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
+  }
+  .btn-buy:hover { background: #d4521a; transform: translateY(-1px); }
+  .btn-buy:active { transform: scale(0.98); }
+
+  .shop-footer-note { text-align: center; margin-top: 48px; font-size: 13px; color: var(--color-text-tertiary); }
+  .shop-footer-note a { color: #F1641E; font-weight: 700; text-decoration: none; }
+  .shop-footer-note a:hover { text-decoration: underline; }
+
+  /* FOOTER */
+  footer { background: var(--color-bg-soft); border-top: 1px solid var(--color-border); padding: 32px 24px; text-align: center; font-size: 13px; color: var(--color-text-tertiary); }
+  footer a { color: var(--color-text-tertiary); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a href="/" class="site-logo">LUV BUGS</a>
+  <button class="menu-btn" onclick="document.querySelector('.site-nav').classList.toggle('open')">Menu</button>
+  <nav class="site-nav">
+    <a href="/#characters">Characters</a>
+    <a href="/#stories">Stories</a>
+    <a href="/books.html">Books</a>
+    <a href="/games.html">Games</a>
+    <a href="/#watch">Watch</a>
+    <a href="/parents.html">For Parents</a>
+    <a href="/shop.html" class="active" style="color:#F1641E;font-weight:700;">🛒 Shop</a>
+  </nav>
+  <a href="https://bacillerna.se/shop.html" class="site-lang" title="Swedish version">EN / SV</a>
+</header>
+
+<div class="shop-hero">
+  <h1>🛒 Our Shop</h1>
+  <p>Digital downloads — pay once, download instantly and print at home!</p>
+</div>
+
+<section class="shop-section">
+  <div class="products-grid">
+
+    <!-- Product 1: Activity Sheets -->
+    <div class="product-card">
+      <div class="product-img-wrap">
+        <img src="Aktivitetsblad LuvBugs.png" alt="Luv Bugs Collection Activity Sheets – 6 characters to draw">
+      </div>
+      <div class="product-body">
+        <div class="product-tag">Digital download · Print at home</div>
+        <div class="product-name">Activity Sheets – 6 Luv Bugs to draw!</div>
+        <p class="product-desc">Draw and colour all six Luv Bugs! The perfect activity for kids aged 3–8 on a rainy afternoon, at a birthday party or in the classroom.</p>
+        <div class="product-footer">
+          <div class="product-price">$4.99</div>
+          <a href="https://www.etsy.com/se-en/listing/4504992081/luv-bugs-collection-activity-sheets-6" target="_blank" rel="noopener" class="btn-buy">🛒 Buy on Etsy</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product 2: Birthday Pack -->
+    <div class="product-card">
+      <div class="product-img-wrap">
+        <img src="godisbacillen.png" alt="Candy Bug Birthday Pack" style="object-fit: contain; padding: 20px; background: #FFF0E5;">
+      </div>
+      <div class="product-body">
+        <div class="product-tag">Digital download · Print at home</div>
+        <div class="product-name">Candy Bug Birthday Pack</div>
+        <p class="product-desc">Everything you need to make the party extra fun! Download, print and decorate with Candy Bug. Perfect for kids' birthday parties!</p>
+        <div class="product-footer">
+          <div class="product-price">$8.99</div>
+          <a href="https://www.etsy.com/se-en/listing/4505282155/candy-bug-birthday-pack" target="_blank" rel="noopener" class="btn-buy">🛒 Buy on Etsy</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="shop-footer-note">
+    All products are sold via <a href="https://www.etsy.com/se-en/shop/LuvBugsBacillerna?ref=shop_profile&listing_id=4505002460" target="_blank" rel="noopener">our Etsy shop</a> — secure payment and instant download.
+  </p>
+</section>
+
+<footer>
+  Luv Bugs Collection · <a href="/">luvbugscollection.com</a> · © 2026
+</footer>
+
+<script>
+  document.querySelectorAll('.site-nav a').forEach(link => {
+    link.addEventListener('click', () => document.querySelector('.site-nav').classList.remove('open'));
+  });
+</script>
+
+</body>
+</html>
