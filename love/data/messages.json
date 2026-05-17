@@ -6,7 +6,7 @@
   "baciller": {
     "karlek": {
       "namn_sv": "Kärleksbacillen",
-      "namn_en": "Love Bug",
+      "namn_en": "Heart Bug",
       "slug_sv": "karleksbacillen",
       "slug_en": "lovebug",
       "farg_primar": "#FF6B6B",
@@ -47,7 +47,7 @@
 
     "gladje": {
       "namn_sv": "Glädjebacillen",
-      "namn_en": "Happy Bug",
+      "namn_en": "Smiley Bug",
       "slug_sv": "gladjebacillen",
       "slug_en": "happybug",
       "farg_primar": "#FFB84D",
@@ -145,7 +145,7 @@
 
     "dans": {
       "namn_sv": "Dansbacillen",
-      "namn_en": "Dance Bug",
+      "namn_en": "Disco Bug",
       "slug_sv": "dansbacillen",
       "slug_en": "dancebug",
       "farg_primar": "#4DD0E1",
