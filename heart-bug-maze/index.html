@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Luv Bugs">
+<title>Heart Bug – The Maze Game | Luv Bugs Collection</title>
+<meta name="description" content="Help Heart Bug find the heart in the maze! Free kids game for ages 4–8. Three difficulty levels. Works on mobile and desktop.">
+<link rel="canonical" href="https://luvbugscollection.com/heart-bug-maze/" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%;
+    height: 100svh;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Fredoka', sans-serif;
+    background: #FFFEF8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+
+  .bg-bubble {
+    position: fixed;
+    border-radius: 50%;
+    opacity: 0.12;
+    pointer-events: none;
+    animation: float linear infinite;
+    z-index: 0;
+  }
+  @keyframes float {
+    0%   { transform: translateY(100vh) scale(0.8); opacity: 0; }
+    10%  { opacity: 0.12; }
+    90%  { opacity: 0.12; }
+    100% { transform: translateY(-200px) scale(1.1); opacity: 0; }
+  }
+
+  header {
+    text-align: center;
+    padding: 8px 16px 4px;
+    width: 100%;
+    position: relative;
+    z-index: 10;
+    flex-shrink: 0;
+  }
+  @media (max-height: 680px) {
+    header { padding: 5px 12px 2px; }
+  }
+
+  .back-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #FF6B9D;
+    background: none;
+    border: 2px solid #FF6B9D;
+    border-radius: 999px;
+    padding: 4px 14px;
+    cursor: pointer;
+    margin-bottom: 5px;
+    transition: all 0.2s;
+    display: inline-block;
+    text-decoration: none;
+  }
+  .back-btn:hover { background: #FF6B9D; color: #fff; }
+
+  .back-btn-win {
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #D63A75;
+    background: none;
+    border: 2px solid #D63A75;
+    border-radius: 999px;
+    padding: 8px 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .back-btn-win:hover { background: #D63A75; color: #fff; }
+
+  header h1 {
+    font-size: clamp(18px, 4.5vw, 30px);
+    color: #D63A75;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+  header p {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(11px, 2.5vw, 15px);
+    color: #888;
+    margin-top: 1px;
+  }
+
+  .difficulty-bar {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    padding: 5px 0;
+    z-index: 10;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .diff-btn {
+    font-family: 'Fredoka', sans-serif;
+    font-size: clamp(12px, 3.2vw, 15px);
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 999px;
+    border: 2.5px solid #FF6B9D;
+    background: #fff;
+    color: #D63A75;
+    cursor: pointer;
+    transition: all 0.2s;
+    touch-action: manipulation;
+  }
+  .diff-btn:hover, .diff-btn.active {
+    background: #FF6B9D;
+    color: #fff;
+  }
+
+  .game-wrapper {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    padding: 2px 8px;
+  }
+
+  canvas {
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(214,58,117,0.15);
+    background: #fff;
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    touch-action: none;
+  }
+
+  .controls-hint {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(10px, 2.5vw, 13px);
+    color: #bbb;
+    text-align: center;
+    padding: 2px 0;
+    z-index: 10;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .dpad {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    z-index: 10;
+    position: relative;
+    padding: 3px 0 8px;
+    flex-shrink: 0;
+  }
+  .dpad-row {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .dpad-btn {
+    width: clamp(42px, 12vw, 52px);
+    height: clamp(42px, 12vw, 52px);
+    border-radius: 14px;
+    border: none;
+    background: #FF6B9D;
+    color: #fff;
+    font-size: clamp(16px, 4.5vw, 20px);
+    cursor: pointer;
+    box-shadow: 0 4px 0 #D63A75;
+    transition: transform 0.08s, box-shadow 0.08s;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .dpad-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #D63A75;
+  }
+  .dpad-center {
+    width: clamp(42px, 12vw, 52px);
+    height: clamp(42px, 12vw, 52px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(18px, 5vw, 24px);
+  }
+
+  #win-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: rgba(255,107,157,0.15);
+    backdrop-filter: blur(4px);
+  }
+  #win-overlay.show { display: flex; }
+
+  .win-card {
+    background: #fff;
+    border-radius: 28px;
+    padding: 32px 40px;
+    text-align: center;
+    box-shadow: 0 12px 48px rgba(214,58,117,0.25);
+    position: relative;
+    max-width: 340px;
+    width: 90%;
+  }
+  .win-card h2 {
+    font-size: 30px;
+    color: #D63A75;
+    margin-bottom: 8px;
+  }
+  .win-card p {
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    color: #888;
+    margin-bottom: 20px;
+  }
+  .play-again {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 12px 32px;
+    border-radius: 999px;
+    border: none;
+    background: linear-gradient(135deg, #FF6B9D, #D63A75);
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.15s;
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .play-again:hover { transform: scale(1.05); }
+
+  .heart-particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 200;
+    animation: heartFly 2.5s ease-out forwards;
+  }
+  @keyframes heartFly {
+    0%   { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(-300px) scale(1.5) rotate(20deg); opacity: 0; }
+  }
+
+  .love-wave {
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    pointer-events: none;
+    display: none;
+  }
+  .love-wave.show { display: block; }
+  .wave-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 4px solid #FF6B9D;
+    animation: waveExpand 2s ease-out forwards;
+    opacity: 0;
+  }
+  @keyframes waveExpand {
+    0%   { width: 20px; height: 20px; margin: -10px; opacity: 0.9; }
+    100% { width: 200vmax; height: 200vmax; margin: -100vmax; opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<script>
+const bubbleColors = ['#FF6B9D','#7BC142','#FFB347','#4ECDC4','#FFD93D','#D4A017'];
+for(let i = 0; i < 12; i++){
+  const b = document.createElement('div');
+  b.className = 'bg-bubble';
+  const size = 40 + Math.random() * 120;
+  b.style.cssText = `width:${size}px;height:${size}px;background:${bubbleColors[i%6]};left:${Math.random()*100}%;animation-duration:${8+Math.random()*12}s;animation-delay:${-Math.random()*15}s;`;
+  document.body.appendChild(b);
+}
+</script>
+
+<header>
+  <a class="back-btn" href="/games.html">← Back to games</a>
+  <h1>Heart Bug – The Maze Game</h1>
+  <p>Help Heart Bug find the heart!</p>
+</header>
+
+<div class="difficulty-bar">
+  <button class="diff-btn active" onclick="setDifficulty('easy',this)">⭐ Easy</button>
+  <button class="diff-btn" onclick="setDifficulty('medium',this)">⭐⭐ Medium</button>
+  <button class="diff-btn" onclick="setDifficulty('hard',this)">⭐⭐⭐ Hard</button>
+</div>
+
+<div class="game-wrapper">
+  <canvas id="maze"></canvas>
+</div>
+<div class="controls-hint">Arrow keys or 👆🏽 swipe • Or use the buttons below</div>
+
+<div class="dpad">
+  <div class="dpad-row">
+    <button class="dpad-btn" onpointerdown="tryMove(-1,0)">▲</button>
+  </div>
+  <div class="dpad-row">
+    <button class="dpad-btn" onpointerdown="tryMove(0,-1)">◀</button>
+    <div class="dpad-center">💖</div>
+    <button class="dpad-btn" onpointerdown="tryMove(0,1)">▶</button>
+  </div>
+  <div class="dpad-row">
+    <button class="dpad-btn" onpointerdown="tryMove(1,0)">▼</button>
+  </div>
+</div>
+
+<div id="win-overlay">
+  <div class="love-wave" id="love-wave"></div>
+  <div class="win-card">
+    <div style="font-size:60px;margin-bottom:8px;">💖</div>
+    <h2>Love Wave!</h2>
+    <p>You found the heart! Heart Bug is <em>so</em> happy!</p>
+    <button class="play-again" onclick="resetGame()">Play again!</button>
+    <a class="back-btn-win" href="/games.html">← Back to games</a>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('maze');
+const ctx = canvas.getContext('2d');
+
+const bugImg = new Image();
+bugImg.src = 'heartbug.png';
+
+let COLS = 8, ROWS = 9, SEED = 42;
+let grid = [], playerR = 0, playerC = 0;
+let goalR, goalC;
+let cellW, cellH, offX, offY;
+let bugAnim = 0, heartAnim = 0, won = false;
+let animFrame;
+
+let rngState;
+function rand() {
+  rngState = (rngState * 16807) % 2147483647;
+  return rngState / 2147483647;
+}
+
+let EXTRA_RATIO = 0.0;
+
+function buildMaze(cols, rows, seed) {
+  rngState = seed;
+  const g = [];
+  for(let r = 0; r < rows; r++){
+    g[r] = [];
+    for(let c = 0; c < cols; c++) g[r][c] = {visited:false, walls:[true,true,true,true]};
+  }
+  function carve(r, c){
+    g[r][c].visited = true;
+    const dirs = [[0,1,1,3],[1,0,2,0],[-1,0,0,2],[0,-1,3,1]];
+    dirs.sort(()=>rand()-0.5);
+    for(const [dr,dc,w1,w2] of dirs){
+      const nr=r+dr, nc=c+dc;
+      if(nr>=0&&nr<rows&&nc>=0&&nc<cols&&!g[nr][nc].visited){
+        g[r][c].walls[w1]=false;
+        g[nr][nc].walls[w2]=false;
+        carve(nr,nc);
+      }
+    }
+  }
+  carve(0,0);
+  if(EXTRA_RATIO > 0){
+    const extraCount = Math.floor(cols * rows * EXTRA_RATIO);
+    for(let i = 0; i < extraCount; i++){
+      const r=Math.floor(rand()*rows), c=Math.floor(rand()*cols), side=Math.floor(rand()*4);
+      if(side===0&&r>0)      { g[r][c].walls[0]=false; g[r-1][c].walls[2]=false; }
+      else if(side===1&&c<cols-1){ g[r][c].walls[1]=false; g[r][c+1].walls[3]=false; }
+      else if(side===2&&r<rows-1){ g[r][c].walls[2]=false; g[r+1][c].walls[0]=false; }
+      else if(side===3&&c>0) { g[r][c].walls[3]=false; g[r][c-1].walls[1]=false; }
+    }
+  }
+  return g;
+}
+
+function findHardestGoal(g, startR, startC, cols, rows, topPercent) {
+  const dist = Array.from({length:rows},()=>Array(cols).fill(-1));
+  const queue = [[startR, startC]];
+  dist[startR][startC] = 0;
+  const moves = [[-1,0,0,2],[0,1,1,3],[1,0,2,0],[0,-1,3,1]];
+  while(queue.length){
+    const [r,c] = queue.shift();
+    for(const [dr,dc,w] of moves){
+      const nr=r+dr, nc=c+dc;
+      if(nr>=0&&nr<rows&&nc>=0&&nc<cols&&dist[nr][nc]===-1&&!g[r][c].walls[w]){
+        dist[nr][nc]=dist[r][c]+1;
+        queue.push([nr,nc]);
+      }
+    }
+  }
+  const cells = [];
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) if(dist[r][c]>0) cells.push([dist[r][c],r,c]);
+  cells.sort((a,b)=>b[0]-a[0]);
+  const cutoff = Math.max(1, Math.floor(cells.length * topPercent));
+  const candidates = cells.slice(0, cutoff);
+  const pick = candidates[Math.floor(Math.random()*candidates.length)];
+  return [pick[1], pick[2]];
+}
+
+function resize() {
+  const headerEl   = document.querySelector('header');
+  const diffEl     = document.querySelector('.difficulty-bar');
+  const hintEl     = document.querySelector('.controls-hint');
+  const dpadEl     = document.querySelector('.dpad');
+  const reserved   = headerEl.offsetHeight + diffEl.offsetHeight + hintEl.offsetHeight + dpadEl.offsetHeight + 30;
+  const maxW       = Math.min(window.innerWidth - 16, 600);
+  const maxH       = window.innerHeight - reserved;
+  const ratio      = COLS / ROWS;
+  let w = maxW, h = maxW / ratio;
+  if(h > maxH) { h = maxH; w = h * ratio; }
+  canvas.width  = Math.floor(w);
+  canvas.height = Math.floor(h);
+  const margin = Math.floor(Math.min(w, h) * 0.04);
+  offX  = margin;
+  offY  = margin;
+  cellW = (canvas.width  - margin*2) / COLS;
+  cellH = (canvas.height - margin*2) / ROWS;
+}
+
+function drawBug(cx, cy, size, t) {
+  const bob = Math.sin(t * 0.05) * 2;
+  ctx.save();
+  ctx.translate(cx, cy + bob);
+
+  const grd = ctx.createRadialGradient(0,0,size*0.2,0,0,size*1.6);
+  grd.addColorStop(0,'rgba(255,107,157,0.30)');
+  grd.addColorStop(1,'rgba(255,107,157,0)');
+  ctx.fillStyle = grd;
+  ctx.beginPath(); ctx.arc(0,0,size*1.6,0,Math.PI*2); ctx.fill();
+
+  if(bugImg.complete && bugImg.naturalWidth > 0){
+    const imgW = size * 2.6;
+    const imgH = imgW * (bugImg.naturalHeight / bugImg.naturalWidth);
+    ctx.drawImage(bugImg, -imgW/2, -imgH*0.55, imgW, imgH);
+  } else {
+    ctx.fillStyle = '#FF6B9D';
+    ctx.beginPath(); ctx.arc(0,0,size,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = `${size}px serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('💖',0,0);
+  }
+  ctx.restore();
+}
+
+function drawHeart(cx, cy, size, t) {
+  const pulse = 1 + Math.sin(t*0.04)*0.08;
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(pulse, pulse);
+
+  const grd = ctx.createRadialGradient(0,0,size*0.2,0,0,size*2);
+  grd.addColorStop(0,'rgba(214,58,117,0.3)');
+  grd.addColorStop(1,'rgba(214,58,117,0)');
+  ctx.fillStyle = grd;
+  ctx.beginPath(); ctx.arc(0,0,size*2,0,Math.PI*2); ctx.fill();
+
+  ctx.fillStyle = 'rgba(255,220,235,0.8)';
+  ctx.strokeStyle = '#FF6B9D';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(0,0,size*1.35,0,Math.PI*2); ctx.fill(); ctx.stroke();
+
+  ctx.fillStyle = '#D63A75';
+  ctx.beginPath();
+  ctx.moveTo(0,-size*0.25);
+  ctx.bezierCurveTo(size*0.5,-size*0.9,size*1.1,-size*0.2,size*0.45,size*0.4);
+  ctx.bezierCurveTo(size*0.2,size*0.65,0,size*0.75,0,size*0.75);
+  ctx.bezierCurveTo(0,size*0.75,-size*0.2,size*0.65,-size*0.45,size*0.4);
+  ctx.bezierCurveTo(-size*1.1,-size*0.2,-size*0.5,-size*0.9,0,-size*0.25);
+  ctx.closePath(); ctx.fill();
+
+  ctx.fillStyle = 'rgba(255,255,255,0.3)';
+  ctx.beginPath(); ctx.ellipse(-size*0.2,-size*0.15,size*0.18,size*0.1,-0.5,0,Math.PI*2); ctx.fill();
+
+  ctx.fillStyle = '#FFD93D';
+  const sp = [[-size*1.2,-size*0.8],[size*1.0,-size*1.0],[size*1.3,size*0.2],[-size*0.9,size*0.9]];
+  for(const [sx,sy] of sp){
+    const ss = size*0.12*(0.7+0.3*Math.sin(t*0.05+sx));
+    ctx.save(); ctx.translate(sx,sy);
+    for(let i=0;i<4;i++){ ctx.rotate(Math.PI/4); ctx.fillRect(-ss*0.15,-ss,ss*0.3,ss*2); }
+    ctx.restore();
+  }
+  ctx.restore();
+}
+
+function drawMaze() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = '#FFFEF8';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS;c++){
+      const x=offX+c*cellW, y=offY+r*cellH;
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(x,y,cellW,cellH);
+    }
+  }
+
+  const wt = Math.max(2, Math.min(cellW,cellH)*0.12);
+  ctx.strokeStyle = '#FF6B9D';
+  ctx.lineWidth = wt;
+  ctx.lineCap = 'round';
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS;c++){
+      const x=offX+c*cellW, y=offY+r*cellH;
+      const cell = grid[r][c];
+      if(cell.walls[0]){ ctx.beginPath(); ctx.moveTo(x,y);        ctx.lineTo(x+cellW,y);      ctx.stroke(); }
+      if(cell.walls[1]){ ctx.beginPath(); ctx.moveTo(x+cellW,y);  ctx.lineTo(x+cellW,y+cellH);ctx.stroke(); }
+      if(cell.walls[2]){ ctx.beginPath(); ctx.moveTo(x,y+cellH);  ctx.lineTo(x+cellW,y+cellH);ctx.stroke(); }
+      if(cell.walls[3]){ ctx.beginPath(); ctx.moveTo(x,y);        ctx.lineTo(x,y+cellH);      ctx.stroke(); }
+    }
+  }
+
+  ctx.strokeStyle = '#FF6B9D';
+  ctx.lineWidth = wt * 1.5;
+  ctx.strokeRect(offX,offY,COLS*cellW,ROWS*cellH);
+
+  const hx = offX+(goalC+0.5)*cellW, hy = offY+(goalR+0.5)*cellH;
+  drawHeart(hx, hy, Math.min(cellW,cellH)*0.32, heartAnim);
+
+  const bx = offX+(playerC+0.5)*cellW, by = offY+(playerR+0.5)*cellH;
+  drawBug(bx, by, Math.min(cellW,cellH)*0.34, bugAnim);
+}
+
+function tryMove(dr, dc) {
+  if(won) return;
+  const nr=playerR+dr, nc=playerC+dc;
+  if(nr<0||nr>=ROWS||nc<0||nc>=COLS) return;
+  const cell = grid[playerR][playerC];
+  if(dr===-1&&cell.walls[0]) return;
+  if(dc=== 1&&cell.walls[1]) return;
+  if(dr=== 1&&cell.walls[2]) return;
+  if(dc===-1&&cell.walls[3]) return;
+  playerR=nr; playerC=nc;
+  if(playerR===goalR&&playerC===goalC) triggerWin();
+}
+
+function triggerWin() {
+  won = true;
+  setTimeout(()=>{
+    showLoveWave();
+    spawnHearts();
+    document.getElementById('win-overlay').classList.add('show');
+  }, 400);
+}
+
+function showLoveWave() {
+  const lw = document.getElementById('love-wave');
+  lw.classList.add('show');
+  lw.innerHTML = '';
+  const cx = offX+(goalC+0.5)*cellW, cy = offY+(goalR+0.5)*cellH;
+  ['#FF6B9D','#D63A75','#FFB347','#FF6B9D','#4ECDC4'].forEach((color,i)=>{
+    const c = document.createElement('div');
+    c.className = 'wave-circle';
+    c.style.cssText = `left:${cx}px;top:${cy}px;border-color:${color};animation-delay:${i*0.3}s;`;
+    lw.appendChild(c);
+  });
+}
+
+function spawnHearts() {
+  const emojis = ['💖','💕','❤️','💗','💓','💝'];
+  for(let i=0;i<20;i++){
+    setTimeout(()=>{
+      const h = document.createElement('div');
+      h.className = 'heart-particle';
+      h.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      h.style.cssText = `left:${10+Math.random()*80}%;top:${30+Math.random()*50}%;animation-delay:${Math.random()*0.5}s;font-size:${16+Math.random()*24}px;`;
+      document.body.appendChild(h);
+      setTimeout(()=>h.remove(), 3000);
+    }, i*80);
+  }
+}
+
+function setDifficulty(level, btn) {
+  document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(level==='easy'){
+    COLS=8; ROWS=9; SEED=42; EXTRA_RATIO=0.25;
+  } else if(level==='medium'){
+    COLS=14; ROWS=16; SEED=137; EXTRA_RATIO=0.0;
+  } else {
+    COLS=20; ROWS=24; SEED=281; EXTRA_RATIO=0.0;
+  }
+  initGame();
+}
+
+function initGame() {
+  won = false;
+  document.getElementById('win-overlay').classList.remove('show');
+  document.getElementById('love-wave').classList.remove('show');
+  rngState = SEED;
+  grid = buildMaze(COLS, ROWS, SEED);
+  playerR = 0; playerC = 0;
+  if(EXTRA_RATIO > 0){
+    [goalR,goalC] = findHardestGoal(grid,0,0,COLS,ROWS,0.30);
+  } else if(COLS<=15){
+    [goalR,goalC] = findHardestGoal(grid,0,0,COLS,ROWS,0.05);
+  } else {
+    [goalR,goalC] = findHardestGoal(grid,0,0,COLS,ROWS,0.01);
+  }
+  resize();
+  cancelAnimationFrame(animFrame);
+  loop();
+}
+
+function resetGame() { initGame(); }
+
+function loop() {
+  bugAnim++;
+  heartAnim++;
+  drawMaze();
+  animFrame = requestAnimationFrame(loop);
+}
+
+document.addEventListener('keydown', e => {
+  const map = {
+    ArrowUp:[-1,0], ArrowDown:[1,0], ArrowLeft:[0,-1], ArrowRight:[0,1],
+    w:[-1,0], s:[1,0], a:[0,-1], d:[0,1],
+    W:[-1,0], S:[1,0], A:[0,-1], D:[0,1]
+  };
+  if(map[e.key]){ e.preventDefault(); tryMove(...map[e.key]); }
+});
+
+let touchStartX=0, touchStartY=0;
+canvas.addEventListener('touchstart',e=>{
+  touchStartX=e.touches[0].clientX;
+  touchStartY=e.touches[0].clientY;
+},{passive:true});
+canvas.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-touchStartX;
+  const dy=e.changedTouches[0].clientY-touchStartY;
+  if(Math.abs(dx)<10&&Math.abs(dy)<10) return;
+  if(Math.abs(dx)>Math.abs(dy)) tryMove(0,dx>0?1:-1);
+  else tryMove(dy>0?1:-1,0);
+},{passive:true});
+
+canvas.addEventListener('click',e=>{
+  const rect=canvas.getBoundingClientRect();
+  const mx=(e.clientX-rect.left)*(canvas.width/rect.width);
+  const my=(e.clientY-rect.top)*(canvas.height/rect.height);
+  const cc=Math.floor((mx-offX)/cellW);
+  const cr=Math.floor((my-offY)/cellH);
+  const dr=cr-playerR, dc=cc-playerC;
+  if(Math.abs(dr)+Math.abs(dc)===1) tryMove(dr,dc);
+});
+
+let _resizeTimer;
+window.addEventListener('resize',()=>{
+  clearTimeout(_resizeTimer);
+  _resizeTimer=setTimeout(()=>{ resize(); }, 150);
+});
+
+bugImg.onload = initGame;
+if(bugImg.complete) initGame();
+</script>
+</body>
+</html>
