@@ -19,6 +19,96 @@
   #sib-container a { text-decoration: underline; color: #2BB2FC; }
 </style>
 <link rel="stylesheet" href="https://sibforms.com/forms/end-form/build/sib-styles.css">
+<!-- Brevo override: matchar Luv Bugs Collection-designen -->
+<style>
+  .brevo-section { margin-top: 48px; width: 100%; }
+
+  .sib-form { background-color: transparent !important; padding: 0 !important; }
+
+  .sib-container--large {
+    max-width: 520px !important;
+    border: 2px solid var(--color-border-strong) !important;
+    border-radius: 16px !important;
+    background-color: var(--color-bg) !important;
+    padding: 28px !important;
+    margin: 0 auto !important;
+  }
+
+  #sib-form > div:first-child .sib-form-block p {
+    font-family: 'Fredoka', sans-serif !important;
+    font-size: 24px !important;
+    font-weight: 600 !important;
+    color: var(--color-text-primary) !important;
+    line-height: 1.3 !important;
+  }
+
+  .sib-form-block p {
+    font-family: 'Nunito', sans-serif !important;
+    color: var(--color-text-secondary) !important;
+  }
+
+  .entry__label {
+    font-family: 'Fredoka', sans-serif !important;
+    font-size: 15px !important;
+    color: var(--color-text-primary) !important;
+  }
+
+  .input {
+    font-family: 'Nunito', sans-serif !important;
+    border: 2px solid var(--color-border-strong) !important;
+    border-radius: 10px !important;
+    padding: 12px 14px !important;
+    font-size: 15px !important;
+    background-color: var(--color-bg) !important;
+    color: var(--color-text-primary) !important;
+  }
+
+  .input:focus {
+    border-color: var(--brand-deep) !important;
+    box-shadow: 0 0 0 3px rgba(229, 90, 64, 0.15) !important;
+    outline: none !important;
+  }
+
+  .sib-form-block__button {
+    font-family: 'Fredoka', sans-serif !important;
+    background-color: var(--brand-deep) !important;
+    color: #ffffff !important;
+    border-radius: 12px !important;
+    padding: 12px 28px !important;
+    font-size: 17px !important;
+    font-weight: 600 !important;
+    border: none !important;
+    cursor: pointer !important;
+    transition: background-color 0.2s ease !important;
+  }
+
+  .sib-form-block__button:hover { background-color: #c94a31 !important; }
+
+  #success-message, #error-message {
+    font-family: 'Nunito', sans-serif !important;
+    border-radius: 12px !important;
+    max-width: 520px !important;
+  }
+
+  .sib-optin span p {
+    font-family: 'Nunito', sans-serif !important;
+    font-size: 13px !important;
+    color: var(--color-text-secondary) !important;
+  }
+
+  .sib-form__declaration div,
+  .sib-form__declaration p,
+  .sib-form__declaration a {
+    font-family: 'Nunito', sans-serif !important;
+    font-size: 12px !important;
+    color: var(--color-text-secondary) !important;
+  }
+
+  @media (max-width: 600px) {
+    .sib-container--large { max-width: 100% !important; padding: 20px !important; }
+    #sib-form > div:first-child .sib-form-block p { font-size: 22px !important; }
+  }
+</style>
 <style>
   :root {
     --color-bg: #ffffff;
@@ -203,7 +293,8 @@
   </p>
 
   <!-- Brevo Newsletter Form -->
-  <div class="sib-form" style="text-align: center; background-color: #EFF2F7;">
+  <div class="brevo-section">
+  <div class="sib-form" style="text-align: center;">
     <div id="sib-form-container" class="sib-form-container">
       <div id="error-message" class="sib-form-message-panel" style="font-family:Helvetica, sans-serif; font-size:16px; text-align:left; color:#661d1d; background-color:#ffeded; border-color:#ff4949; border-radius:3px; max-width:540px;">
         <div class="sib-form-message-panel__text sib-form-message-panel__text--center">
@@ -286,6 +377,7 @@
       </div>
     </div>
   </div>
+  </div><!-- end .brevo-section -->
   <!-- End Brevo Newsletter Form -->
 
 </section>
