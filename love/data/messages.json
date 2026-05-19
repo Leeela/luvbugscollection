@@ -166,6 +166,16 @@
           "video_sv": "dansbacillen_v1_sv.mp4",
           "video_en": "dancebug_v1_en.mp4",
           "aktiv": true
+        },
+        {
+          "id": 2,
+          "titel_sv": "Helgen ska firas",
+          "titel_en": "Orders from above",
+          "forhandsvisning_sv": "Jag har fått order uppifrån. Helgen ska firas. Du ska vara med. Det är inte förhandlingsbart. Kram från mig och chefen som bestämde!",
+          "forhandsvisning_en": "I've received orders from above. The weekend is going to be celebrated. You're going to be there. It's not negotiable. Hugs from me and the boss who decided!",
+          "video_sv": "dansbacillen_v2_sv.mp4",
+          "video_en": "dancebug_v2_en.mp4",
+          "aktiv": true
         }
       ]
     },
