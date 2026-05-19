@@ -183,9 +183,15 @@
   }
   .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); border-color: var(--brand-mid); }
 
-  .product-img-wrap { aspect-ratio: 4/3; overflow: hidden; background: #fafafa; }
-  .product-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
-  .product-card:hover .product-img-wrap img { transform: scale(1.03); }
+  /* CAROUSEL */
+  .product-img-wrap { position: relative; aspect-ratio: 4/3; overflow: hidden; background: #fafafa; }
+  .carousel-track { display: flex; height: 100%; transition: transform 0.35s ease; }
+  .carousel-track img { width: 100%; height: 100%; object-fit: cover; flex-shrink: 0; transition: transform 0.3s; }
+  .product-card:hover .carousel-track img { transform: scale(1.03); }
+  .carousel-dots { display: flex; justify-content: center; gap: 8px; padding: 10px 0 0; }
+  .carousel-dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--color-border-strong); cursor: pointer; transition: background 0.2s, transform 0.2s; }
+  .carousel-dots span.active { background: var(--brand-deep); transform: scale(1.2); }
+  .carousel-dots.single { display: none; }
 
   .product-body { padding: 24px; flex: 1; display: flex; flex-direction: column; }
   .product-tag { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--brand-deep); text-transform: uppercase; margin-bottom: 8px; }
@@ -242,7 +248,13 @@
     <!-- Product 1: Activity Sheets -->
     <div class="product-card">
       <div class="product-img-wrap">
-        <img src="bilder/activitysheets-shop.jpg" alt="Luv Bugs Collection Activity Sheets – 6 characters to draw">
+        <div class="carousel-track">
+          <img src="bilder/activitysheets-shop.jpg" alt="Luv Bugs Collection Activity Sheets – 6 characters to draw">
+          <img src="bilder/activitysheets2.jpg" alt="Luv Bugs Activity Sheets – inside pages">
+        </div>
+      </div>
+      <div class="carousel-dots">
+        <span class="active"></span><span></span>
       </div>
       <div class="product-body">
         <div class="product-tag">Free download · Print at home</div>
@@ -258,7 +270,13 @@
     <!-- Product 2: Draw with Luv Bugs -->
     <div class="product-card">
       <div class="product-img-wrap">
-        <img src="bilder/luvbugs-activity-cover.png" alt="Draw with Luv Bugs – activity sheets for kids">
+        <div class="carousel-track">
+          <img src="bilder/luvbugs-activity-cover.png" alt="Draw with Luv Bugs – activity sheets for kids">
+          <img src="luvbugs-activity-17pages.jpg" alt="Luv Bugs Activity Book – 17 pages inside">
+        </div>
+      </div>
+      <div class="carousel-dots">
+        <span class="active"></span><span></span>
       </div>
       <div class="product-body">
         <div class="product-tag">Free download · Print at home</div>
@@ -274,7 +292,13 @@
     <!-- Product 3: Birthday Pack -->
     <div class="product-card">
       <div class="product-img-wrap" style="aspect-ratio: 3/4;">
-        <img src="bilder/birthday-kit.png" alt="Candy Bug Birthday Pack">
+        <div class="carousel-track">
+          <img src="bilder/birthday-kit.png" alt="Candy Bug Birthday Pack">
+          <img src="birthday-kit2.jpg" alt="Candy Bug Birthday Pack – contents">
+        </div>
+      </div>
+      <div class="carousel-dots">
+        <span class="active"></span><span></span>
       </div>
       <div class="product-body">
         <div class="product-tag">Digital download · Print at home</div>
@@ -385,6 +409,30 @@
 <script>
   document.querySelectorAll('.site-nav a').forEach(link => {
     link.addEventListener('click', () => document.querySelector('.site-nav').classList.remove('open'));
+  });
+
+  // Carousel
+  document.querySelectorAll('.product-card').forEach(card => {
+    const wrap = card.querySelector('.product-img-wrap');
+    const track = card.querySelector('.carousel-track');
+    const dots = card.querySelectorAll('.carousel-dots span');
+    if (!track || dots.length < 2) return;
+    let current = 0;
+
+    function goTo(i) {
+      current = i;
+      track.style.transform = `translateX(-${i * 100}%)`;
+      dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+    }
+
+    dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
+
+    let startX = 0;
+    wrap.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+    wrap.addEventListener('touchend', e => {
+      const diff = startX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 40) goTo(diff > 0 ? Math.min(current + 1, dots.length - 1) : Math.max(current - 1, 0));
+    });
   });
 </script>
 
