@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6CYV4QCNBS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6CYV4QCNBS');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>A greeting for you · Luv Bugs Collection</title>
@@ -434,6 +442,17 @@
         return;
       }
 
+      // event: recipient opened a valid greeting
+      if (typeof gtag === 'function') {
+        gtag('event', 'message_received', {
+          bug_type: bacillKey,
+          message_id: messageId,
+          has_recipient_name: !!(to && to.length > 0),
+          has_sender_name: !!(from && from.length > 0),
+          content_type: 'love_greeting'
+        });
+      }
+
       document.documentElement.style.setProperty('--primary', bacill.farg_primar);
       document.documentElement.style.setProperty('--primary-soft', bacill.farg_mjuk);
 
@@ -454,6 +473,15 @@
       if (message.poster_en) {
         video.poster = '../videos/' + message.poster_en;
       }
+      video.addEventListener('play', function() {
+        if (typeof gtag === 'function') {
+          gtag('event', 'message_video_play', {
+            bug_type: bacillKey,
+            message_id: messageId,
+            content_type: 'love_greeting'
+          });
+        }
+      }, { once: true });
     })
     .catch(err => {
       console.error('Could not load message:', err);

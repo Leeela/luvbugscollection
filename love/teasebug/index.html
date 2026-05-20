@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6CYV4QCNBS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6CYV4QCNBS');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tease Bug · Send a greeting</title>
@@ -282,7 +290,24 @@
     document.getElementById('share-sms').href = 'sms:?body=' + encodeURIComponent(smsText);
     document.getElementById('share-whatsapp').href = 'https://wa.me/?text=' + encodeURIComponent(smsText);
     document.getElementById('share-email').href = 'mailto:?subject=' + encodeURIComponent(emailSubject) + '&body=' + encodeURIComponent(emailBody);
+
+    // event: share-click tracking (teasebug)
+    ['sms','whatsapp','email'].forEach(function(method) {
+      var el = document.getElementById('share-' + method);
+      if (el) el.addEventListener('click', function() {
+        if (typeof gtag === 'function') {
+          gtag('event', 'share', {
+            method: method,
+            bug_type: 'teasebug',
+            content_type: 'love_greeting'
+          });
+        }
+      }, { once: true });
+    });
     document.getElementById('share-copy').onclick = function() {
+      if (typeof gtag === 'function') {
+        gtag('event', 'share', { method: 'copy_link', bug_type: 'teasebug', content_type: 'love_greeting' });
+      }
       navigator.clipboard.writeText(fullLink).then(function() {
         document.getElementById('copy-label').textContent = 'Copied ✓';
         setTimeout(function() { document.getElementById('copy-label').textContent = 'Copy link'; }, 2000);
