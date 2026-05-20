@@ -49,14 +49,29 @@
       "namn_sv": "Glädjebacillen",
       "namn_en": "Smiley Bug",
       "slug_sv": "gladjebacillen",
-      "slug_en": "happybug",
+      "slug_en": "smileybug",
       "farg_primar": "#FFB84D",
       "farg_mjuk": "#FFF1DD",
       "emoji": "😄",
+      "image_sv": "images/gladjebacillen.png",
+      "image_en": "images/smileybug.png",
       "beskrivning_sv": "Sprid glädje",
       "beskrivning_en": "Spread joy",
-      "aktiv": false,
-      "meddelanden": []
+      "aktiv": true,
+      "meddelanden": [
+        {
+          "id": 1,
+          "titel_sv": "Kittlad i magen",
+          "titel_en": "Tickle in your tummy",
+          "forhandsvisning_sv": "Jag har fått ett hemligt uppdrag. Någon ville att du skulle bli kittlad i magen idag. Kram från mig och den som skickade mig!",
+          "forhandsvisning_en": "I've been given a secret mission. Someone wanted you to get a little tickle in your tummy today. A hug from me and the one who sent me!",
+          "video_sv": "gladjebacillen_v1_sv.mp4",
+          "video_en": "smileybug_v1_en.mp4",
+          "poster_sv": "gladjebacillen_v1_poster.jpg",
+          "poster_en": "smileybug_v1_poster.jpg",
+          "aktiv": true
+        }
+      ]
     },
 
     "ret": {

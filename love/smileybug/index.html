@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6CYV4QCNBS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6CYV4QCNBS');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smiley Bug · Send a greeting</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --coral: #FFB84D;
+    --coral-dark: #E89A2B;
+    --coral-soft: #FFF1DD;
+    --ink: #2D2D2D;
+    --ink-soft: #6B6B6B;
+    --bg: #FFFBF5;
+    --white: #FFFFFF;
+    --border: #F2EBDC;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    min-height: 100vh;
+    padding: 24px 20px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .back-link {
+    align-self: flex-start;
+    max-width: 520px;
+    width: 100%;
+    margin: 0 auto 20px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .back-link:hover { color: var(--coral); }
+
+  .container { max-width: 520px; width: 100%; }
+
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .emoji {
+    font-size: 56px;
+    margin-bottom: 8px;
+  }
+
+  .emoji img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+  }
+
+  h1 {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 28px;
+    color: var(--coral);
+    margin-bottom: 8px;
+  }
+
+  .header-sub {
+    color: var(--ink-soft);
+    font-size: 15px;
+  }
+
+  .step-label {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--ink-soft);
+    letter-spacing: 2px;
+    margin: 28px 0 14px;
+    text-align: center;
+  }
+
+  .messages {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .message-card {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 18px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .message-card:hover { border-color: var(--coral); }
+  .message-card.selected {
+    border-color: var(--coral);
+    background: var(--coral-soft);
+  }
+
+  .message-radio {
+    width: 22px;
+    height: 22px;
+    border: 2px solid #D0D0D0;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 2px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+
+  .message-card.selected .message-radio {
+    border-color: var(--coral);
+  }
+
+  .message-card.selected .message-radio::after {
+    content: '';
+    position: absolute;
+    top: 4px; left: 4px;
+    width: 10px;
+    height: 10px;
+    background: var(--coral);
+    border-radius: 50%;
+  }
+
+  .message-content { flex: 1; }
+
+  .message-title {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .message-preview {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+
+  .preview-button {
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--coral);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .preview-button:hover { text-decoration: underline; }
+
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal.visible { display: flex; }
+
+  .modal-content {
+    width: 100%;
+    max-width: 380px;
+    aspect-ratio: 9 / 16;
+    background: black;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .modal-content video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    padding: 8px;
+  }
+
+  .form-section {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 24px;
+    margin-top: 20px;
+    display: none;
+  }
+
+  .form-section.visible { display: block; }
+
+  label {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .label-hint {
+    font-weight: 400;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    color: var(--ink);
+    background: var(--white);
+    transition: border-color 0.2s;
+    margin-bottom: 18px;
+  }
+
+  input[type="text"]:focus {
+    outline: none;
+    border-color: var(--coral);
+  }
+
+  button.primary {
+    background: var(--coral);
+    color: var(--white);
+    border: none;
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 17px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    width: 100%;
+  }
+
+  button.primary:hover { background: var(--coral-dark); }
+  button.primary:active { transform: scale(0.98); }
+
+  .result {
+    display: none;
+    background: var(--white);
+    padding: 24px;
+    border-radius: 20px;
+    margin-top: 20px;
+  }
+
+  .result.visible { display: block; }
+
+  .result-title {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 22px;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+
+  .link-box {
+    background: var(--coral-soft);
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 12px;
+    word-break: break-all;
+    margin-bottom: 18px;
+  }
+
+  .share-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .share-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 16px;
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .share-button:hover {
+    border-color: var(--coral);
+    background: var(--coral-soft);
+  }
+
+  .preview-link {
+    display: block;
+    text-align: center;
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--coral);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .footer {
+    margin-top: 32px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+
+  .footer a { color: var(--ink-soft); text-decoration: none; }
+
+  @media (max-width: 480px) {
+    h1 { font-size: 24px; }
+    .emoji { font-size: 48px; }
+  }
+
+  /* === SITE NAV === */
+  .site-header {
+    background: white;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 18px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .site-logo {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: 1.5px;
+    color: #2a2a2a;
+    text-decoration: none;
+  }
+  .site-nav {
+    display: flex;
+    gap: 22px;
+    font-size: 14px;
+    font-weight: 600;
+    flex-wrap: wrap;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .site-nav a {
+    text-decoration: none;
+    color: #555555;
+    padding: 4px 0;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    font-family: 'Nunito', sans-serif;
+  }
+  .site-nav a:hover { color: #E55A40; }
+  .menu-btn {
+    display: none;
+    background: none;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  @media (max-width: 720px) {
+    .site-header { flex-wrap: nowrap; }
+    .site-nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      transform: none;
+      background: white;
+      border-bottom: 1px solid #f0f0f0;
+      padding: 16px 24px;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 99;
+    }
+    .site-nav.open { display: flex; }
+    .menu-btn { display: block; }
+  }
+<!-- Brevo + subscribe-box styles -->
+<style>
+  @font-face { font-display: block; font-family: Roboto; src: url(https://assets.brevo.com/font/Roboto/Latin/normal/normal/7529907e9eaf8ebb5220c5f9850e3811.woff2) format("woff2"), url(https://assets.brevo.com/font/Roboto/Latin/normal/normal/25c678feafdc175a70922a116c9be3e7.woff) format("woff") }
+  @font-face { font-display: fallback; font-family: Roboto; font-weight: 600; src: url(https://assets.brevo.com/font/Roboto/Latin/medium/normal/6e9caeeafb1f3491be3e32744bc30440.woff2) format("woff2"), url(https://assets.brevo.com/font/Roboto/Latin/medium/normal/71501f0d8d5aa95960f6475d5487d4c2.woff) format("woff") }
+  @font-face { font-display: fallback; font-family: Roboto; font-weight: 700; src: url(https://assets.brevo.com/font/Roboto/Latin/bold/normal/3ef7cf158f310cf752d5ad08cd0e7e60.woff2) format("woff2"), url(https://assets.brevo.com/font/Roboto/Latin/bold/normal/ece3a1d82f18b60bcce0211725c476aa.woff) format("woff") }
+  :where(.sib-form-message-panel) { display: none; }
+  :where(.sib-form-message-panel .sib-notification__icon) { width: 20px; height: 20px; }
+  #sib-container input:-ms-input-placeholder { font-family: 'Nunito', sans-serif; color: #c0ccda; }
+  #sib-container input::placeholder { font-family: 'Nunito', sans-serif; color: #c0ccda; }
+  #sib-container a { text-decoration: underline; color: var(--coral); }
+  .subscribe-box { display: none; background: var(--white); border: 2px solid var(--border); border-radius: 20px; padding: 24px; margin-top: 16px; }
+  .subscribe-box.visible { display: block; }
+  .subscribe-box-heading { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 20px; color: var(--ink); text-align: center; margin-bottom: 8px; }
+  .subscribe-box-desc { font-size: 14px; color: var(--ink-soft); text-align: center; margin-bottom: 20px; line-height: 1.5; }
+  .sib-form { background-color: transparent !important; padding: 0 !important; }
+  .sib-container--large { max-width: 100% !important; border: none !important; background-color: transparent !important; padding: 0 !important; margin: 0 !important; }
+  .sib-form-block p { font-family: 'Nunito', sans-serif !important; color: var(--ink-soft) !important; }
+  .entry__label { font-family: 'Fredoka', sans-serif !important; font-size: 15px !important; color: var(--ink) !important; }
+  .input { font-family: 'Nunito', sans-serif !important; border: 2px solid var(--border) !important; border-radius: 10px !important; padding: 12px 14px !important; font-size: 15px !important; background-color: var(--white) !important; color: var(--ink) !important; }
+  .input:focus { border-color: var(--coral) !important; box-shadow: 0 0 0 3px rgba(255,107,107,0.15) !important; outline: none !important; }
+  .sib-form-block__button { font-family: 'Fredoka', sans-serif !important; background-color: var(--coral) !important; color: var(--white) !important; border-radius: 12px !important; padding: 12px 28px !important; font-size: 17px !important; font-weight: 600 !important; border: none !important; cursor: pointer !important; transition: background-color 0.2s ease !important; }
+  .sib-form-block__button:hover { background-color: var(--coral-dark) !important; }
+  #success-message, #error-message { font-family: 'Nunito', sans-serif !important; border-radius: 12px !important; }
+  .sib-optin span p { font-family: 'Nunito', sans-serif !important; font-size: 13px !important; color: var(--ink-soft) !important; }
+  .sib-form__declaration div, .sib-form__declaration p, .sib-form__declaration a { font-family: 'Nunito', sans-serif !important; font-size: 12px !important; color: var(--ink-soft) !important; }
+</style>
+<link rel="stylesheet" href="https://sibforms.com/forms/end-form/build/sib-styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a href="/" class="site-logo">LUV BUGS</a>
+  <button class="menu-btn" onclick="document.querySelector('.site-nav').classList.toggle('open')">Menu</button>
+  <nav class="site-nav">
+    <a href="/characters.html">Characters</a>
+    <a href="/stories.html">Stories</a>
+    <a href="/books.html">Books</a>
+    <a href="/games.html">Games</a>
+    <a href="/watch.html">Watch</a>
+    <a href="/parents.html">For Parents</a>
+  </nav>
+</header>
+
+<div class="page">
+
+  <a href="../" class="back-link">← Back to all bugs</a>
+
+  <div class="container">
+
+    <div class="header">
+      <div class="emoji"><img src="../images/smileybug-portrait.png" alt="Smiley Bug"></div>
+      <h1>Smiley Bug</h1>
+      <div class="header-sub">Choose which greeting to send</div>
+    </div>
+
+    <div class="step-label">CHOOSE A MESSAGE</div>
+
+    <div class="messages" id="messages-list"></div>
+
+    <form class="form-section" id="form-section" onsubmit="event.preventDefault(); createLink();">
+      <div class="step-label" style="margin-top: 0;">ENTER NAMES</div>
+
+      <label for="till">Who is the greeting for?</label>
+      <input type="text" id="till" name="to" placeholder="First name" maxlength="25" required>
+
+      <label for="fran">What is your name? <span class="label-hint">(optional)</span></label>
+      <input type="text" id="fran" name="from" placeholder="Your first name" maxlength="25">
+
+      <button type="submit" class="primary">Create link</button>
+    </form>
+
+    <div id="result" class="result">
+      <div class="result-title">Your link is ready 😄</div>
+      <div class="link-box" id="link-display"></div>
+
+      <div class="share-buttons">
+        <a href="#" class="share-button" id="share-sms">
+          <span>📱</span><span>Send via SMS</span>
+        </a>
+        <a href="#" class="share-button" id="share-whatsapp" target="_blank" rel="noopener">
+          <span>💬</span><span>Send via WhatsApp</span>
+        </a>
+        <a href="#" class="share-button" id="share-email">
+          <span>📧</span><span>Send via email</span>
+        </a>
+        <button class="share-button" id="share-copy" type="button">
+          <span>📋</span><span id="copy-label">Copy link</span>
+        </button>
+      </div>
+
+      <a href="#" class="preview-link" id="preview-link" target="_blank" rel="noopener">
+        Preview the greeting →
+      </a>
+    </div>
+
+    <div id="subscribe-section" class="subscribe-box">
+      <div class="subscribe-box-heading">You're spreading joy right now 😄</div>
+      <p class="subscribe-box-desc">Want to know when the next greeting lands? We'll let you know when it's time.</p>
+      <div id="sib-form-container" class="sib-form-container">
+        <div id="error-message" class="sib-form-message-panel" style="font-family:Helvetica,sans-serif;font-size:16px;text-align:left;color:#661d1d;background-color:#ffeded;border-color:#ff4949;border-radius:3px;">
+          <div class="sib-form-message-panel__text sib-form-message-panel__text--center">
+            <svg viewBox="0 0 512 512" class="sib-icon sib-notification__icon"><path d="M256 40c118.621 0 216 96.075 216 216 0 119.291-96.61 216-216 216-119.244 0-216-96.562-216-216 0-119.203 96.602-216 216-216m0-32C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm-11.49 120h22.979c6.823 0 12.274 5.682 11.99 12.5l-7 168c-.268 6.428-5.556 11.5-11.99 11.5h-8.979c-6.433 0-11.722-5.073-11.99-11.5l-7-168c-.283-6.818 5.167-12.5 11.99-12.5zM256 340c-15.464 0-28 12.536-28 28s12.536 28 28 28 28-12.536 28-28-12.536-28-28-28z"/></svg>
+            <span class="sib-form-message-panel__inner-text">Your subscription could not be saved. Please try again!</span>
+          </div>
+        </div>
+        <div id="success-message" class="sib-form-message-panel" style="font-family:Helvetica,sans-serif;font-size:16px;text-align:left;color:#085229;background-color:#e7faf0;border-color:#13ce66;border-radius:3px;">
+          <div class="sib-form-message-panel__text sib-form-message-panel__text--center">
+            <svg viewBox="0 0 512 512" class="sib-icon sib-notification__icon"><path d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 464c-118.664 0-216-96.055-216-216 0-118.663 96.055-216 216-216 118.664 0 216 96.055 216 216 0 118.663-96.055 216-216 216zm141.63-274.961L217.15 376.071c-4.705 4.667-12.303 4.637-16.97-.068l-85.878-86.572c-4.667-4.705-4.637-12.303.068-16.97l8.52-8.451c4.705-4.667 12.303-4.637 16.97.068l68.976 69.533 163.441-162.13c4.705-4.667 12.303-4.637 16.97.068l8.451 8.52c4.668 4.705 4.637 12.303-.068 16.97z"/></svg>
+            <span class="sib-form-message-panel__inner-text">Thanks! We'll be in touch when the time comes. 😄</span>
+          </div>
+        </div>
+        <div id="sib-container" class="sib-container--large sib-container--vertical" style="text-align:center;background-color:rgba(255,255,255,1);border-width:1px;border-style:solid;border-color:#C0CCD9;border-radius:3px;direction:ltr">
+          <form id="sib-form" method="POST" action="https://f09ba191.sibforms.com/serve/MUIFAAtecjO19fkKbfFrhkg4En9Oq7tOcRtfF54_4ppQN7pHS3p2aY74Um5-cNvR3qzTkq81xdPODE5LOCCc-DiJz5G2wmthyyCRqvJLav1xAukbD_KR3F91smy_oGHy79TVUe_8uiFdRM_hn5r-mXI4QloNLrLZpqmpjhclEM_PrEvTKVIz4QU-navjBxdeEVHUP_sgRokCL-dzoA==" data-type="subscription">
+            <div style="padding:8px 0">
+              <div class="sib-input sib-form-block">
+                <div class="form__entry entry_block">
+                  <div class="form__label-row">
+                    <label class="entry__label" style="font-weight:700;text-align:left;font-family:Helvetica,sans-serif;font-size:16px;color:#3c4858;" for="EMAIL" data-required="*">Your email address:</label>
+                    <div class="entry__field">
+                      <input class="input" type="text" id="EMAIL" name="EMAIL" autocomplete="off" value="" placeholder="you@email.com" data-required="true" required />
+                    </div>
+                  </div>
+                  <label class="entry__error entry__error--primary" style="font-family:Helvetica,sans-serif;font-size:16px;text-align:left;color:#661d1d;background-color:#ffeded;border-color:#ff4949;border-radius:3px;"></label>
+                </div>
+              </div>
+            </div>
+            <div style="padding:8px 0">
+              <div class="sib-optin sib-form-block" data-required="true">
+                <div class="form__entry entry_mcq">
+                  <div class="form__label-row">
+                    <div class="entry__choice">
+                      <label>
+                        <input type="checkbox" class="input_replaced" value="1" id="GDPR" name="GDPR" required />
+                        <span class="checkbox checkbox_tick_positive"></span>
+                        <span style="font-family:Helvetica,sans-serif;font-size:14px;text-align:left;color:#3C4858;"><p>Yes, I want to receive emails from Luv Bugs Collection. I can unsubscribe anytime.</p><span data-required="*" style="display:inline;" class="entry__label entry__label_optin"></span></span>
+                      </label>
+                    </div>
+                  </div>
+                  <label class="entry__error entry__error--primary" style="font-family:Helvetica,sans-serif;font-size:16px;text-align:left;color:#661d1d;background-color:#ffeded;border-color:#ff4949;border-radius:3px;"></label>
+                </div>
+              </div>
+            </div>
+            <div style="padding:8px 0;text-align:left">
+              <button class="sib-form-block__button sib-form-block__button-with-loader" style="font-family:Helvetica,sans-serif;font-size:16px;font-weight:700;text-align:left;color:#FFFFFF;background-color:#3E4857;border-width:0px;border-radius:3px;" form="sib-form" type="submit">
+                <svg class="icon clickable__icon progress-indicator__icon sib-hide-loader-icon" viewBox="0 0 512 512"><path d="M460.116 373.846l-20.823-12.022c-5.541-3.199-7.54-10.159-4.663-15.874 30.137-59.886 28.343-131.652-5.386-189.946-33.641-58.394-94.896-95.833-161.827-99.676C261.028 55.961 256 50.751 256 44.352V20.309c0-6.904 5.808-12.337 12.703-11.982 83.556 4.306 160.163 50.864 202.11 123.677 42.063 72.696 44.079 162.316 6.031 236.832-3.14 6.148-10.75 8.461-16.728 5.01z"/></svg>
+                Sign me up!
+              </button>
+            </div>
+            <input type="text" name="email_address_check" value="" class="input--hidden">
+            <input type="hidden" name="locale" value="en">
+            <input type="hidden" name="SOURCE" value="share-success-en">
+            <input type="hidden" name="FIRST_CAMPAIGN" value="luvbugs-launch-2026">
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Luv Bugs Collection · <a href="/">luvbugscollection.com</a>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="modal" id="modal" onclick="closeModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <video id="modal-video" controls playsinline></video>
+  </div>
+</div>
+
+<script>
+  let selectedMessage = null;
+  let bacillData = null;
+
+  fetch('../data/messages.json')
+    .then(r => r.json())
+    .then(data => {
+      bacillData = data.baciller.gladje;
+      renderMessages();
+    });
+
+  function renderMessages() {
+    const list = document.getElementById('messages-list');
+    const active = bacillData.meddelanden.filter(m => m.aktiv);
+
+    active.forEach(msg => {
+      const card = document.createElement('div');
+      card.className = 'message-card';
+      card.dataset.id = msg.id;
+      card.onclick = () => selectMessage(msg.id);
+
+      card.innerHTML =
+        '<div class="message-radio"></div>' +
+        '<div class="message-content">' +
+        '<div class="message-title">' + msg.titel_en + '</div>' +
+        '<div class="message-preview">' + msg.forhandsvisning_en + '</div>' +
+        '<button class="preview-button" onclick="event.stopPropagation(); previewVideo(\'' + msg.video_en + '\')">▶ Preview video</button>' +
+        '</div>';
+
+      list.appendChild(card);
+    });
+  }
+
+  function selectMessage(id) {
+    selectedMessage = id;
+    document.querySelectorAll('.message-card').forEach(c => {
+      c.classList.toggle('selected', parseInt(c.dataset.id) === id);
+    });
+    document.getElementById('form-section').classList.add('visible');
+    document.getElementById('result').classList.remove('visible');
+
+    setTimeout(() => {
+      document.getElementById('form-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+  }
+
+  function previewVideo(filename) {
+    const video = document.getElementById('modal-video');
+    video.src = '../videos/' + filename;
+    document.getElementById('modal').classList.add('visible');
+    video.play().catch(() => {});
+  }
+
+  function closeModal(event) {
+    if (event && event.target.id !== 'modal') return;
+    const video = document.getElementById('modal-video');
+    video.pause();
+    video.src = '';
+    document.getElementById('modal').classList.remove('visible');
+  }
+
+  function createLink() {
+    if (!selectedMessage) return;
+
+    const to = document.getElementById('till').value.trim();
+    const from = document.getElementById('fran').value.trim();
+
+    if (!to) return;
+
+    const params = new URLSearchParams();
+    params.set('bug', 'gladje');
+    params.set('v', selectedMessage);
+    params.set('to', to);
+    if (from) params.set('from', from);
+
+    const base = window.location.origin + '/love/k/';
+    const fullLink = base + '?' + params.toString();
+
+    document.getElementById('link-display').textContent = fullLink;
+    document.getElementById('preview-link').href = fullLink;
+
+    const smsText = to + ' 😄 you got a secret greeting from me: ' + fullLink;
+    const emailSubject = 'A greeting for you 😄';
+    const emailBody = 'Hi ' + to + '!\n\nI sent you a joy greeting:\n' + fullLink + '\n\n' + (from ? '— ' + from : '');
+
+    document.getElementById('share-sms').href = 'sms:?body=' + encodeURIComponent(smsText);
+    document.getElementById('share-whatsapp').href = 'https://wa.me/?text=' + encodeURIComponent(smsText);
+    document.getElementById('share-email').href = 'mailto:?subject=' + encodeURIComponent(emailSubject) + '&body=' + encodeURIComponent(emailBody);
+
+    // event: share-click tracking (smileybug)
+    ['sms','whatsapp','email'].forEach(function(method) {
+      var el = document.getElementById('share-' + method);
+      if (el) el.addEventListener('click', function() {
+        if (typeof gtag === 'function') {
+          gtag('event', 'share', {
+            method: method,
+            bug_type: 'smileybug',
+            content_type: 'joy_greeting'
+          });
+        }
+      }, { once: true });
+    });
+
+    document.getElementById('share-copy').onclick = function() {
+      if (typeof gtag === 'function') {
+        gtag('event', 'share', { method: 'copy_link', bug_type: 'smileybug', content_type: 'joy_greeting' });
+      }
+      navigator.clipboard.writeText(fullLink).then(function() {
+        document.getElementById('copy-label').textContent = 'Copied ✓';
+        setTimeout(function() {
+          document.getElementById('copy-label').textContent = 'Copy link';
+        }, 2000);
+      });
+    };
+
+    document.getElementById('result').classList.add('visible');
+    if (localStorage.getItem('bacillerna_subscribed') !== 'true') {
+      document.getElementById('subscribe-section').classList.add('visible');
+    }
+    document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // localStorage + Brevo success observer
+  (function() {
+    var sub = document.getElementById('subscribe-section');
+    var el = document.getElementById('success-message');
+    if (!sub || !el) return;
+    new MutationObserver(function() {
+      if (window.getComputedStyle(el).display !== 'none') {
+        localStorage.setItem('bacillerna_subscribed', 'true');
+        sub.classList.remove('visible');
+      }
+    }).observe(el, { attributes: true, attributeFilter: ['style', 'class'] });
+  })();
+</script>
+
+<script>
+  window.REQUIRED_CODE_ERROR_MESSAGE = 'Please choose a country code';
+  window.LOCALE = 'en';
+  window.EMAIL_INVALID_MESSAGE = window.SMS_INVALID_MESSAGE = "Invalid format. Please try again.";
+  window.REQUIRED_ERROR_MESSAGE = "This field cannot be empty. ";
+  window.GENERIC_INVALID_MESSAGE = "Invalid format. Please try again.";
+  window.INVALID_NUMBER = "Invalid format. Please try again.";
+  window.INVALID_DATE = "Please enter a valid date";
+  window.REQUIRED_MULTISELECT_MESSAGE = 'Please select at least 1 option';
+  window.translation = { common: { selectedList: '{quantity} list selected', selectedLists: '{quantity} lists selected', selectedOption: '{quantity} selected', selectedOptions: '{quantity} selected' } };
+  var AUTOHIDE = Boolean(1);
+</script>
+<script defer src="https://sibforms.com/forms/end-form/build/main.js"></script>
+</body>
+</html>
