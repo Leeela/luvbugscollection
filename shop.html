@@ -443,6 +443,43 @@
       if (Math.abs(diff) > 40) goTo(diff > 0 ? Math.min(current + 1, dots.length - 1) : Math.max(current - 1, 0));
     });
   });
+
+  // event: shop conversion tracking
+  document.querySelectorAll('.product-card .btn-buy').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      if (typeof gtag !== 'function') return;
+      var card = btn.closest('.product-card');
+      var productTitle = card ? (card.querySelector('h3') || {}).textContent : '';
+      productTitle = (productTitle || '').trim();
+
+      if (btn.hasAttribute('download')) {
+        gtag('event', 'download_pdf', {
+          product_name: productTitle,
+          file_name: btn.getAttribute('href'),
+          content_type: 'shop_product'
+        });
+      } else if (btn.href && btn.href.indexOf('etsy.com') !== -1) {
+        gtag('event', 'click_etsy', {
+          product_name: productTitle,
+          destination: 'product_page',
+          content_type: 'shop_product'
+        });
+      }
+    });
+  });
+
+  // event: click on the "our Etsy shop" footer link
+  document.querySelectorAll('a[href*="etsy.com/se-en/shop"]').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (typeof gtag === 'function') {
+        gtag('event', 'click_etsy', {
+          product_name: 'shop_home',
+          destination: 'shop_home',
+          content_type: 'shop_product'
+        });
+      }
+    });
+  });
 </script>
 
 <script>
