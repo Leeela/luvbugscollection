@@ -409,12 +409,22 @@
 </div>
 
 <script>
-  const params = new URLSearchParams(window.location.search);
-  // Support both English keys (bug, to, from) and Swedish keys (bacill, till, fran) for cross-language compatibility
-  const bacillKey = params.get('bug') || params.get('bacill') || 'karlek';
-  const messageId = parseInt(params.get('v')) || 1;
-  const to = params.get('to') || params.get('till');
-  const from = params.get('from') || params.get('fran');
+  let bacillKey, messageId, to, from;
+  const hashRaw = window.location.hash.slice(1);
+  if (hashRaw) {
+    const parts = hashRaw.split('.').map(p => { try { return decodeURIComponent(p); } catch(e) { return p; } });
+    bacillKey = parts[0] || 'karlek';
+    messageId = parseInt(parts[1]) || 1;
+    to = parts[2] || null;
+    from = parts[3] || null;
+  } else {
+    const params = new URLSearchParams(window.location.search);
+    // Support both English keys (bug, to, from) and Swedish keys (bacill, till, fran) for cross-language compatibility
+    bacillKey = params.get('bug') || params.get('bacill') || 'karlek';
+    messageId = parseInt(params.get('v')) || 1;
+    to = params.get('to') || params.get('till');
+    from = params.get('from') || params.get('fran');
+  }
 
   // Map English bug names to internal keys
   const bugMap = {

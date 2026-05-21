@@ -672,25 +672,22 @@
 
     if (!to) return;
 
-    const params = new URLSearchParams();
-    params.set('bug', 'gladje');
-    params.set('v', selectedMessage);
-    params.set('to', to);
-    if (from) params.set('from', from);
+    const enc = s => encodeURIComponent(s || '').replace(/\./g, '%2E');
+    const hashParts = ['gladje', selectedMessage, enc(to)];
+    if (from) hashParts.push(enc(from));
 
     const base = window.location.origin + '/love/k/';
-    const fullLink = base + '?' + params.toString();
+    const fullLink = base + '#' + hashParts.join('.');
 
     document.getElementById('link-display').textContent = fullLink;
     document.getElementById('preview-link').href = fullLink;
 
-    const smsText = to + ' 😄 you got a secret greeting from me: ' + fullLink;
-    const emailSubject = 'A greeting for you 😄';
-    const emailBody = 'Hi ' + to + '!\n\nI sent you a joy greeting:\n' + fullLink + '\n\n' + (from ? '— ' + from : '');
+    const shareText = "I've sent you a greeting from Luv Bugs Collection — a little animated film 💛 It's a new website with stories, games and animations for kids. No real bugs, promise :D " + fullLink;
+    const emailSubject = 'A greeting from Luv Bugs Collection 💛';
 
-    document.getElementById('share-sms').href = 'sms:?body=' + encodeURIComponent(smsText);
-    document.getElementById('share-whatsapp').href = 'https://wa.me/?text=' + encodeURIComponent(smsText);
-    document.getElementById('share-email').href = 'mailto:?subject=' + encodeURIComponent(emailSubject) + '&body=' + encodeURIComponent(emailBody);
+    document.getElementById('share-sms').href = 'sms:?body=' + encodeURIComponent(shareText);
+    document.getElementById('share-whatsapp').href = 'https://wa.me/?text=' + encodeURIComponent(shareText);
+    document.getElementById('share-email').href = 'mailto:?subject=' + encodeURIComponent(emailSubject) + '&body=' + encodeURIComponent(shareText);
 
     // event: share-click tracking (smileybug)
     ['sms','whatsapp','email'].forEach(function(method) {
