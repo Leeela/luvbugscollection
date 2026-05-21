@@ -70,6 +70,18 @@
           "poster_sv": "gladjebacillen_v1_poster.jpg",
           "poster_en": "smileybug_v1_poster.jpg",
           "aktiv": true
+        },
+        {
+          "id": 2,
+          "titel_sv": "Glädjelarm",
+          "titel_en": "Joy alert",
+          "forhandsvisning_sv": "Jag har fått larm. Glädjenivåerna hos dig är farligt låga. Kram från mig och larmcentralen!",
+          "forhandsvisning_en": "I've received an alert. Your joy levels are dangerously low. A hug from me and the dispatch center!",
+          "video_sv": "gladjebacillen_v2_sv.mp4",
+          "video_en": "smileybug_v2_en.mp4",
+          "poster_sv": "gladjebacillen_v2_poster.jpg",
+          "poster_en": "smileybug_v2_poster.jpg",
+          "aktiv": true
         }
       ]
     },
