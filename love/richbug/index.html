@@ -672,7 +672,7 @@
 
     if (!to) return;
 
-    const enc = s => encodeURIComponent(s || '').replace(/\./g, '%2E');
+    const enc = s => (s || '').replace(/[.#\s]/gu, c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0').toUpperCase());
     const hashParts = ['rikedom', selectedMessage, enc(to)];
     if (from) hashParts.push(enc(from));
 
