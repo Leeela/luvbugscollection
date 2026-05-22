@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VPN8T03G8N"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VPN8T03G8N');
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#7BC142">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="LuvBugsCollection">
+  <link rel="apple-touch-icon" href="/icons/icon-180.png">
+  <!-- iOS Splash Screens -->
+  <link rel="apple-touch-startup-image" href="/icons/splash-640x1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="/icons/splash-750x1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="/icons/splash-828x1792.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="/icons/splash-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="/icons/splash-1242x2688.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="/icons/splash-1170x2532.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="/icons/splash-1290x2796.png" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="/icons/splash-1536x2048.png" media="(min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="/icons/splash-1668x2388.png" media="(min-device-width: 834px) and (max-device-width: 834px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="/icons/splash-2048x2732.png" media="(min-device-width: 1024px) and (max-device-width: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <title>Dress Up the Bug – Free Kids Game | LuvBugsCollection</title>
+  <meta name="description" content="Dress up Candy Bug and Love Bug with fun accessories — hat, crown, sunglasses and more! Save your creation as a picture. Free kids game for ages 3–6.">
+  <link rel="canonical" href="https://luvbugscollection.com/dress-up-bug.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://luvbugscollection.com/dress-up-bug.html" />
+  <meta property="og:title" content="Dress Up the Bug – Free Kids Game | LuvBugsCollection" />
+  <meta property="og:description" content="Dress up Candy Bug and Love Bug with fun accessories and save your creation!" />
+  <meta property="og:image" content="https://luvbugscollection.com/bilder/godisbacillen.png" />
+  <meta property="og:site_name" content="LuvBugsCollection" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --candy: #7BC142;
+      --candy-light: #E5F4D6;
+      --love: #FF6B9D;
+      --love-light: #FFE5F0;
+      --radius: 20px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Fredoka', sans-serif;
+      background: #fffdf7;
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      overflow: hidden;
+      touch-action: none;
+      user-select: none;
+    }
+
+    /* Character picker */
+    #char-picker {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      padding: 10px 16px 6px;
+      flex-shrink: 0;
+    }
+
+    .char-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: white;
+      border: 3px solid #e0e0e0;
+      border-radius: var(--radius);
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.15s;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .char-btn img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+
+    .char-btn.active[data-char="godis"] {
+      border-color: var(--candy);
+      background: var(--candy-light);
+      color: #3a7a10;
+      transform: scale(1.05);
+    }
+
+    .char-btn.active[data-char="karlek"] {
+      border-color: var(--love);
+      background: var(--love-light);
+      color: #aa2060;
+      transform: scale(1.05);
+    }
+
+    .char-btn:focus-visible { outline: 3px solid var(--candy); outline-offset: 2px; }
+
+    /* Game board */
+    #stage {
+      flex: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      background: white;
+      margin: 8px 16px;
+      border-radius: var(--radius);
+      border: 3px dashed #e0e0e0;
+    }
+
+    #character-img {
+      height: 80%;
+      max-height: 360px;
+      width: auto;
+      object-fit: contain;
+      pointer-events: none;
+      draggable: false;
+    }
+
+    /* Accessory panel + save button */
+    #bottom-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px 12px;
+      flex-shrink: 0;
+    }
+
+    #accessory-panel {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      flex: 1;
+      padding: 4px 2px 8px;
+      scrollbar-width: none;
+    }
+    #accessory-panel::-webkit-scrollbar { display: none; }
+
+    .accessory-item {
+      flex-shrink: 0;
+      width: 64px;
+      height: 64px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      cursor: grab;
+      touch-action: none;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+
+    .accessory-item:active { transform: scale(0.92); }
+
+    /* Save button */
+    #save-btn {
+      flex-shrink: 0;
+      width: 72px;
+      height: 72px;
+      background: var(--candy);
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: white;
+      gap: 2px;
+      box-shadow: 0 4px 12px rgba(123,193,66,0.4);
+      transition: transform 0.15s;
+    }
+    #save-btn:active { transform: scale(0.93); }
+    #save-btn:focus-visible { outline: 3px solid white; outline-offset: 2px; }
+    #save-btn span { font-size: 11px; }
+
+    /* Ghost accessory (follows finger during drag) */
+    .ghost {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1000;
+      font-size: 96px;
+      transform: translate(-50%, -50%);
+      opacity: 0.85;
+      transition: none;
+    }
+
+    /* Placed accessory on game board */
+    .placed-accessory {
+      position: absolute;
+      font-size: 96px;
+      cursor: grab;
+      touch-action: none;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.2s;
+      z-index: 10;
+    }
+
+    .placed-accessory.removing {
+      animation: poff 0.3s ease-out forwards;
+    }
+
+    @keyframes poff {
+      0%   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      60%  { transform: translate(-50%, -50%) scale(1.4); opacity: 0.6; }
+      100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+    }
+
+    /* Star rain */
+    #star-rain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2000;
+      overflow: hidden;
+    }
+
+    .star {
+      position: absolute;
+      font-size: 32px;
+      animation: star-fall 1s ease-in forwards;
+      top: -50px;
+    }
+
+    @keyframes star-fall {
+      from { transform: translateY(0) rotate(0deg); opacity: 1; }
+      to   { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* Responsive: more space on larger screens */
+    @media (min-width: 600px) {
+      #char-picker { padding: 16px 24px 8px; }
+      #stage { margin: 10px 32px; }
+      #bottom-bar { padding: 10px 32px 20px; }
+      .accessory-item { width: 72px; height: 72px; font-size: 36px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Character picker -->
+  <div id="char-picker">
+    <button class="char-btn active" data-char="godis" aria-label="Choose Candy Bug">
+      <img src="../bilder/godisbacillen.png" alt="Candy Bug">
+      <span>Candy Bug</span>
+    </button>
+    <button class="char-btn" data-char="karlek" aria-label="Choose Love Bug">
+      <img src="../bilder/karleksbacillen.png" alt="Love Bug">
+      <span>Love Bug</span>
+    </button>
+  </div>
+
+  <!-- Game board -->
+  <div id="stage">
+    <img id="character-img" src="../bilder/godisbacillen.png" alt="Bug" draggable="false">
+    <!-- Placed accessories are rendered dynamically here -->
+  </div>
+
+  <!-- Accessory panel + save button -->
+  <div id="bottom-bar">
+    <div id="accessory-panel">
+      <!-- Accessories are rendered with JS -->
+    </div>
+    <button id="save-btn" aria-label="Save as image">
+      📷
+      <span>Save</span>
+    </button>
+  </div>
+
+  <!-- Star rain overlay (shown when saving) -->
+  <div id="star-rain" aria-hidden="true"></div>
+
+  <script>
+const ACCESSORIES = [
+  { id: 'hat',        emoji: '🎩', label: 'Hat' },
+  { id: 'crown',      emoji: '👑', label: 'Crown' },
+  { id: 'sunglasses', emoji: '🕶️', label: 'Sunglasses' },
+  { id: 'bow',        emoji: '🎀', label: 'Bow' },
+  { id: 'star',       emoji: '⭐', label: 'Star' },
+  { id: 'flower',     emoji: '🌸', label: 'Flower' },
+  { id: 'glasses',    emoji: '🤓', label: 'Glasses' },
+  { id: 'rainbow',    emoji: '🌈', label: 'Rainbow' },
+  { id: 'butterfly',  emoji: '🦋', label: 'Butterfly' },
+  { id: 'guitar',     emoji: '🎸', label: 'Guitar' },
+  { id: 'heart',      emoji: '❤️', label: 'Heart' },
+  { id: 'mustache',   emoji: '🥸', label: 'Mustache' },
+];
+
+const CHARACTERS = {
+  godis:  { src: '../bilder/godisbacillen.png',   alt: 'Candy Bug' },
+  karlek: { src: '../bilder/karleksbacillen.png', alt: 'Love Bug' },
+};
+
+let activeChar = 'godis';
+
+function renderAccessoryPanel() {
+  const panel = document.getElementById('accessory-panel');
+  panel.innerHTML = '';
+  ACCESSORIES.forEach(acc => {
+    const el = document.createElement('div');
+    el.className = 'accessory-item';
+    el.dataset.id = acc.id;
+    el.dataset.emoji = acc.emoji;
+    el.setAttribute('aria-label', acc.label);
+    el.setAttribute('role', 'button');
+    el.textContent = acc.emoji;
+    panel.appendChild(el);
+  });
+}
+
+renderAccessoryPanel();
+
+function switchCharacter(charKey) {
+  if (charKey === activeChar) return;
+  activeChar = charKey;
+
+  const img = document.getElementById('character-img');
+  img.src = CHARACTERS[charKey].src;
+  img.alt = CHARACTERS[charKey].alt;
+
+  document.querySelectorAll('.char-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.char === charKey);
+  });
+
+  document.querySelectorAll('.placed-accessory').forEach(el => el.remove());
+}
+
+document.querySelectorAll('.char-btn').forEach(btn => {
+  btn.addEventListener('click', () => switchCharacter(btn.dataset.char));
+});
+
+let ghost = null;
+let ghostEmoji = '';
+let draggingPlaced = null;
+
+function createGhost(emoji, x, y) {
+  ghost = document.createElement('div');
+  ghost.className = 'ghost';
+  ghost.textContent = emoji;
+  ghost.style.left = x + 'px';
+  ghost.style.top = y + 'px';
+  document.body.appendChild(ghost);
+}
+
+function moveGhost(x, y) {
+  if (!ghost) return;
+  ghost.style.left = x + 'px';
+  ghost.style.top = y + 'px';
+}
+
+function removeGhost() {
+  if (ghost) { ghost.remove(); ghost = null; }
+}
+
+function getClientXY(e) {
+  if (e.touches && e.touches.length > 0) {
+    return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  }
+  if (e.changedTouches && e.changedTouches.length > 0) {
+    return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+  }
+  return { x: e.clientX, y: e.clientY };
+}
+
+function isOverStage(x, y) {
+  const stage = document.getElementById('stage');
+  const rect = stage.getBoundingClientRect();
+  return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+}
+
+function placeAccessory(emoji, x, y) {
+  const stage = document.getElementById('stage');
+  const rect = stage.getBoundingClientRect();
+  const el = document.createElement('div');
+  el.className = 'placed-accessory';
+  el.textContent = emoji;
+  el.style.left = (x - rect.left) + 'px';
+  el.style.top  = (y - rect.top) + 'px';
+  stage.appendChild(el);
+  initPlacedDrag(el);
+  initLongPress(el);
+}
+
+function onPanelDragStart(e, itemEl) {
+  e.preventDefault();
+  ghostEmoji = itemEl.dataset.emoji;
+  const { x, y } = getClientXY(e);
+  createGhost(ghostEmoji, x, y);
+}
+
+document.getElementById('accessory-panel').addEventListener('mousedown', e => {
+  const item = e.target.closest('.accessory-item');
+  if (!item) return;
+  onPanelDragStart(e, item);
+});
+
+document.getElementById('accessory-panel').addEventListener('touchstart', e => {
+  const item = e.target.closest('.accessory-item');
+  if (!item) return;
+  onPanelDragStart(e, item);
+}, { passive: false });
+
+document.addEventListener('mousemove', e => {
+  moveGhost(e.clientX, e.clientY);
+  if (draggingPlaced) movePlaced(e.clientX, e.clientY);
+});
+
+document.addEventListener('touchmove', e => {
+  e.preventDefault();
+  const { x, y } = getClientXY(e);
+  moveGhost(x, y);
+  if (draggingPlaced) movePlaced(x, y);
+}, { passive: false });
+
+function onDrop(x, y) {
+  if (ghost && ghostEmoji) {
+    if (isOverStage(x, y)) {
+      placeAccessory(ghostEmoji, x, y);
+    }
+    removeGhost();
+    ghostEmoji = '';
+  }
+  draggingPlaced = null;
+}
+
+document.addEventListener('mouseup', e => onDrop(e.clientX, e.clientY));
+document.addEventListener('touchend', e => {
+  const { x, y } = getClientXY(e);
+  onDrop(x, y);
+});
+
+document.addEventListener('touchcancel', () => {
+  removeGhost();
+  ghostEmoji = '';
+  draggingPlaced = null;
+});
+
+let placedOffsetX = 0;
+let placedOffsetY = 0;
+let longPressTimer = null;
+
+function initPlacedDrag(el) {
+  function startDrag(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    clearTimeout(longPressTimer);
+    const { x, y } = getClientXY(e);
+    const stage = document.getElementById('stage');
+    const stageRect = stage.getBoundingClientRect();
+    const elLeft = parseFloat(el.style.left);
+    const elTop  = parseFloat(el.style.top);
+    placedOffsetX = x - (stageRect.left + elLeft);
+    placedOffsetY = y - (stageRect.top  + elTop);
+    draggingPlaced = el;
+  }
+
+  el.addEventListener('mousedown', startDrag);
+  el.addEventListener('touchstart', startDrag, { passive: false });
+}
+
+function movePlaced(x, y) {
+  if (!draggingPlaced) return;
+  const stage = document.getElementById('stage');
+  const rect = stage.getBoundingClientRect();
+  const newLeft = x - rect.left - placedOffsetX;
+  const newTop  = y - rect.top  - placedOffsetY;
+  draggingPlaced.style.left = newLeft + 'px';
+  draggingPlaced.style.top  = newTop  + 'px';
+}
+
+function removeAccessory(el) {
+  if (draggingPlaced === el) draggingPlaced = null;
+  el.classList.add('removing');
+  el.addEventListener('animationend', () => el.remove(), { once: true });
+}
+
+function initLongPress(el) {
+  function startLong(e) {
+    longPressTimer = setTimeout(() => {
+      removeAccessory(el);
+    }, 500);
+  }
+  function cancelLong() {
+    clearTimeout(longPressTimer);
+  }
+
+  el.addEventListener('mousedown', startLong);
+  el.addEventListener('mouseup', cancelLong);
+  el.addEventListener('mousemove', cancelLong);
+  el.addEventListener('touchstart', startLong, { passive: true });
+  el.addEventListener('touchend', cancelLong);
+  el.addEventListener('touchmove', cancelLong);
+}
+
+function showStarRain() {
+  const container = document.getElementById('star-rain');
+  container.innerHTML = '';
+  const stars = ['⭐','🌟','✨','💫'];
+  for (let i = 0; i < 20; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.textContent = stars[i % stars.length];
+    star.style.left = Math.random() * 100 + 'vw';
+    star.style.animationDelay = Math.random() * 0.6 + 's';
+    star.style.fontSize = (24 + Math.random() * 24) + 'px';
+    container.appendChild(star);
+  }
+  setTimeout(() => { container.innerHTML = ''; }, 1800);
+}
+
+document.getElementById('save-btn').addEventListener('click', (e) => {
+  const btn = e.currentTarget;
+  btn.disabled = true;
+  const stage = document.getElementById('stage');
+  html2canvas(stage, {
+    backgroundColor: '#ffffff',
+    scale: 2,
+    useCORS: true,
+    allowTaint: false,
+  }).then(canvas => {
+    const link = document.createElement('a');
+    link.download = 'my-bug.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showStarRain();
+  }).catch(err => {
+    console.error('html2canvas failed:', err);
+    alert('Could not save the image. Try taking a screenshot instead! 📸');
+  }).finally(() => {
+    btn.disabled = false;
+  });
+});
+  </script>
+
+</body>
+</html>
