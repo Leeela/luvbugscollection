@@ -1,7 +1,7 @@
 {
   "_kommentar": "Datakällan för Bacillerna/Luv Bugs Collection love-kampanjen. Aktivera nya baciller genom att sätta 'aktiv': true.",
   "_version": "1.0",
-  "_uppdaterad": "2026-05-13",
+  "_uppdaterad": "2026-05-23",
 
   "baciller": {
     "karlek": {
@@ -50,6 +50,16 @@
           "forhandsvisning_en": "Someone sent me with a sorry message. Get in touch when you're ready. Kisses!",
           "video_sv": "karleksbacillen_v3_sv.mp4",
           "video_en": "lovebug_v3_en.mp4",
+          "aktiv": true
+        },
+        {
+          "id": 4,
+          "titel_sv": "Glad mors dag",
+          "titel_en": "Happy Mother's Day",
+          "forhandsvisning_sv": "Någon har skickat mig hela vägen hit för att säga att du är den finaste mamman som finns. Glad mors dag!",
+          "forhandsvisning_en": "Someone sent me all the way here to tell you that you are the best mother ever. Happy Mother's Day!",
+          "video_sv": "karleksbacillen_v4_sv.mp4",
+          "video_en": "lovebug_v4_en.mp4",
           "aktiv": true
         }
       ]
