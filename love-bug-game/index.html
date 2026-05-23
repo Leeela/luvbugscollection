@@ -118,6 +118,9 @@ let figureReact=false, animating=false, bug={};
 const TOP_PAD = 100;
 
 const audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+function unlockAudio(){
+  if(audioCtx.state==='suspended') audioCtx.resume();
+}
 function playPling(i=0){
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
@@ -359,7 +362,7 @@ function loop(){
 }
 
 function onDown(e){
-  e.preventDefault(); if(state!=='playing') return;
+  e.preventDefault(); unlockAudio(); if(state!=='playing') return;
   const pos=getPos(e);
   if(dist(pos,bug)<=bug.r*1.65){dragging=true;dragStart={x:bug.x,y:bug.y};dragCurrent={...pos};}
 }
