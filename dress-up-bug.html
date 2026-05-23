@@ -44,6 +44,8 @@
       --candy-light: #E5F4D6;
       --love: #FF6B9D;
       --love-light: #FFE5F0;
+      --wealth: #D4A017;
+      --wealth-light: #FFF8DC;
       --radius: 20px;
     }
 
@@ -103,6 +105,13 @@
       border-color: var(--love);
       background: var(--love-light);
       color: #aa2060;
+      transform: scale(1.05);
+    }
+
+    .char-btn.active[data-char="rikedom"] {
+      border-color: var(--wealth);
+      background: var(--wealth-light);
+      color: #7a5800;
       transform: scale(1.05);
     }
 
@@ -279,6 +288,10 @@
       <img src="../bilder/karleksbacillen.png" alt="Love Bug">
       <span>Love Bug</span>
     </button>
+    <button class="char-btn" data-char="rikedom" aria-label="Choose Wealth Bug">
+      <img src="../bilder/rikedomsbacillen.png" alt="Wealth Bug">
+      <span>Wealth Bug</span>
+    </button>
   </div>
 
   <!-- Game board -->
@@ -319,8 +332,9 @@ const ACCESSORIES = [
 ];
 
 const CHARACTERS = {
-  godis:  { src: '../bilder/godisbacillen.png',   alt: 'Candy Bug' },
-  karlek: { src: '../bilder/karleksbacillen.png', alt: 'Love Bug' },
+  godis:   { src: '../bilder/godisbacillen.png',    alt: 'Candy Bug' },
+  karlek:  { src: '../bilder/karleksbacillen.png',  alt: 'Love Bug' },
+  rikedom: { src: '../bilder/rikedomsbacillen.png', alt: 'Wealth Bug' },
 };
 
 let activeChar = 'godis';
