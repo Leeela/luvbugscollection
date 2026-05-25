@@ -344,10 +344,14 @@
     background: white;
     border: 2px solid var(--brand-mid);
     border-radius: var(--radius-md);
-    padding: 24px;
+    overflow: hidden;
     transition: transform 0.2s, box-shadow 0.2s;
   }
   .saga-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+  .saga-card-img { height: 160px; overflow: hidden; }
+  .saga-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
+  .saga-card:hover .saga-card-img img { transform: scale(1.04); }
+  .saga-card-body { padding: 20px; }
   .saga-num {
     font-family: var(--font-body);
     font-weight: 700;
@@ -667,22 +671,37 @@
 
       <div class="saga-list">
         <div class="saga-card">
-          <div class="saga-num">Episode 1</div>
-          <div class="saga-title">The sweetest secret of the night</div>
-          <div class="saga-meta">8 min · Candy Bug sneaks down to the kitchen</div>
-          <a class="saga-listen" href="https://open.spotify.com/show/2X0WwBDFy6mdud7rfAIzrZ" target="_blank">▶ Listen on Spotify</a>
+          <div class="saga-card-img">
+            <img src="bilder/sagor/ep11-nattens-hemlighet.jpg" alt="The sweetest secret of the night" loading="lazy">
+          </div>
+          <div class="saga-card-body">
+            <div class="saga-num">Episode 1</div>
+            <div class="saga-title">The sweetest secret of the night</div>
+            <div class="saga-meta">8 min · Candy Bug sneaks down to the kitchen</div>
+            <a class="saga-listen" href="https://open.spotify.com/show/2X0WwBDFy6mdud7rfAIzrZ" target="_blank">▶ Listen on Spotify</a>
+          </div>
         </div>
         <div class="saga-card">
-          <div class="saga-num">Episode 3</div>
-          <div class="saga-title">The candy factory break-in</div>
-          <div class="saga-meta">9 min · a daring adventure inside the night factory</div>
-          <a class="saga-listen" href="https://open.spotify.com/show/2X0WwBDFy6mdud7rfAIzrZ" target="_blank">▶ Listen on Spotify</a>
+          <div class="saga-card-img">
+            <img src="bilder/sagor/ep09-godisfabriken.jpg" alt="The candy factory break-in" loading="lazy">
+          </div>
+          <div class="saga-card-body">
+            <div class="saga-num">Episode 3</div>
+            <div class="saga-title">The candy factory break-in</div>
+            <div class="saga-meta">9 min · a daring adventure inside the night factory</div>
+            <a class="saga-listen" href="https://open.spotify.com/show/2X0WwBDFy6mdud7rfAIzrZ" target="_blank">▶ Listen on Spotify</a>
+          </div>
         </div>
         <div class="saga-card">
-          <div class="saga-num">Episode 9</div>
-          <div class="saga-title">Candy Bug and the Candy Dinner</div>
-          <div class="saga-meta">8 min · when the whole dinner turns into candy</div>
-          <a class="saga-listen" href="https://open.spotify.com/show/2X0WwBDFy6mdud7rfAIzrZ" target="_blank">▶ Listen on Spotify</a>
+          <div class="saga-card-img">
+            <img src="bilder/sagor/ep07-dagis.jpg" alt="Candy Bug at Preschool" loading="lazy">
+          </div>
+          <div class="saga-card-body">
+            <div class="saga-num">Episode 5</div>
+            <div class="saga-title">Candy Bug at Preschool</div>
+            <div class="saga-meta">6 min · Candy Bug had a plan and a preschool full of candy</div>
+            <a class="saga-listen" href="https://podcasters.spotify.com/pod/show/leila-el/episodes/Avsnitt-5-Godisbacillen-p-dagis-e3hsncf" target="_blank">▶ Listen on Spotify</a>
+          </div>
         </div>
       </div>
 
