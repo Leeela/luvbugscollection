@@ -260,6 +260,16 @@
           "video_sv": "rikedomsbacillen_v2_sv.mp4",
           "video_en": "richbug_v2_en.mp4",
           "aktiv": true
+        },
+        {
+          "id": 3,
+          "titel_sv": "Swisha 25 kr?",
+          "titel_en": "Got any spare coins?",
+          "forhandsvisning_sv": "Jag har ett litet hemligt uppdrag. Kan du swisha 25 kr snälla? Inte för min skull... jo det är faktiskt för min skull.",
+          "forhandsvisning_en": "I'm on a little secret mission. Can you send me some coins or bills please? Not for my sake... actually yes, for my sake.",
+          "video_sv": "rikedomsbacillen_v3_sv.mp4",
+          "video_en": "richbug_v3_en.mp4",
+          "aktiv": true
         }
       ]
     }
