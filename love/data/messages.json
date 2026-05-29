@@ -1,12 +1,12 @@
 {
   "_kommentar": "Datakällan för Bacillerna/Luv Bugs Collection love-kampanjen. Aktivera nya baciller genom att sätta 'aktiv': true.",
   "_version": "1.0",
-  "_uppdaterad": "2026-05-23",
+  "_uppdaterad": "2026-05-29",
 
   "baciller": {
     "karlek": {
       "namn_sv": "Kärleksbacillen",
-      "namn_en": "Heart Bug",
+      "namn_en": "Love Bug",
       "slug_sv": "karleksbacillen",
       "slug_en": "lovebug",
       "farg_primar": "#FF6B6B",
@@ -61,6 +61,16 @@
           "video_sv": "karleksbacillen_v4_sv.mp4",
           "video_en": "lovebug_v4_en.mp4",
           "aktiv": true
+        },
+        {
+          "id": 5,
+          "titel_sv": "Glad mors dag!",
+          "titel_en": "Happy Mother's Day!",
+          "forhandsvisning_sv": "Alla bacillerna har samlats för att önska dig en riktigt glad mors dag! Maaaamaaa! I love you!!",
+          "forhandsvisning_en": "All the bugs have gathered just to wish you a very happy Mother's Day! Maaaamaaa! I love you!!",
+          "video_sv": "morsdag_alla_baciller.mp4",
+          "video_en": "mothersday_all_bugs.mp4",
+          "aktiv": true
         }
       ]
     },
@@ -102,6 +112,16 @@
           "poster_sv": "gladjebacillen_v2_poster.jpg",
           "poster_en": "smileybug_v2_poster.jpg",
           "aktiv": true
+        },
+        {
+          "id": 3,
+          "titel_sv": "Glad mors dag!",
+          "titel_en": "Happy Mother's Day!",
+          "forhandsvisning_sv": "Alla bacillerna har fått ett uppdrag. De ska se till att du ler idag. Glad mors dag! Maaaamaaa! I love you!!",
+          "forhandsvisning_en": "All the bugs got a mission. They're here to make you smile today. Happy Mother's Day! Maaaamaaa! I love you!!",
+          "video_sv": "morsdag_alla_baciller.mp4",
+          "video_en": "mothersday_all_bugs.mp4",
+          "aktiv": true
         }
       ]
     },
@@ -138,6 +158,16 @@
           "forhandsvisning_en": "Someone teases you all the time. It's because they like you. A whole lot actually.",
           "video_sv": "retbacillen_v2_sv.mp4",
           "video_en": "teasebug_v2_en.mp4",
+          "aktiv": true
+        },
+        {
+          "id": 3,
+          "titel_sv": "Glad mors dag!",
+          "titel_en": "Happy Mother's Day!",
+          "forhandsvisning_sv": "Okej okej... du är den bästa mamman. Alla bacillerna säger det. Glad mors dag! Maaaamaaa! I love you!!",
+          "forhandsvisning_en": "Okay okay... you're the best mum. All the bugs agree. Happy Mother's Day! Maaaamaaa! I love you!!",
+          "video_sv": "morsdag_alla_baciller.mp4",
+          "video_en": "mothersday_all_bugs.mp4",
           "aktiv": true
         }
       ]
@@ -186,13 +216,23 @@
           "video_sv": "godisbacillen_v3_sv.mp4",
           "video_en": "candybug_v3_en.mp4",
           "aktiv": true
+        },
+        {
+          "id": 4,
+          "titel_sv": "Glad mors dag!",
+          "titel_en": "Happy Mother's Day!",
+          "forhandsvisning_sv": "Godisbacillen och alla kompisarna har ett viktigt meddelande. Glad mors dag! Maaaamaaa! I love you!!",
+          "forhandsvisning_en": "Candy Bug and all the friends have an important message. Happy Mother's Day! Maaaamaaa! I love you!!",
+          "video_sv": "morsdag_alla_baciller.mp4",
+          "video_en": "mothersday_all_bugs.mp4",
+          "aktiv": true
         }
       ]
     },
 
     "dans": {
       "namn_sv": "Dansbacillen",
-      "namn_en": "Disco Bug",
+      "namn_en": "Dance Bug",
       "slug_sv": "dansbacillen",
       "slug_en": "dancebug",
       "farg_primar": "#4DD0E1",
@@ -222,6 +262,16 @@
           "forhandsvisning_en": "I've received orders from above. The weekend is going to be celebrated. You're going to be there. It's not negotiable. Hugs from me and the boss who decided!",
           "video_sv": "dansbacillen_v2_sv.mp4",
           "video_en": "dancebug_v2_en.mp4",
+          "aktiv": true
+        },
+        {
+          "id": 3,
+          "titel_sv": "Glad mors dag!",
+          "titel_en": "Happy Mother's Day!",
+          "forhandsvisning_sv": "Alla bacillerna dansar för dig idag. Glad mors dag! Maaaamaaa! I love you!!",
+          "forhandsvisning_en": "All the bugs are dancing for you today. Happy Mother's Day! Maaaamaaa! I love you!!",
+          "video_sv": "morsdag_alla_baciller.mp4",
+          "video_en": "mothersday_all_bugs.mp4",
           "aktiv": true
         }
       ]
@@ -269,6 +319,16 @@
           "forhandsvisning_en": "I'm on a little secret mission. Can you send me some coins or bills please? Not for my sake... actually yes, for my sake.",
           "video_sv": "rikedomsbacillen_v3_sv.mp4",
           "video_en": "richbug_v3_en.mp4",
+          "aktiv": true
+        },
+        {
+          "id": 4,
+          "titel_sv": "Glad mors dag!",
+          "titel_en": "Happy Mother's Day!",
+          "forhandsvisning_sv": "Det finaste du kan ge en mamma är kärlek. Alla bacillerna skickar sin. Glad mors dag! Maaaamaaa! I love you!!",
+          "forhandsvisning_en": "The best gift you can give a mother is love. All the bugs are sending theirs. Happy Mother's Day! Maaaamaaa! I love you!!",
+          "video_sv": "morsdag_alla_baciller.mp4",
+          "video_en": "mothersday_all_bugs.mp4",
           "aktiv": true
         }
       ]
