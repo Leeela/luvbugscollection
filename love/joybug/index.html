@@ -11,7 +11,7 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smiley Bug · Send a greeting</title>
+<title>Joy Bug · Send a greeting</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -481,8 +481,8 @@
   <div class="container">
 
     <div class="header">
-      <div class="emoji"><img src="../images/smileybug-portrait.png" alt="Smiley Bug"></div>
-      <h1>Smiley Bug</h1>
+      <div class="emoji"><img src="../images/joybug-portrait.png" alt="Joy Bug"></div>
+      <h1>Joy Bug</h1>
       <div class="header-sub">Choose which greeting to send</div>
     </div>
 
@@ -689,14 +689,14 @@
     document.getElementById('share-whatsapp').href = 'https://wa.me/?text=' + encodeURIComponent(shareText);
     document.getElementById('share-email').href = 'mailto:?subject=' + encodeURIComponent(emailSubject) + '&body=' + encodeURIComponent(shareText);
 
-    // event: share-click tracking (smileybug)
+    // event: share-click tracking (joybug)
     ['sms','whatsapp','email'].forEach(function(method) {
       var el = document.getElementById('share-' + method);
       if (el) el.addEventListener('click', function() {
         if (typeof gtag === 'function') {
           gtag('event', 'share', {
             method: method,
-            bug_type: 'smileybug',
+            bug_type: 'joybug',
             content_type: 'joy_greeting'
           });
         }
@@ -705,7 +705,7 @@
 
     document.getElementById('share-copy').onclick = function() {
       if (typeof gtag === 'function') {
-        gtag('event', 'share', { method: 'copy_link', bug_type: 'smileybug', content_type: 'joy_greeting' });
+        gtag('event', 'share', { method: 'copy_link', bug_type: 'joybug', content_type: 'joy_greeting' });
       }
       navigator.clipboard.writeText(fullLink).then(function() {
         document.getElementById('copy-label').textContent = 'Copied ✓';

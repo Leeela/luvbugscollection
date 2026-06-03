@@ -77,14 +77,14 @@
 
     "gladje": {
       "namn_sv": "Glädjebacillen",
-      "namn_en": "Smiley Bug",
+      "namn_en": "Joy Bug",
       "slug_sv": "gladjebacillen",
-      "slug_en": "smileybug",
+      "slug_en": "joybug",
       "farg_primar": "#FFB84D",
       "farg_mjuk": "#FFF1DD",
       "emoji": "😄",
       "image_sv": "images/gladjebacillen.png",
-      "image_en": "images/smileybug.png",
+      "image_en": "images/joybug.png",
       "beskrivning_sv": "Sprid glädje",
       "beskrivning_en": "Spread joy",
       "aktiv": true,
@@ -96,9 +96,9 @@
           "forhandsvisning_sv": "Jag har fått ett hemligt uppdrag. Någon ville att du skulle bli kittlad i magen idag. Kram från mig och den som skickade mig!",
           "forhandsvisning_en": "I've been given a secret mission. Someone wanted you to get a little tickle in your tummy today. A hug from me and the one who sent me!",
           "video_sv": "gladjebacillen_v1_sv.mp4",
-          "video_en": "smileybug_v1_en.mp4",
+          "video_en": "joybug_v1_en.mp4",
           "poster_sv": "gladjebacillen_v1_poster.jpg",
-          "poster_en": "smileybug_v1_poster.jpg",
+          "poster_en": "joybug_v1_poster.jpg",
           "aktiv": true
         },
         {
@@ -108,9 +108,9 @@
           "forhandsvisning_sv": "Jag har fått larm. Glädjenivåerna hos dig är farligt låga. Kram från mig och larmcentralen!",
           "forhandsvisning_en": "I've received an alert. Your joy levels are dangerously low. A hug from me and the dispatch center!",
           "video_sv": "gladjebacillen_v2_sv.mp4",
-          "video_en": "smileybug_v2_en.mp4",
+          "video_en": "joybug_v2_en.mp4",
           "poster_sv": "gladjebacillen_v2_poster.jpg",
-          "poster_en": "smileybug_v2_poster.jpg",
+          "poster_en": "joybug_v2_poster.jpg",
           "aktiv": true
         },
         {
