@@ -628,7 +628,22 @@
     .footer-inner { grid-template-columns: 1fr 1fr; gap: 24px; }
     .cta-block h2 { font-size: 26px; }
   }
-</style>
+
+  /* === CANONICAL HEADER OVERRIDE (cc) === */
+  .site-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; gap: 16px; position: relative; }
+  .nav-group { display: contents; }
+  .site-nav { display: flex; flex-wrap: nowrap; align-items: center; gap: 22px; position: absolute; left: 50%; transform: translateX(-50%); width: max-content; margin: 0; }
+  .lang-pill { order: 0; margin-top: 0; flex-shrink: 0; }
+  @media (max-width: 900px) {
+    .site-header { flex-wrap: nowrap; }
+    .site-nav { display: none; position: absolute; left: 0; right: 0; top: 100%; transform: none; width: auto; background: #fff; border-bottom: 1px solid var(--color-border, #eee); padding: 16px 32px; flex-direction: column; gap: 12px; z-index: 99; margin: 0; }
+    .site-nav.open { display: flex; }
+    .menu-btn { display: block; }
+    .lang-pill { padding: 4px 10px; }
+    .lang-text, .lang-divider { display: none; }
+  }
+
+  </style>
   <link rel="alternate" hreflang="sv" href="https://bacillerna.se/godisbacillen.html" />
   <link rel="alternate" hreflang="en" href="https://luvbugscollection.com/candy-bug.html" />
   <link rel="alternate" hreflang="x-default" href="https://luvbugscollection.com/candy-bug.html" />
