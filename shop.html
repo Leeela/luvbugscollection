@@ -154,17 +154,28 @@
     gap: 16px;
   }
   .site-logo { font-family: var(--font-heading); font-weight: 700; font-size: 26px; letter-spacing: 1.5px; color: var(--color-text-primary); text-decoration: none; }
-  .site-nav { display: flex; gap: 22px; font-size: 14px; font-weight: 600; }
+  .site-nav { display: flex; gap: 22px; font-size: 14px; font-weight: 600; margin-left: auto;; }
   .site-nav a { text-decoration: none; color: var(--color-text-secondary); padding: 4px 0; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; }
   .site-nav a:hover { color: var(--brand-deep); }
   .site-nav a.active { color: var(--brand-deep); border-bottom-color: var(--brand-deep); }
-  .site-lang { font-size: 12px; font-weight: 700; color: var(--color-text-secondary); letter-spacing: 1.5px; text-decoration: none; }
+  .nav-group { display: flex; align-items: center; gap: 16px; position: absolute; left: 50%; transform: translateX(-50%) translateY(0); overflow: visible; padding-right: 2px; }
+  .lang-pill { display: flex; align-items: center; gap: 6px; background: #f2f9eb; border: 1.5px solid var(--candy); border-radius: 999px; padding: 5px 13px; text-decoration: none; flex-shrink: 0; order: 3; margin-top: -12px; }
+  .lang-pill::before { display: none; }
+  .lang-text { font-size: 12px; font-weight: 700; }
+  .lang-active { color: var(--candy-deep); }
+  .lang-other { color: #aaa; font-weight: 600; }
+  .lang-flag-other { opacity: 0.45; }
+  .lang-divider { color: #ddd; font-size: 11px; margin: 0 1px; }
   .menu-btn { display: none; background: none; border: 2px solid var(--color-border-strong); border-radius: var(--radius-sm); padding: 8px 12px; font-family: var(--font-body); font-weight: 700; font-size: 14px; cursor: pointer; }
   @media (max-width: 720px) {
     .site-header { flex-wrap: nowrap; }
     .site-nav { display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border-bottom: 1px solid var(--color-border); padding: 16px 32px; flex-direction: column; gap: 12px; z-index: 99; }
     .site-nav.open { display: flex; }
     .menu-btn { display: block; }
+  .nav-group { position: static; transform: none; padding-right: 0; }
+  .lang-pill { padding: 4px 10px; margin-top: 0; }
+  .lang-pill::before { display: none; }
+  .lang-text, .lang-divider { display: none; }
   }
 
   /* HERO */
@@ -189,7 +200,7 @@
     display: flex;
     flex-direction: column;
   }
-  .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); border-color: var(--brand-mid); }
+  .product-card:hover { transform: translateY(0); box-shadow: 0 12px 32px rgba(0,0,0,0.08); border-color: var(--brand-mid); }
 
   /* CAROUSEL */
   .product-img-wrap { position: relative; aspect-ratio: 4/3; overflow: hidden; background: #fafafa; }
@@ -243,7 +254,11 @@
     <a href="/parents.html">For Parents</a>
     <a href="/shop.html" class="active" style="color:#F1641E;font-weight:700;">🛒 Shop</a>
   </nav>
-  <a href="https://bacillerna.se/shop.html" class="site-lang" title="Swedish version">EN / SV</a>
+  <a href="https://bacillerna.se/shop.html" class="lang-pill" title="Byt till svenska">
+      <span>🇬🇧</span><span class="lang-text lang-active">English</span>
+      <span class="lang-divider" aria-hidden="true">|</span>
+      <span class="lang-flag-other">🇸🇪</span><span class="lang-text lang-other">Svenska</span>
+    </a>
 </header>
 
 <div class="shop-hero">
@@ -298,7 +313,32 @@
       </div>
     </div>
 
-    <!-- Product 3: Birthday Pack -->
+    <!-- Product 3: Activity Book – all Luv Bugs -->
+    <div class="product-card">
+      <div class="product-img-wrap">
+        <div class="carousel-track">
+          <img src="bilder/alla-bacillerna.png" alt="Luv Bugs Activity Book – all six characters">
+          <img src="bilder/activitysheets2.jpg" alt="Luv Bugs Activity Book – inside pages">
+        </div>
+      </div>
+      <div class="carousel-dots">
+        <span class="active"></span><span></span>
+      </div>
+      <div class="product-body">
+        <div class="product-tag">Free download · Print at home · Play online</div>
+        <div class="product-name">Activity Book – All 6 Luv Bugs</div>
+        <p class="product-desc">Mazes, colouring, memory, word matching and character facts for all six Luv Bugs! Download as PDF or play directly in your browser — perfect for kids aged 3–8.</p>
+        <div class="product-footer">
+          <div class="product-price" style="color:#FF7F50;">FREE</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <a href="luvbugs-activity-book-free.pdf" download class="btn-buy" style="background:#FF7F50;" target="_blank" onclick="gtag('event', 'file_download', {file_name: 'luvbugs-activity-book-free.pdf', file_extension: 'pdf', link_url: 'https://luvbugscollection.com/luvbugs-activity-book-free.pdf'});">⬇️ Download PDF</a>
+            <a href="activity-book.html" class="btn-buy" style="background:#fff;color:#FF7F50;border:2px solid #FF7F50;">▶ Play online</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product 4: Birthday Pack -->
     <div class="product-card">
       <div class="product-img-wrap" style="aspect-ratio: 3/4;">
         <div class="carousel-track">
