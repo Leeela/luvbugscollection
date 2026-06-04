@@ -273,6 +273,16 @@
           "video_sv": "morsdag_alla_baciller.mp4",
           "video_en": "mothersday_all_bugs.mp4",
           "aktiv": true
+        },
+        {
+          "id": 4,
+          "titel_sv": "Grattis på födelsedagen!",
+          "titel_en": "Happy Birthday!",
+          "forhandsvisning_sv": "Dansvågen är aktiverad bara för DIG! GRATTIS PÅ FÖDELSEDAGEN!!",
+          "forhandsvisning_en": "The Dance wave is activated just for you! HAPPY BIRTHDAY!!",
+          "video_sv": "dansbacillen_v3_sv.mp4",
+          "video_en": "dancebug_v3_en.mp4",
+          "aktiv": true
         }
       ]
     },
