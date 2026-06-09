@@ -1,7 +1,7 @@
 {
   "_kommentar": "Datakällan för Bacillerna/Luv Bugs Collection love-kampanjen. Aktivera nya baciller genom att sätta 'aktiv': true.",
   "_version": "1.0",
-  "_uppdaterad": "2026-05-29",
+  "_uppdaterad": "2026-06-09",
 
   "baciller": {
     "karlek": {
@@ -121,6 +121,16 @@
           "forhandsvisning_en": "All the bugs got a mission. They're here to make you smile today. Happy Mother's Day! Maaaamaaa! I love you!!",
           "video_sv": "morsdag_alla_baciller.mp4",
           "video_en": "mothersday_all_bugs.mp4",
+          "aktiv": true
+        },
+        {
+          "id": 4,
+          "titel_sv": "Grattis!",
+          "titel_en": "Congratulations!",
+          "forhandsvisning_sv": "Någon ville att du skulle få ett riktigt stort grattis idag! Kram från mig och den som skickade mig!",
+          "forhandsvisning_en": "Someone wanted you to get a great big congratulations today! Hugs from me and the one who sent me!",
+          "video_sv": "gladjebacillen_v4_sv.mp4",
+          "video_en": "joybug_v4_en.mp4",
           "aktiv": true
         }
       ]
