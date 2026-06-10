@@ -629,6 +629,39 @@
     .cta-block h2 { font-size: 26px; }
   }
 
+  /* === BUBBLES ANIMATION === */
+  .bubble-container {
+    position: relative;
+    height: 90px;
+    width: 200px;
+    margin: 0 auto 8px auto;
+    pointer-events: none;
+  }
+  .bubble {
+    position: absolute;
+    bottom: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%,
+      rgba(255,255,255,0.65) 0%,
+      rgba(255,195,80,0.08) 40%,
+      rgba(255,160,50,0.12) 70%,
+      rgba(255,255,255,0.04) 100%);
+    border: 2px solid rgba(255,255,255,0.7);
+    box-shadow: inset -3px -3px 8px rgba(255,255,255,0.35), 0 0 8px rgba(255,200,80,0.25);
+    animation: floatBubble linear infinite;
+  }
+  .bubble:nth-child(1) { width: 38px; height: 38px; left: 10px;  animation-duration: 3.2s; animation-delay: 0s;    border-color: rgba(255,180,60,0.55); }
+  .bubble:nth-child(2) { width: 26px; height: 26px; left: 60px;  animation-duration: 2.6s; animation-delay: 0.7s;  border-color: rgba(255,210,100,0.5); }
+  .bubble:nth-child(3) { width: 46px; height: 46px; left: 110px; animation-duration: 3.8s; animation-delay: 0.3s;  border-color: rgba(255,160,40,0.5); }
+  .bubble:nth-child(4) { width: 22px; height: 22px; left: 155px; animation-duration: 2.8s; animation-delay: 1.2s;  border-color: rgba(255,220,120,0.55); }
+  .bubble:nth-child(5) { width: 32px; height: 32px; left: 35px;  animation-duration: 3.5s; animation-delay: 1.8s;  border-color: rgba(255,190,70,0.5); }
+  @keyframes floatBubble {
+    0%   { transform: translateY(0) scale(1);    opacity: 0; }
+    10%  { opacity: 0.9; }
+    85%  { opacity: 0.7; }
+    100% { transform: translateY(-100px) scale(0.85); opacity: 0; }
+  }
+
   /* === CANONICAL HEADER OVERRIDE (cc) === */
   .site-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; gap: 16px; position: relative; }
   .nav-group { display: contents; }
@@ -705,7 +738,13 @@
   <!-- SUPERPOWER -->
   <section class="superpower" id="superpower">
     <div class="section-inner">
-      <div class="superpower-icon">✨</div>
+      <div class="bubble-container">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+      </div>
       <div class="section-eyebrow">Superpower</div>
       <div class="superpower-name">JOY RUSH</div>
       <p class="superpower-desc">
