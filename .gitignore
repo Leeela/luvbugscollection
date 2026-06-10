@@ -1,5 +1,6 @@
 .DS_Store
 Thumbs.db
+.superpowers/
 *.log
 .vscode/
 .idea/
