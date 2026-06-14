@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Titta – Bacillerna</title>
+  <link rel="manifest" href="/app/manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --candy: #7BC142; --candy-deep: #5C9B22;
+      --brand: #FF8A75; --brand-deep: #E55A40; --brand-light: #FFD9CE;
+      --love: #FF6B9D; --love-deep: #D63A75;
+      --happy: #FFB347; --happy-deep: #C97D00;
+      --tease: #FFD93D; --tease-deep: #B89400;
+      --font-heading: 'Fredoka', sans-serif;
+      --font-body: 'Nunito', sans-serif;
+      --nav-h: 68px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background: #fff; color: #2a2a2a; padding-bottom: var(--nav-h); }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      background: linear-gradient(180deg, var(--brand-light) 0%, #FFEFEA 100%);
+      padding: 32px 20px 36px;
+      text-align: center;
+    }
+    .page-hero h1 { font-family: var(--font-heading); font-size: 38px; font-weight: 700; color: #2a2a2a; }
+    .page-hero p { font-size: 16px; color: #555; margin-top: 8px; max-width: 420px; margin-left: auto; margin-right: auto; line-height: 1.5; }
+
+    /* ── SECTIONS ── */
+    section { padding: 28px 16px; }
+    section:nth-child(even) { background: #fafafa; }
+    .section-inner { max-width: 720px; margin: 0 auto; }
+    .section-label { font-family: var(--font-body); font-weight: 700; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--brand-deep); margin-bottom: 6px; }
+    .section-title { font-family: var(--font-heading); font-size: 26px; font-weight: 700; margin-bottom: 14px; color: #2a2a2a; }
+
+    /* ── YOUTUBE PLAYER ── */
+    .player-wrap { background: white; border: 2px solid #f0f0f0; border-radius: 18px; padding: 10px; box-shadow: 0 4px 18px rgba(0,0,0,0.07); margin-bottom: 8px; }
+    .player-frame { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; background: #000; }
+    .player-frame iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+    .player-label { padding: 8px 4px 2px; font-size: 13px; color: #888; }
+    .player-label strong { color: #2a2a2a; font-family: var(--font-heading); font-size: 15px; }
+
+    /* ── STORY LIST ── */
+    .story-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+    .story-item { display: flex; align-items: center; gap: 10px; background: white; border: 2px solid #f0f0f0; border-radius: 12px; padding: 12px 14px; }
+    .story-num { font-family: var(--font-heading); font-weight: 700; font-size: 13px; color: white; background: var(--brand); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .story-title { font-weight: 600; font-size: 13px; color: #2a2a2a; line-height: 1.3; }
+    .goto-btn { display: inline-block; margin-top: 20px; background: var(--brand); color: white; font-family: var(--font-heading); font-size: 17px; font-weight: 700; padding: 12px 28px; border-radius: 999px; }
+
+    /* ── BOTTOM NAV ── */
+    .app-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      background: #fff; border-top: 2px solid #eee;
+      display: flex; z-index: 100;
+    }
+    .app-nav a {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1px;
+      font-size: 10px; font-weight: 700; color: #bbb;
+      text-decoration: none; font-family: var(--font-body);
+      -webkit-tap-highlight-color: transparent;
+      text-transform: uppercase; letter-spacing: 0.3px;
+    }
+    .app-nav a .ni { font-size: 22px; }
+    .app-nav a.active { color: var(--brand-deep); }
+
+    @media (max-width: 480px) {
+      .story-list { grid-template-columns: 1fr; }
+      .page-hero h1 { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-hero">
+    <h1>🎬 Titta</h1>
+    <p>Korta animationer med Bacillerna — på svenska och engelska.</p>
+  </div>
+
+  <section>
+    <div class="section-inner">
+      <div class="section-label">Svenska videos</div>
+      <h2 class="section-title">Bacillerna</h2>
+      <div class="player-wrap">
+        <div class="player-frame">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/hcPc4J6GdFw?list=PL-8MlwtgM26Sl4nag7JBZUfXYEhE-rlY3&rel=0&iv_load_policy=3&modestbranding=1"
+            title="Bacillerna — alla videos"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen></iframe>
+        </div>
+        <div class="player-label"><strong>BACILLERNA</strong> · Alla videos</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-inner">
+      <div class="section-label">English videos</div>
+      <h2 class="section-title">Luv Bugs Collection</h2>
+      <div class="player-wrap">
+        <div class="player-frame">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/KagGFDUb9r0?list=PL-8MlwtgM26Qcwr6RluZ3_WKKNOuDS8RQ&rel=0&iv_load_policy=3&modestbranding=1"
+            title="Luv Bugs Collection — all videos"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen></iframe>
+        </div>
+        <div class="player-label"><strong>LUV BUGS COLLECTION</strong> · All videos</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-inner">
+      <div class="section-label">Lyssna istället</div>
+      <h2 class="section-title">Sagor med Bacillerna</h2>
+      <p style="font-size:15px;color:#555;margin-bottom:0;">Tio mysiga sagor med Godisbacillen och vänner. Perfekta att somna till.</p>
+      <div class="story-list">
+        <a class="story-item" href="/app/sagor.html"><span class="story-num">1</span><span class="story-title">Nattens sötaste hemlighet</span></a>
+        <a class="story-item" href="/app/sagor.html"><span class="story-num">2</span><span class="story-title">Det försvunna Godisberget</span></a>
+        <a class="story-item" href="/app/sagor.html"><span class="story-num">3</span><span class="story-title">Godisfabrikens inbrott</span></a>
+        <a class="story-item" href="/app/sagor.html"><span class="story-num">4</span><span class="story-title">Godisbacillen i mataffären</span></a>
+        <a class="story-item" href="/app/sagor.html"><span class="story-num">5</span><span class="story-title">Godisbacillen på dagis</span></a>
+        <a class="story-item" href="/app/sagor.html"><span class="story-num">6</span><span class="story-title">Godisbacillen i lekparken</span></a>
+        <a class="story-item" href="/app/sagor.html"><span class="story-num">7</span><span class="story-title">Godisbacillen i biblioteket</span></a>
+        <a class="story-item" href="/app/sagor.html"><span class="story-num">8</span><span class="story-title">Kärleksbacillen och det ensamma barnet</span></a>
+        <a class="story-item" href="/app/sagor.html"><span class="story-num">9</span><span class="story-title">Glädgebacillen och glasstrutet</span></a>
+        <a class="story-item" href="/app/sagor.html"><span class="story-num">10</span><span class="story-title">Retbacillen och retsuget</span></a>
+      </div>
+      <a class="goto-btn" href="/app/sagor.html">Gå till alla sagor →</a>
+    </div>
+  </section>
+
+  <nav class="app-nav">
+    <a href="/app/"><span class="ni">🏠</span>Start</a>
+    <a href="/app/titta.html" class="active"><span class="ni">🎬</span>Titta</a>
+    <a href="/app/sagor.html"><span class="ni">📚</span>Sagor</a>
+    <a href="/app/spel.html"><span class="ni">🎮</span>Spel</a>
+    <a href="/app/halsning.html"><span class="ni">💌</span>Hälsning</a>
+  </nav>
+
+</body>
+</html>

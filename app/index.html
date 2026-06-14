@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Bacillerna</title>
+  <link rel="manifest" href="/app/manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --candy: #7BC142; --candy-deep: #5C9B22;
+      --love: #FF6B9D; --love-deep: #D63A75;
+      --happy: #FFB347; --happy-deep: #C97D00;
+      --tease: #FFD93D; --tease-deep: #B89400;
+      --brand: #FF8A75; --brand-deep: #E55A40;
+      --font-heading: 'Fredoka', sans-serif;
+      --font-body: 'Nunito', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: #fff; font-family: var(--font-body); overflow-x: hidden; }
+    body { display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+
+    .hero {
+      background: linear-gradient(160deg, #E5F4D6 0%, #FFE0EE 100%);
+      width: 100%;
+      text-align: center;
+      padding: 28px 20px 20px;
+      flex-shrink: 0;
+    }
+    .hero img { width: 140px; height: auto; object-fit: contain; display: block; margin: 0 auto 10px; }
+    .hero h1 {
+      font-family: var(--font-heading);
+      font-size: 38px;
+      font-weight: 700;
+      color: #2a2a2a;
+      letter-spacing: 1px;
+    }
+
+    .start-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      padding: 20px 16px 24px;
+      width: 100%;
+      max-width: 500px;
+      flex: 1;
+    }
+
+    .start-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border-radius: 24px;
+      padding: 28px 12px;
+      text-decoration: none;
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 700;
+      color: white;
+      min-height: 140px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+      transition: transform 0.12s, box-shadow 0.12s;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .start-btn:active { transform: scale(0.96); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+
+    .start-btn .icon { font-size: 48px; line-height: 1; }
+
+    .btn-titta  { background: linear-gradient(135deg, #FF8A75, #E55A40); }
+    .btn-sagor  { background: linear-gradient(135deg, #FFB347, #C97D00); }
+    .btn-spel   { background: linear-gradient(135deg, #7BC142, #5C9B22); }
+    .btn-halsning { background: linear-gradient(135deg, #FF6B9D, #D63A75); }
+  </style>
+</head>
+<body>
+
+  <div class="hero">
+    <img src="/bilder/alla-bacillerna.png" alt="Bacillerna">
+    <h1>Bacillerna</h1>
+  </div>
+
+  <div class="start-grid">
+    <a href="/app/titta.html" class="start-btn btn-titta">
+      <span class="icon">🎬</span>
+      Titta
+    </a>
+    <a href="/app/sagor.html" class="start-btn btn-sagor">
+      <span class="icon">📚</span>
+      Sagor
+    </a>
+    <a href="/app/spel.html" class="start-btn btn-spel">
+      <span class="icon">🎮</span>
+      Spel
+    </a>
+    <a href="/app/halsning.html" class="start-btn btn-halsning">
+      <span class="icon">💌</span>
+      Hälsning
+    </a>
+  </div>
+
+</body>
+</html>

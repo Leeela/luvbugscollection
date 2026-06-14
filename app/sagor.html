@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Sagor – Bacillerna</title>
+  <link rel="manifest" href="/app/manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --candy: #7BC142; --candy-deep: #5C9B22;
+      --brand: #FF8A75; --brand-deep: #E55A40;
+      --love: #FF6B9D; --love-deep: #D63A75;
+      --happy: #FFB347; --happy-deep: #C97D00;
+      --tease: #FFD93D; --tease-deep: #B89400;
+      --font-heading: 'Fredoka', sans-serif;
+      --font-body: 'Nunito', sans-serif;
+      --nav-h: 68px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: #fff; color: #2a2a2a; padding-bottom: var(--nav-h); }
+    a { color: inherit; text-decoration: none; }
+
+    .page-hero {
+      background: linear-gradient(135deg, #FFF8E1 0%, #E8F5E3 50%, #FCE4EC 100%);
+      padding: 32px 20px 36px; text-align: center;
+    }
+    .page-hero h1 { font-family: var(--font-heading); font-size: 38px; font-weight: 700; color: #2a2a2a; }
+    .page-hero p { font-size: 16px; color: #555; margin-top: 8px; max-width: 420px; margin-left: auto; margin-right: auto; line-height: 1.5; }
+
+    section { padding: 28px 16px; }
+    section.bg-soft { background: #fafafa; }
+    .section-inner { max-width: 720px; margin: 0 auto; }
+    .section-label { font-family: var(--font-body); font-weight: 700; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #C97D00; margin-bottom: 6px; }
+    .section-title { font-family: var(--font-heading); font-size: 26px; font-weight: 700; margin-bottom: 16px; color: #2a2a2a; }
+
+    /* ── SPOTIFY EMBED ── */
+    .spotify-wrap { border-radius: 16px; overflow: hidden; box-shadow: 0 6px 24px rgba(0,0,0,0.10); }
+
+    /* ── EPISODE GRID ── */
+    .episode-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+    .ep-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.07); display: flex; flex-direction: column; }
+    .ep-card-img { position: relative; aspect-ratio: 1; overflow: hidden; }
+    .ep-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ep-badge { position: absolute; top: 10px; left: 10px; font-family: var(--font-heading); font-weight: 700; font-size: 11px; padding: 3px 9px; border-radius: 999px; }
+    .ep-dur { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 999px; }
+    .ep-card-body { padding: 14px 16px 16px; flex: 1; display: flex; flex-direction: column; }
+    .ep-char { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
+    .ep-title { font-family: var(--font-heading); font-size: 15px; font-weight: 600; margin: 0 0 6px 0; line-height: 1.3; color: #2a2a2a; }
+    .ep-desc { font-size: 12px; color: #666; line-height: 1.5; flex: 1; }
+
+    /* Character colours */
+    .char-candy .ep-badge { background: #7BC142; color: white; }
+    .char-candy .ep-char { color: #5C9B22; }
+    .char-love .ep-badge { background: #FF6B9D; color: white; }
+    .char-love .ep-char { color: #D63A75; }
+    .char-happy .ep-badge { background: #FFB347; color: white; }
+    .char-happy .ep-char { color: #C97D00; }
+    .char-tease .ep-badge { background: #FFD93D; color: #333; }
+    .char-tease .ep-char { color: #B89400; }
+
+    /* ── BOTTOM NAV ── */
+    .app-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: var(--nav-h); background: #fff; border-top: 2px solid #eee;
+      display: flex; z-index: 100;
+    }
+    .app-nav a {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1px;
+      font-size: 10px; font-weight: 700; color: #bbb;
+      text-decoration: none; font-family: var(--font-body);
+      -webkit-tap-highlight-color: transparent;
+      text-transform: uppercase; letter-spacing: 0.3px;
+    }
+    .app-nav a .ni { font-size: 22px; }
+    .app-nav a.active { color: #C97D00; }
+
+    @media (max-width: 480px) {
+      .episode-grid { grid-template-columns: 1fr; }
+      .page-hero h1 { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-hero">
+    <h1>📚 Sagor</h1>
+    <p>Mysiga sagor med Bacillerna — lyssna direkt i spelaren nedan.</p>
+  </div>
+
+  <section class="bg-soft">
+    <div class="section-inner">
+      <div class="section-label">Lyssna nu</div>
+      <h2 class="section-title">Alla avsnitt i spelaren</h2>
+      <div class="spotify-wrap">
+        <iframe
+          src="https://open.spotify.com/embed/show/0Y8e5AT5HGGHG5ZS92SfXT"
+          width="100%" height="352" frameborder="0"
+          allow="encrypted-media" loading="lazy"
+          title="Bacillerna – sagor på Spotify"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-inner">
+      <div class="section-label">11 avsnitt</div>
+      <h2 class="section-title">Välj din favoritbacill</h2>
+      <div class="episode-grid">
+
+        <div class="ep-card char-candy">
+          <div class="ep-card-img">
+            <img src="/bilder/sagor/ep11-nattens-hemlighet.jpg" alt="Godisbacillen – Nattens sötaste hemlighet" loading="lazy">
+            <span class="ep-badge">Avsnitt 1</span>
+            <span class="ep-dur">5:29</span>
+          </div>
+          <div class="ep-card-body">
+            <div class="ep-char">Godisbacillen</div>
+            <h3 class="ep-title">Nattens sötaste hemlighet</h3>
+            <p class="ep-desc">Godisbacillen smyger ner till köket när alla sover. Men vad luktar det så gott?</p>
+          </div>
+        </div>
+
+        <div class="ep-card char-candy">
+          <div class="ep-card-img">
+            <img src="/bilder/sagor/ep10-godisberget.jpg" alt="Godisbacillen – Det försvunna Godisberget" loading="lazy">
+            <span class="ep-badge">Avsnitt 2</span>
+            <span class="ep-dur">9:24</span>
+          </div>
+          <div class="ep-card-body">
+            <div class="ep-char">Godisbacillen</div>
+            <h3 class="ep-title">Det försvunna Godisberget</h3>
+            <p class="ep-desc">Godisbacillen vaknar med tomma kinder. Någonstans i huset gömmer sig ett Godisberg — men var?</p>
+          </div>
+        </div>
+
+        <div class="ep-card char-candy">
+          <div class="ep-card-img">
+            <img src="/bilder/sagor/ep09-godisfabriken.jpg" alt="Godisbacillen – Godisfabrikens inbrott" loading="lazy">
+            <span class="ep-badge">Avsnitt 3</span>
+            <span class="ep-dur">6:36</span>
+          </div>
+          <div class="ep-card-body">
+            <div class="ep-char">Godisbacillen</div>
+            <h3 class="ep-title">Godisfabrikens inbrott</h3>
+            <p class="ep-desc">Godisbacillen har ett hemligt uppdrag: ta sig in i Godisfabriken. Årets busigaste äventyr!</p>
+          </div>
+        </div>
+
+        <div class="ep-card char-candy">
+          <div class="ep-card-img">
+            <img src="/bilder/sagor/ep08-mataffaren.jpg" alt="Godisbacillen i mataffären" loading="lazy">
+            <span class="ep-badge">Avsnitt 4</span>
+            <span class="ep-dur">10:41</span>
+          </div>
+          <div class="ep-card-body">
+            <div class="ep-char">Godisbacillen</div>
+            <h3 class="ep-title">Godisbacillen i mataffären</h3>
+            <p class="ep-desc">En lista, en vagn, in och ut. Men Godisbacillen har andra planer.</p>
+          </div>
+        </div>
+
+        <div class="ep-card char-candy">
+          <div class="ep-card-img">
+            <img src="/bilder/sagor/ep07-dagis.jpg" alt="Godisbacillen på dagis" loading="lazy">
+            <span class="ep-badge">Avsnitt 5</span>
+            <span class="ep-dur">5:37</span>
+          </div>
+          <div class="ep-card-body">
+            <div class="ep-char">Godisbacillen</div>
+            <h3 class="ep-title">Godisbacillen på dagis</h3>
+            <p class="ep-desc">Godisbacillen hade en plan, en ryggsäck och ett dagis med en stor blå låda märkt LÖRDAGSGODIS.</p>
+          </div>
+        </div>
+
+        <div class="ep-card char-candy">
+          <div class="ep-card-img">
+            <img src="/bilder/sagor/ep06-lekparken.jpg" alt="Godisbacillen i lekparken" loading="lazy">
+            <span class="ep-badge">Avsnitt 6</span>
+            <span class="ep-dur">5:00</span>
+          </div>
+          <div class="ep-card-body">
+            <div class="ep-char">Godisbacillen</div>
+            <h3 class="ep-title">Godisbacillen i lekparken</h3>
+            <p class="ep-desc">En solig dag i lekparken och en gubbe som tror sig ha sett något konstigt röra sig.</p>
+          </div>
+        </div>
+
+        <div class="ep-card char-candy">
+          <div class="ep-card-img">
+            <img src="/bilder/sagor/ep05-biblioteket.jpg" alt="Godisbacillen i biblioteket" loading="lazy">
+            <span class="ep-badge">Avsnitt 7</span>
+            <span class="ep-dur">6:07</span>
+          </div>
+          <div class="ep-card-body">
+            <div class="ep-char">Godisbacillen</div>
+            <h3 class="ep-title">Godisbacillen i biblioteket</h3>
+            <p class="ep-desc">Inget godis på biblioteket — men något ännu bättre: en hemlig bok om godis!</p>
+          </div>
+        </div>
+
+        <div class="ep-card char-love">
+          <div class="ep-card-img">
+            <img src="/bilder/sagor/ep04-karleksbacillen-1.jpg" alt="Kärleksbacillen och det ensamma barnet" loading="lazy">
+            <span class="ep-badge">Avsnitt 8</span>
+            <span class="ep-dur">5:54</span>
+          </div>
+          <div class="ep-card-body">
+            <div class="ep-char">Kärleksbacillen</div>
+            <h3 class="ep-title">Kärleksbacillen och det ensamma barnet</h3>
+            <p class="ep-desc">Lilla Astrid satt ensam i sitt rum. Kärleksbacillen kände det direkt.</p>
+          </div>
+        </div>
+
+        <div class="ep-card char-love">
+          <div class="ep-card-img">
+            <img src="/bilder/sagor/ep02-karleksbacillen-2.jpg" alt="Kärleksbacillen och de dumma orden" loading="lazy">
+            <span class="ep-badge">Avsnitt 9</span>
+            <span class="ep-dur">6:36</span>
+          </div>
+          <div class="ep-card-body">
+            <div class="ep-char">Kärleksbacillen</div>
+            <h3 class="ep-title">Kärleksbacillen och de dumma orden</h3>
+            <p class="ep-desc">Liam kom hem från dagis med en tung känsla. Den kvällen kom Kärleksbacillen.</p>
+          </div>
+        </div>
+
+        <div class="ep-card char-happy">
+          <div class="ep-card-img">
+            <img src="/bilder/sagor/ep03-gladjebacillen.jpg" alt="Glädgebacillen och glasstrutet" loading="lazy">
+            <span class="ep-badge">Avsnitt 10</span>
+            <span class="ep-dur">5:56</span>
+          </div>
+          <div class="ep-card-body">
+            <div class="ep-char">Glädgebacillen</div>
+            <h3 class="ep-title">Glädgebacillen och glasstrutet</h3>
+            <p class="ep-desc">Glasstrutet föll. Men Glädgebacillen visste att glädje alltid hittar en väg.</p>
+          </div>
+        </div>
+
+        <div class="ep-card char-tease">
+          <div class="ep-card-img">
+            <img src="/bilder/sagor/ep01-retbacillen.jpg" alt="Retbacillen och retsuget" loading="lazy">
+            <span class="ep-badge">Avsnitt 11</span>
+            <span class="ep-dur">6:23</span>
+          </div>
+          <div class="ep-card-body">
+            <div class="ep-char">Retbacillen</div>
+            <h3 class="ep-title">Retbacillen och retsuget</h3>
+            <p class="ep-desc">Retbacillen har ett problem — det kliar inifrån. Det finns bara ett botemedel: reta någon!</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <nav class="app-nav">
+    <a href="/app/"><span class="ni">🏠</span>Start</a>
+    <a href="/app/titta.html"><span class="ni">🎬</span>Titta</a>
+    <a href="/app/sagor.html" class="active"><span class="ni">📚</span>Sagor</a>
+    <a href="/app/spel.html"><span class="ni">🎮</span>Spel</a>
+    <a href="/app/halsning.html"><span class="ni">💌</span>Hälsning</a>
+  </nav>
+
+</body>
+</html>

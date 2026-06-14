@@ -1,0 +1,48 @@
+{
+  "name": "Bacillerna – Barnapp",
+  "short_name": "Bacillerna",
+  "description": "Titta, lyssna, spela och skicka hälsningar med Bacillerna — en barnsäker app för 3–8 år.",
+  "lang": "sv",
+  "start_url": "/app/",
+  "scope": "/app/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#7BC142",
+  "categories": ["education", "entertainment", "kids"],
+  "icons": [
+    {
+      "src": "/app/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/app/icons/icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/app/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/app/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/app/icons/screenshot-start.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Startskärmen med fyra knappar"
+    }
+  ]
+}

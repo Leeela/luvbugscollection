@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Spel – Bacillerna</title>
+  <link rel="manifest" href="/app/manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --candy: #7BC142; --candy-deep: #5C9B22; --candy-light: #E5F4D6;
+      --brand: #FF8A75; --brand-deep: #E55A40; --brand-light: #FFD9CE;
+      --love: #FF6B9D; --love-deep: #D63A75; --love-light: #FFE0EE;
+      --happy: #FFB347; --happy-deep: #C97D00;
+      --tease: #FFD93D; --tease-deep: #B89400;
+      --dance: #4ECDC4; --dance-deep: #2BA89F;
+      --font-heading: 'Fredoka', sans-serif;
+      --font-body: 'Nunito', sans-serif;
+      --nav-h: 68px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: #fff; color: #2a2a2a; padding-bottom: var(--nav-h); }
+    a { color: inherit; text-decoration: none; }
+
+    .page-hero {
+      background: var(--brand-light);
+      padding: 32px 20px 36px; text-align: center;
+    }
+    .page-hero h1 { font-family: var(--font-heading); font-size: 38px; font-weight: 700; color: #2a2a2a; }
+    .page-hero p { font-size: 16px; color: #555; margin-top: 8px; max-width: 420px; margin-left: auto; margin-right: auto; line-height: 1.5; }
+
+    section { padding: 24px 16px; }
+    .section-inner { max-width: 700px; margin: 0 auto; }
+    .section-label { font-family: var(--font-body); font-weight: 700; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--brand-deep); margin-bottom: 6px; }
+    .section-title { font-family: var(--font-heading); font-size: 26px; font-weight: 700; margin-bottom: 20px; color: #2a2a2a; }
+
+    /* ── GAME GRID ── */
+    .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    .game-card {
+      border-radius: 20px; overflow: hidden;
+      box-shadow: 0 3px 14px rgba(0,0,0,0.09);
+      display: flex; flex-direction: column;
+      text-decoration: none; color: #2a2a2a;
+      transition: transform 0.12s, box-shadow 0.12s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .game-card:active { transform: scale(0.97); }
+
+    .game-thumb {
+      width: 100%; aspect-ratio: 1;
+      object-fit: contain;
+      display: block;
+    }
+    .game-thumb-bg-candy  { background: var(--candy-light); }
+    .game-thumb-bg-love   { background: var(--love-light); }
+    .game-thumb-bg-brand  { background: var(--brand-light); }
+    .game-thumb-bg-dance  { background: #E0F7F5; }
+
+    .game-body { padding: 12px 14px 16px; flex: 1; display: flex; flex-direction: column; }
+    .game-age { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 999px; margin-bottom: 7px; color: white; }
+    .age-candy  { background: var(--candy); }
+    .age-love   { background: var(--love); }
+    .age-brand  { background: var(--brand); }
+    .age-dance  { background: var(--dance); }
+    .age-orange { background: #FF7F50; }
+    .game-title { font-family: var(--font-heading); font-size: 16px; font-weight: 700; margin-bottom: 6px; line-height: 1.2; }
+    .game-desc { font-size: 12px; color: #666; line-height: 1.5; flex: 1; }
+
+    /* ── BOTTOM NAV ── */
+    .app-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: var(--nav-h); background: #fff; border-top: 2px solid #eee;
+      display: flex; z-index: 100;
+    }
+    .app-nav a {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1px;
+      font-size: 10px; font-weight: 700; color: #bbb;
+      text-decoration: none; font-family: var(--font-body);
+      -webkit-tap-highlight-color: transparent;
+      text-transform: uppercase; letter-spacing: 0.3px;
+    }
+    .app-nav a .ni { font-size: 22px; }
+    .app-nav a.active { color: var(--candy-deep); }
+
+    @media (max-width: 400px) {
+      .game-grid { grid-template-columns: 1fr; }
+      .page-hero h1 { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-hero">
+    <h1>🎮 Spel</h1>
+    <p>Gratis spel med Bacillerna — utan reklam och utan köp.</p>
+  </div>
+
+  <section>
+    <div class="section-inner">
+      <div class="section-label">Välj ett spel</div>
+      <h2 class="section-title">Spela med Bacillerna</h2>
+      <div class="game-grid">
+
+        <a class="game-card" href="/feed-candy-bug.html">
+          <img src="/bilder/godisbacillen-gapar.png" alt="Mata Godisbacillen" class="game-thumb game-thumb-bg-candy">
+          <div class="game-body">
+            <div class="game-age age-candy">2–4 år</div>
+            <div class="game-title">Mata Godisbacillen</div>
+            <p class="game-desc">Dra godis till Godisbacillens öppna mun — CHOMP!</p>
+          </div>
+        </a>
+
+        <a class="game-card" href="/dress-up-bug.html">
+          <img src="/bilder/godisbacillen.png" alt="Klä ut Bacillen" class="game-thumb game-thumb-bg-candy">
+          <div class="game-body">
+            <div class="game-age age-candy">3–6 år</div>
+            <div class="game-title">Klä ut Bacillen 🎨</div>
+            <p class="game-desc">Klä på Godisbacillen med roliga tillbehör och spara bilden!</p>
+          </div>
+        </a>
+
+        <a class="game-card" href="/love-bug-game/">
+          <img src="/bilder/karleksbacillen.png" alt="Sprid kärleken" class="game-thumb game-thumb-bg-love">
+          <div class="game-body">
+            <div class="game-age age-love">3–6 år</div>
+            <div class="game-title">Sprid kärleken!</div>
+            <p class="game-desc">Rita kärlekslinjer från Kärleksbacillen till alla!</p>
+          </div>
+        </a>
+
+        <a class="game-card" href="/heart-bug-maze/">
+          <img src="/bilder/karleksbacillen.png" alt="Kärleksbacillen i labyrinten" class="game-thumb game-thumb-bg-love">
+          <div class="game-body">
+            <div class="game-age age-love">4–8 år</div>
+            <div class="game-title">Labyrinten</div>
+            <p class="game-desc">Hjälp Kärleksbacillen hitta hjärtat i labyrinten!</p>
+          </div>
+        </a>
+
+        <a class="game-card" href="/Memory/">
+          <img src="/bilder/alla-bacillerna.png" alt="Memory med Bacillerna" class="game-thumb game-thumb-bg-dance">
+          <div class="game-body">
+            <div class="game-age age-dance">4–8 år</div>
+            <div class="game-title">Memory</div>
+            <p class="game-desc">Hitta alla par med Bacillerna-korten!</p>
+          </div>
+        </a>
+
+        <a class="game-card" href="/Dentist/">
+          <img src="/bilder/godisbacillen-springer.png" alt="Godisbacillen rymmer från tandläkaren" class="game-thumb game-thumb-bg-candy">
+          <div class="game-body">
+            <div class="game-age age-brand">6–10 år</div>
+            <div class="game-title">Rymmer från tandläkaren!</div>
+            <p class="game-desc">Spring! Hoppa! Samla godis — men se upp för tandläkaren!</p>
+          </div>
+        </a>
+
+        <a class="game-card" href="/activity-book.html">
+          <img src="/bilder/alla-bacillerna.png" alt="Aktivitetsbok" class="game-thumb" style="background:#FFE8E0;">
+          <div class="game-body">
+            <div class="game-age age-orange">3–8 år</div>
+            <div class="game-title">Aktivitetsbok 📚</div>
+            <p class="game-desc">Labyrinter, färgläggning, memory och karaktärsfakta!</p>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <nav class="app-nav">
+    <a href="/app/"><span class="ni">🏠</span>Start</a>
+    <a href="/app/titta.html"><span class="ni">🎬</span>Titta</a>
+    <a href="/app/sagor.html"><span class="ni">📚</span>Sagor</a>
+    <a href="/app/spel.html" class="active"><span class="ni">🎮</span>Spel</a>
+    <a href="/app/halsning.html"><span class="ni">💌</span>Hälsning</a>
+  </nav>
+
+</body>
+</html>

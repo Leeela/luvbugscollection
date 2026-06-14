@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Hälsning – Bacillerna</title>
+  <link rel="manifest" href="/app/manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --candy: #7BC142; --candy-deep: #5C9B22; --candy-light: #E5F4D6;
+      --love: #FF6B9D; --love-deep: #D63A75; --love-light: #FFE0EE;
+      --happy: #FFB347; --happy-deep: #C97D00; --happy-light: #FFF0D6;
+      --tease: #FFD93D; --tease-deep: #B89400; --tease-light: #FFFBE0;
+      --brand-deep: #E55A40;
+      --font-heading: 'Fredoka', sans-serif;
+      --font-body: 'Nunito', sans-serif;
+      --nav-h: 68px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background: #fff; color: #2a2a2a; padding-bottom: calc(var(--nav-h) + 20px); }
+    button { font-family: var(--font-body); }
+
+    .page-hero {
+      background: linear-gradient(135deg, var(--love-light) 0%, var(--happy-light) 100%);
+      padding: 28px 20px 30px; text-align: center;
+    }
+    .page-hero h1 { font-family: var(--font-heading); font-size: 34px; font-weight: 700; }
+    .page-hero p { font-size: 15px; color: #555; margin-top: 8px; max-width: 380px; margin-left: auto; margin-right: auto; line-height: 1.5; }
+
+    /* ── STEP BLOCKS ── */
+    .step { padding: 22px 16px; max-width: 600px; margin: 0 auto; }
+    .step + .step { border-top: 1px solid #f0f0f0; }
+    .step-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .step-num {
+      width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+      font-family: var(--font-heading); font-size: 17px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--love); color: white; transition: background 0.2s;
+    }
+    .step-num.pending { background: #ddd; color: #aaa; }
+    .step-num.done { background: var(--candy); }
+    .step-title { font-family: var(--font-heading); font-size: 21px; font-weight: 700; }
+
+    /* ── CHARACTER GRID ── */
+    .char-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .char-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      background: white; border: 3px solid #eee; border-radius: 18px;
+      padding: 16px 10px; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      -webkit-tap-highlight-color: transparent; user-select: none;
+    }
+    .char-btn img { width: 76px; height: 76px; object-fit: contain; display: block; }
+    .char-btn .char-name { font-family: var(--font-heading); font-size: 15px; font-weight: 700; text-align: center; line-height: 1.2; }
+    .char-btn.sel-candy  { border-color: var(--candy);      background: var(--candy-light); }
+    .char-btn.sel-love   { border-color: var(--love);       background: var(--love-light); }
+    .char-btn.sel-happy  { border-color: var(--happy);      background: var(--happy-light); }
+    .char-btn.sel-tease  { border-color: var(--tease-deep); background: var(--tease-light); }
+
+    /* ── OCCASION GRID ── */
+    .occasion-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .occasion-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      background: white; border: 3px solid #eee; border-radius: 16px;
+      padding: 13px 6px; cursor: pointer;
+      font-family: var(--font-heading); font-size: 13px; font-weight: 700; text-align: center;
+      -webkit-tap-highlight-color: transparent; user-select: none;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .occasion-btn .oc-icon { font-size: 28px; line-height: 1; }
+    .occasion-btn.selected { border-color: var(--love); background: var(--love-light); }
+
+    /* ── MESSAGE OPTIONS ── */
+    .msg-options { display: flex; flex-direction: column; gap: 10px; }
+    .msg-placeholder { color: #bbb; font-size: 14px; }
+    .msg-btn {
+      background: white; border: 3px solid #eee; border-radius: 14px;
+      padding: 15px 16px; cursor: pointer; text-align: left;
+      font-family: var(--font-body); font-size: 15px; font-weight: 600; line-height: 1.5;
+      color: #2a2a2a; width: 100%;
+      -webkit-tap-highlight-color: transparent; user-select: none;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .msg-btn.selected { border-color: var(--candy); background: var(--candy-light); }
+
+    /* ── PREVIEW + SEND ── */
+    .preview-area { max-width: 600px; margin: 0 auto; padding: 20px 16px; }
+    .preview-label { font-family: var(--font-heading); font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #aaa; margin-bottom: 10px; }
+    .preview-card {
+      background: linear-gradient(135deg, var(--love-light) 0%, var(--happy-light) 100%);
+      border-radius: 18px; padding: 20px 22px;
+      font-size: 15px; line-height: 1.8; color: #2a2a2a;
+      margin-bottom: 16px; white-space: pre-line;
+      border: 2px solid rgba(255,107,157,0.2);
+    }
+    .send-btn {
+      display: block; width: 100%;
+      background: linear-gradient(135deg, var(--love), var(--love-deep));
+      color: white; border: none; border-radius: 999px;
+      font-family: var(--font-heading); font-size: 22px; font-weight: 700;
+      padding: 18px 20px; cursor: pointer;
+      box-shadow: 0 4px 18px rgba(214,58,117,0.35);
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.1s;
+    }
+    .send-btn:active { transform: scale(0.97); }
+
+    /* ── FALLBACK ── */
+    .fallback-area { max-width: 600px; margin: 0 auto; padding: 0 16px 20px; }
+    .fallback-label { font-family: var(--font-heading); font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #aaa; margin-bottom: 8px; }
+    .fallback-box { background: #f7f7f7; border: 2px solid #eee; border-radius: 12px; padding: 16px; font-size: 14px; line-height: 1.8; white-space: pre-line; color: #333; margin-bottom: 12px; }
+    .copy-btn { background: var(--candy); color: white; border: none; border-radius: 999px; font-family: var(--font-heading); font-size: 17px; font-weight: 700; padding: 12px 28px; cursor: pointer; }
+
+    /* ── GATE OVERLAY ── */
+    .gate-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6); z-index: 500;
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .gate-overlay.open { display: flex; }
+    .gate-card {
+      background: white; border-radius: 24px;
+      padding: 30px 24px 24px; max-width: 340px; width: 100%;
+      text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .gate-icon { font-size: 46px; margin-bottom: 8px; }
+    .gate-title { font-family: var(--font-heading); font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+    .gate-text { font-size: 14px; color: #555; line-height: 1.5; margin-bottom: 16px; }
+    .gate-problem { font-family: var(--font-heading); font-size: 32px; font-weight: 700; color: var(--love-deep); margin-bottom: 14px; }
+    .gate-input {
+      display: block; width: 100%; max-width: 130px; margin: 0 auto 6px;
+      border: 3px solid #ddd; border-radius: 12px; outline: none;
+      font-family: var(--font-heading); font-size: 30px; font-weight: 700;
+      text-align: center; padding: 10px 8px;
+      transition: border-color 0.15s;
+      -moz-appearance: textfield;
+    }
+    .gate-input::-webkit-inner-spin-button,
+    .gate-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    .gate-input:focus { border-color: var(--love); }
+    .gate-input.shake { border-color: var(--brand-deep); animation: shake 0.35s; }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-8px); }
+      40%      { transform: translateX(8px); }
+      60%      { transform: translateX(-6px); }
+      80%      { transform: translateX(6px); }
+    }
+    .gate-error { font-size: 13px; color: var(--brand-deep); font-weight: 700; min-height: 20px; margin: 6px 0 12px; }
+    .gate-confirm {
+      display: block; width: 100%;
+      background: var(--love); color: white; border: none; border-radius: 999px;
+      font-family: var(--font-heading); font-size: 18px; font-weight: 700;
+      padding: 13px 20px; cursor: pointer; margin-bottom: 10px;
+    }
+    .gate-cancel-btn { background: none; border: none; color: #bbb; font-family: var(--font-body); font-size: 13px; font-weight: 700; cursor: pointer; padding: 4px; text-decoration: underline; }
+
+    /* ── BOTTOM NAV ── */
+    .app-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: var(--nav-h); background: #fff; border-top: 2px solid #eee;
+      display: flex; z-index: 100;
+    }
+    .app-nav a {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1px;
+      font-size: 10px; font-weight: 700; color: #bbb;
+      text-decoration: none; font-family: var(--font-body);
+      -webkit-tap-highlight-color: transparent;
+      text-transform: uppercase; letter-spacing: 0.3px;
+    }
+    .app-nav a .ni { font-size: 22px; }
+    .app-nav a.active { color: var(--love-deep); }
+
+    @media (max-width: 360px) {
+      .occasion-grid { grid-template-columns: 1fr 1fr; }
+      .char-btn img { width: 60px; height: 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-hero">
+    <h1>💌 Skicka en hälsning</h1>
+    <p>Välj en bacill, ett tillfälle och ett meddelande. En vuxen hjälper till att skicka!</p>
+  </div>
+
+  <!-- STEP 1: VÄLJ BACILL -->
+  <div class="step" id="step1">
+    <div class="step-head">
+      <div class="step-num done" id="num1">1</div>
+      <div class="step-title">Välj en bacill</div>
+    </div>
+    <div class="char-grid">
+      <button class="char-btn" id="char-candy"
+        onclick="pickChar('candy','Godisbacillen','🍬','/bilder/godisbacillen.png')">
+        <img src="/bilder/godisbacillen.png" alt="Godisbacillen">
+        <span class="char-name">Godisbacillen</span>
+      </button>
+      <button class="char-btn" id="char-love"
+        onclick="pickChar('love','Kärleksbacillen','💖','/bilder/karleksbacillen.png')">
+        <img src="/bilder/karleksbacillen.png" alt="Kärleksbacillen">
+        <span class="char-name">Kärleksbacillen</span>
+      </button>
+      <button class="char-btn" id="char-happy"
+        onclick="pickChar('happy','Glädgebacillen','😄','/bilder/gladjebacillen.png')">
+        <img src="/bilder/gladjebacillen.png" alt="Glädgebacillen">
+        <span class="char-name">Glädgebacillen</span>
+      </button>
+      <button class="char-btn" id="char-tease"
+        onclick="pickChar('tease','Retbacillen','😝','/bilder/retbacillen.png')">
+        <img src="/bilder/retbacillen.png" alt="Retbacillen">
+        <span class="char-name">Retbacillen</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 2: VÄLJ TILLFÄLLE -->
+  <div class="step" id="step2">
+    <div class="step-head">
+      <div class="step-num pending" id="num2">2</div>
+      <div class="step-title">Vilket tillfälle?</div>
+    </div>
+    <div class="occasion-grid">
+      <button class="occasion-btn" id="oc-birthday"  onclick="pickOccasion('birthday','Födelsedag','🎂')">
+        <span class="oc-icon">🎂</span><span>Födelsedag</span>
+      </button>
+      <button class="occasion-btn" id="oc-hugs"      onclick="pickOccasion('hugs','Kramar','🤗')">
+        <span class="oc-icon">🤗</span><span>Kramar</span>
+      </button>
+      <button class="occasion-btn" id="oc-goodluck"  onclick="pickOccasion('goodluck','Lycka till','⭐')">
+        <span class="oc-icon">⭐</span><span>Lycka till</span>
+      </button>
+      <button class="occasion-btn" id="oc-goodnight" onclick="pickOccasion('goodnight','God natt','🌙')">
+        <span class="oc-icon">🌙</span><span>God natt</span>
+      </button>
+      <button class="occasion-btn" id="oc-congrats"  onclick="pickOccasion('congrats','Grattis','🎉')">
+        <span class="oc-icon">🎉</span><span>Grattis</span>
+      </button>
+      <button class="occasion-btn" id="oc-justbecause" onclick="pickOccasion('justbecause','Bara för att','🌈')">
+        <span class="oc-icon">🌈</span><span>Bara för att</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 3: VÄLJ MEDDELANDE -->
+  <div class="step" id="step3">
+    <div class="step-head">
+      <div class="step-num pending" id="num3">3</div>
+      <div class="step-title">Välj ett meddelande</div>
+    </div>
+    <div class="msg-options" id="msg-options">
+      <p class="msg-placeholder">Välj bacill och tillfälle ovan först.</p>
+    </div>
+  </div>
+
+  <!-- FÖRHANDSVISNING + SKICKA-KNAPP -->
+  <div class="preview-area" id="preview-area" style="display:none;">
+    <div class="preview-label">Förhandsvisning</div>
+    <div class="preview-card" id="preview-card"></div>
+    <button class="send-btn" id="send-btn">Skicka hälsningen 💌</button>
+  </div>
+
+  <!-- RESERVLÖSNING (när Web Share saknas) -->
+  <div class="fallback-area" id="fallback-area" style="display:none;">
+    <div class="fallback-label">Kopiera och klistra in i en app:</div>
+    <div class="fallback-box" id="fallback-box"></div>
+    <button class="copy-btn" id="copy-btn" onclick="copyFallback()">Kopiera text 📋</button>
+  </div>
+
+  <!-- FÖRÄLDRAGRIND -->
+  <div class="gate-overlay" id="gate-overlay">
+    <div class="gate-card">
+      <div class="gate-icon">🔐</div>
+      <h2 class="gate-title">Vuxencheck!</h2>
+      <p class="gate-text">En vuxen behöver hjälpa till för att skicka. Räkna ut:</p>
+      <div class="gate-problem" id="gate-problem"></div>
+      <input
+        type="number" id="gate-input" class="gate-input"
+        inputmode="numeric" pattern="[0-9]*"
+        min="1" max="999" autocomplete="off"
+        aria-label="Svar på räkneuppgiften">
+      <p class="gate-error" id="gate-error" aria-live="polite"></p>
+      <button class="gate-confirm" id="gate-confirm">Bekräfta</button>
+      <button class="gate-cancel-btn" id="gate-cancel">Avbryt</button>
+    </div>
+  </div>
+
+  <nav class="app-nav">
+    <a href="/app/"><span class="ni">🏠</span>Start</a>
+    <a href="/app/titta.html"><span class="ni">🎬</span>Titta</a>
+    <a href="/app/sagor.html"><span class="ni">📚</span>Sagor</a>
+    <a href="/app/spel.html"><span class="ni">🎮</span>Spel</a>
+    <a href="/app/halsning.html" class="active"><span class="ni">💌</span>Hälsning</a>
+  </nav>
+
+  <script>
+    /* ── DATA ── */
+    const MSGS = {
+      birthday: [
+        'Grattis på födelsedagen! Hoppas du får massor av godis och roliga presenter! 🎂🍬',
+        'Yay, det är din dag idag! Du är superspeciell och jag tänker på dig! 🎉💖',
+        'Stor kram på din födelsedag! Hoppas det blir en magisk dag! 🎂🤗',
+      ],
+      hugs: [
+        'Skickar en jättestor kram rakt till dig! 🤗💖',
+        'Du förtjänar en hel hög med kramar — här är de! 🤗🤗🤗',
+        'Kramar från mig till dig, precis när du behöver det som mest! 💖',
+      ],
+      goodluck: [
+        'Du klarar det! Jag tror på dig med hela mitt hjärta! ⭐💪',
+        'Lycka till, hjälte! Du är modigare än du tror! ⭐🌟',
+        'Tummen upp! Du är fantastisk och du klarar precis allt! 💪⭐',
+      ],
+      goodnight: [
+        'Sov gott och drömm om godis och äventyr! 🌙🍬',
+        'Godnatt! Nu är det dags att sova och ladda om för imorgon! 🌙⭐',
+        'Sov sött, sov lugnt, sov gott — du är trygg och älskad! 🌙💖',
+      ],
+      congrats: [
+        'WOW! GRATTIS! Det du gjort är verkligen fantastiskt! 🎉⭐',
+        'Grattis, grattis, GRATTIS! Du är bäst! 🎉🎊🎉',
+        'Hurra för dig! Jag är så stolt och glad! 🎉💖',
+      ],
+      justbecause: [
+        'Jag tänker på dig just nu och ville bara säga hej! 💖🌈',
+        'Hoppas du har en riktigt bra dag! Du är speciell! 🌈😊',
+        'Du är världens bästa — det ville jag bara berätta! 💖⭐',
+      ],
+    };
+
+    /* ── STATE ── */
+    let selChar = null;       // { id, name, emoji }
+    let selOccasion = null;   // { id, name, emoji }
+    let selMsg = null;        // string
+    let gateA = 0, gateB = 0;
+
+    /* ── STEP 1: CHARACTER ── */
+    function pickChar(id, name, emoji) {
+      selChar = { id, name, emoji };
+      selMsg = null;
+
+      document.querySelectorAll('.char-btn').forEach(b => {
+        b.className = 'char-btn';
+      });
+      document.getElementById('char-' + id).classList.add('sel-' + id);
+      document.getElementById('num1').classList.remove('pending');
+      document.getElementById('num1').classList.add('done');
+
+      renderMsgOptions();
+      updatePreview();
+
+      setTimeout(() => {
+        document.getElementById('step2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 80);
+    }
+
+    /* ── STEP 2: OCCASION ── */
+    function pickOccasion(id, name, emoji) {
+      selOccasion = { id, name, emoji };
+      selMsg = null;
+
+      document.querySelectorAll('.occasion-btn').forEach(b => b.classList.remove('selected'));
+      document.getElementById('oc-' + id).classList.add('selected');
+      document.getElementById('num2').classList.remove('pending');
+
+      renderMsgOptions();
+      updatePreview();
+
+      setTimeout(() => {
+        document.getElementById('step3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+
+    /* ── STEP 3: MESSAGE ── */
+    function renderMsgOptions() {
+      const container = document.getElementById('msg-options');
+      if (!selChar || !selOccasion) {
+        container.innerHTML = '<p class="msg-placeholder">Välj bacill och tillfälle ovan först.</p>';
+        return;
+      }
+      const list = MSGS[selOccasion.id] || [];
+      container.innerHTML = list.map(m =>
+        `<button class="msg-btn" onclick="pickMsg(${JSON.stringify(m)}, this)">${m}</button>`
+      ).join('');
+    }
+
+    function pickMsg(text, el) {
+      selMsg = text;
+      document.querySelectorAll('.msg-btn').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+      document.getElementById('num3').classList.remove('pending');
+      updatePreview();
+      setTimeout(() => {
+        document.getElementById('preview-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+
+    /* ── PREVIEW ── */
+    function buildText() {
+      return (
+        'Hälsning från ' + selChar.name + ' ' + selChar.emoji + '\n\n' +
+        selOccasion.emoji + ' ' + selOccasion.name + '\n\n' +
+        '“' + selMsg + '”' + '\n\n' +
+        '— Skickat med Bacillerna-appen 🐛'
+      );
+    }
+
+    function updatePreview() {
+      const area = document.getElementById('preview-area');
+      const fb   = document.getElementById('fallback-area');
+      if (selChar && selOccasion && selMsg) {
+        document.getElementById('preview-card').textContent = buildText();
+        area.style.display = 'block';
+        fb.style.display = 'none';
+      } else {
+        area.style.display = 'none';
+        fb.style.display = 'none';
+      }
+    }
+
+    /* ── GATE ── */
+    function newProblem() {
+      /* ensure product is at least 12 so single-key guessing is hard */
+      do {
+        gateA = Math.floor(Math.random() * 8) + 2;
+        gateB = Math.floor(Math.random() * 8) + 2;
+      } while (gateA * gateB < 12);
+
+      document.getElementById('gate-problem').textContent = gateA + ' \xD7 ' + gateB + ' = ?';
+      const inp = document.getElementById('gate-input');
+      inp.value = '';
+      inp.classList.remove('shake');
+      document.getElementById('gate-error').textContent = '';
+    }
+
+    function openGate() {
+      newProblem();
+      document.getElementById('gate-overlay').classList.add('open');
+      setTimeout(() => document.getElementById('gate-input').focus(), 200);
+    }
+
+    function closeGate() {
+      document.getElementById('gate-overlay').classList.remove('open');
+    }
+
+    document.getElementById('send-btn').addEventListener('click', openGate);
+    document.getElementById('gate-cancel').addEventListener('click', closeGate);
+
+    document.getElementById('gate-confirm').addEventListener('click', checkGate);
+    document.getElementById('gate-input').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') checkGate();
+    });
+
+    function checkGate() {
+      const inp = document.getElementById('gate-input');
+      const val = parseInt(inp.value, 10);
+      if (val === gateA * gateB) {
+        closeGate();
+        doShare();
+      } else {
+        inp.classList.add('shake');
+        document.getElementById('gate-error').textContent = 'Fel svar — försök igen!';
+        setTimeout(() => {
+          newProblem();
+        }, 700);
+      }
+    }
+
+    /* Tapping outside the gate card does nothing — gate must be solved */
+    document.getElementById('gate-overlay').addEventListener('click', function(e) {
+      if (e.target === this) e.stopPropagation();
+    });
+
+    /* ── SHARE ── */
+    async function doShare() {
+      const text = buildText();
+      const url  = 'https://bacillerna.se/app/';
+      try {
+        if (navigator.share) {
+          await navigator.share({
+            title: 'Hälsning från ' + selChar.name,
+            text: text,
+            url: url,
+          });
+        } else {
+          showFallback(text);
+        }
+      } catch (err) {
+        if (err.name !== 'AbortError') showFallback(text);
+      }
+    }
+
+    function showFallback(text) {
+      document.getElementById('fallback-box').textContent = text;
+      document.getElementById('fallback-area').style.display = 'block';
+      document.getElementById('fallback-area').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    let fallbackText = '';
+    function copyFallback() {
+      const text = document.getElementById('fallback-box').textContent;
+      const btn  = document.getElementById('copy-btn');
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(function() {
+          btn.textContent = 'Kopierat! ✅';
+          setTimeout(function() { btn.textContent = 'Kopiera text 📋'; }, 2500);
+        });
+      }
+    }
+  </script>
+
+</body>
+</html>
