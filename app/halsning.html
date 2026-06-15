@@ -273,6 +273,7 @@
     <button class="copy-btn" id="copy-btn" onclick="copyFallback()">Kopiera text 📋</button>
   </div>
 
+
   <!-- FÖRÄLDRAGRIND -->
   <div class="gate-overlay" id="gate-overlay">
     <div class="gate-card">
@@ -442,7 +443,6 @@
     function openGate() {
       newProblem();
       document.getElementById('gate-overlay').classList.add('open');
-      setTimeout(() => document.getElementById('gate-input').focus(), 200);
     }
 
     function closeGate() {
