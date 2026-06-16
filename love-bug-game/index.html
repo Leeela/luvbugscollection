@@ -56,7 +56,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Nunito',
   <div id="msg">Draw a love line to every lonely character!</div>
 </div>
 <div id="video-overlay">
-  <video id="love-video" playsinline webkit-playsinline muted src="lovewave.mp4"></video>
+  <video id="love-video" playsinline webkit-playsinline src="lovewave.mp4"></video>
   <div id="video-label">💖 Love Wave!</div>
 </div>
 
@@ -209,12 +209,17 @@ function triggerWave(){
     }
   });
   videoOverlay.style.display='flex';
-  loveVideo.currentTime=0; loveVideo.play().catch(()=>{
-    setTimeout(()=>{
-      videoOverlay.style.display='none';
-      figureReact=false; figureHearts=[];
-      setTimeout(nextLevel,500);
-    },1500);
+  loveVideo.currentTime=0; loveVideo.muted=false; loveVideo.volume=1;
+  loveVideo.play().catch(()=>{
+    // Sound autoplay blocked → play muted so the animation still shows
+    loveVideo.muted=true;
+    loveVideo.play().catch(()=>{
+      setTimeout(()=>{
+        videoOverlay.style.display='none';
+        figureReact=false; figureHearts=[];
+        setTimeout(nextLevel,500);
+      },1500);
+    });
   });
 }
 

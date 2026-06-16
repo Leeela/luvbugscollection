@@ -23,8 +23,8 @@
 
   html, body {
     width: 100%;
-    height: 100svh;
-    height: 100vh;
+    height: 100vh; /* fallback */
+    height: 100svh; /* svh = synlig yta, exkluderar system-UI så D-paddorna inte hamnar utanför skärmen */
     overflow: hidden;
     font-family: 'Fredoka', sans-serif;
     background: #FFFEF8;
@@ -429,13 +429,12 @@ function findHardestGoal(g, startR, startC, cols, rows, topPercent) {
 }
 
 function resize() {
-  const headerEl   = document.querySelector('header');
-  const diffEl     = document.querySelector('.difficulty-bar');
-  const hintEl     = document.querySelector('.controls-hint');
-  const dpadEl     = document.querySelector('.dpad');
-  const reserved   = headerEl.offsetHeight + diffEl.offsetHeight + hintEl.offsetHeight + dpadEl.offsetHeight + 30;
-  const maxW       = Math.min(window.innerWidth - 16, 600);
-  const maxH       = window.innerHeight - reserved;
+  // Mät den faktiska ytan flexboxen gett spelplanen (inom synlig svh-höjd),
+  // istället för window.innerHeight (som kan vara högre än synlig yta på t.ex.
+  // Samsung-plattor → då trycktes D-paddorna utanför skärmen).
+  const wrap       = document.querySelector('.game-wrapper');
+  const maxW       = Math.min(wrap.clientWidth, 600);
+  const maxH       = wrap.clientHeight;
   const ratio      = COLS / ROWS;
   let w = maxW, h = maxW / ratio;
   if(h > maxH) { h = maxH; w = h * ratio; }
