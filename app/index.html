@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>Bacillerna</title>
+  <title>Luvbugs Collection</title>
   <link rel="manifest" href="/app/manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
@@ -26,84 +26,65 @@
 
     .hero {
       background: linear-gradient(160deg, #E5F4D6 0%, #FFE0EE 100%);
-      width: 100%;
-      text-align: center;
-      padding: 28px 20px 20px;
-      flex-shrink: 0;
+      width: 100%; text-align: center;
+      padding: 28px 20px 20px; flex-shrink: 0;
     }
     .hero img { width: 140px; height: auto; object-fit: contain; display: block; margin: 0 auto 10px; }
-    .hero h1 {
-      font-family: var(--font-heading);
-      font-size: 38px;
-      font-weight: 700;
-      color: #2a2a2a;
-      letter-spacing: 1px;
-    }
+    .hero h1 { font-family: var(--font-heading); font-size: 38px; font-weight: 700; color: #2a2a2a; letter-spacing: 1px; }
 
     .start-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      padding: 20px 16px 24px;
-      width: 100%;
-      max-width: 500px;
-      flex: 1;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+      padding: 20px 16px 24px; width: 100%; max-width: 500px; flex: 1;
     }
 
     .start-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      border-radius: 24px;
-      padding: 28px 12px;
-      text-decoration: none;
-      font-family: var(--font-heading);
-      font-size: 22px;
-      font-weight: 700;
-      color: white;
-      min-height: 140px;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 10px; border-radius: 24px;
+      padding: 28px 12px; text-decoration: none;
+      font-family: var(--font-heading); font-size: 22px; font-weight: 700;
+      color: white; min-height: 140px;
       box-shadow: 0 4px 16px rgba(0,0,0,0.13);
       transition: transform 0.12s, box-shadow 0.12s;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
+      -webkit-tap-highlight-color: transparent; user-select: none;
     }
     .start-btn:active { transform: scale(0.96); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
-
     .start-btn .icon { font-size: 48px; line-height: 1; }
 
-    .btn-titta  { background: linear-gradient(135deg, #FF8A75, #E55A40); }
-    .btn-sagor  { background: linear-gradient(135deg, #FFB347, #C97D00); }
-    .btn-spel   { background: linear-gradient(135deg, #7BC142, #5C9B22); }
-    .btn-halsning { background: linear-gradient(135deg, #FF6B9D, #D63A75); }
+    .btn-watch    { background: linear-gradient(135deg, #FF8A75, #E55A40); }
+    .btn-stories  { background: linear-gradient(135deg, #FFB347, #C97D00); }
+    .btn-games    { background: linear-gradient(135deg, #7BC142, #5C9B22); }
+    .btn-greeting { background: linear-gradient(135deg, #FF6B9D, #D63A75); }
   </style>
 </head>
 <body>
 
   <div class="hero">
-    <img src="/bilder/alla-bacillerna.png" alt="Bacillerna">
-    <h1>Bacillerna</h1>
+    <img src="/bilder/alla-bacillerna.png" alt="Luvbugs Collection">
+    <h1>Luvbugs</h1>
   </div>
 
   <div class="start-grid">
-    <a href="/app/titta.html" class="start-btn btn-titta">
+    <a href="/app/watch.html" class="start-btn btn-watch">
       <span class="icon">🎬</span>
-      Titta
+      Watch
     </a>
-    <a href="/app/sagor.html" class="start-btn btn-sagor">
+    <a href="/app/stories.html" class="start-btn btn-stories">
       <span class="icon">📚</span>
-      Sagor
+      Stories
     </a>
-    <a href="/app/spel.html" class="start-btn btn-spel">
+    <a href="/app/games.html" class="start-btn btn-games">
       <span class="icon">🎮</span>
-      Spel
+      Games
     </a>
-    <a href="/app/halsning.html" class="start-btn btn-halsning">
+    <a href="/app/greetings.html" class="start-btn btn-greeting">
       <span class="icon">💌</span>
-      Hälsning
+      Greetings
     </a>
   </div>
+
+  <p style="text-align:center; padding:8px 20px 24px; margin:0;">
+    <a href="/privacy.html" style="color:#aaa; font-size:12px; font-weight:700; text-decoration:none; font-family:'Nunito',sans-serif;">Privacy Policy</a>
+  </p>
 
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "e985bdf04c164c86b40875af0397828c"}'></script><!-- End Cloudflare Web Analytics -->
 </body>

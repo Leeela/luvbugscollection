@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Stories – Luvbugs Collection</title>
+  <link rel="manifest" href="/app/manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --candy: #7BC142; --candy-deep: #5C9B22;
+      --brand: #FF8A75; --brand-deep: #E55A40;
+      --love: #FF6B9D; --love-deep: #D63A75;
+      --happy: #FFB347; --happy-deep: #C97D00;
+      --tease: #FFD93D; --tease-deep: #B89400;
+      --dance: #4ECDC4; --dance-deep: #2BA89F;
+      --wealth: #D4A017; --wealth-deep: #A07A0A;
+      --font-heading: 'Fredoka', sans-serif;
+      --font-body: 'Nunito', sans-serif;
+      --nav-h: 68px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: #fff; color: #2a2a2a; padding-bottom: var(--nav-h); }
+    a { color: inherit; text-decoration: none; }
+
+    .page-hero {
+      background: linear-gradient(135deg, #FFF8E1 0%, #E8F5E3 50%, #FCE4EC 100%);
+      padding: 32px 20px 36px; text-align: center;
+    }
+    .page-hero h1 { font-family: var(--font-heading); font-size: 38px; font-weight: 700; color: #2a2a2a; }
+    .page-hero p { font-size: 16px; color: #555; margin-top: 8px; max-width: 420px; margin-left: auto; margin-right: auto; line-height: 1.5; }
+
+    section { padding: 28px 16px; }
+    section.bg-soft { background: #fafafa; }
+    .section-inner { max-width: 720px; margin: 0 auto; }
+    .section-label { font-family: var(--font-body); font-weight: 700; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #C97D00; margin-bottom: 6px; }
+    .section-title { font-family: var(--font-heading); font-size: 26px; font-weight: 700; margin-bottom: 16px; color: #2a2a2a; }
+
+    .spotify-wrap { border-radius: 16px; overflow: hidden; box-shadow: 0 6px 24px rgba(0,0,0,0.10); }
+    #spotify-player { min-height: 352px; }
+    #spotify-player iframe { display: block; width: 100%; border: 0; }
+
+    .episode-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+    .ep-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.07); display: flex; flex-direction: column; }
+    .ep-card-img { position: relative; aspect-ratio: 1; overflow: hidden; background: #f0f0f0; }
+    .ep-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ep-badge { position: absolute; top: 10px; left: 10px; font-family: var(--font-heading); font-weight: 700; font-size: 11px; padding: 3px 9px; border-radius: 999px; }
+    .ep-dur { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 999px; }
+    .ep-card-body { padding: 14px 16px 16px; flex: 1; display: flex; flex-direction: column; }
+    .ep-char { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
+    .ep-title { font-family: var(--font-heading); font-size: 15px; font-weight: 600; margin: 0 0 6px 0; line-height: 1.3; color: #2a2a2a; }
+    .ep-desc { font-size: 12px; color: #666; line-height: 1.5; flex: 1; margin-bottom: 12px; }
+    .ep-listen { display: inline-flex; align-items: center; gap: 5px; padding: 8px 16px; border-radius: 999px; font-family: var(--font-body); font-weight: 700; font-size: 12px; color: #222; background: #1DB954; border: none; cursor: pointer; -webkit-tap-highlight-color: transparent; align-self: flex-start; }
+    .ep-listen:active { background: #17a349; }
+
+    .player-hint { font-size: 13px; color: #777; text-align: center; margin-top: 12px; line-height: 1.5; }
+
+    .char-candy .ep-badge { background: #7BC142; color: white; }
+    .char-candy .ep-char { color: #5C9B22; }
+    .char-love .ep-badge { background: #FF6B9D; color: white; }
+    .char-love .ep-char { color: #D63A75; }
+    .char-happy .ep-badge { background: #FFB347; color: white; }
+    .char-happy .ep-char { color: #C97D00; }
+    .char-tease .ep-badge { background: #FFD93D; color: #333; }
+    .char-tease .ep-char { color: #B89400; }
+    .char-dance .ep-badge { background: #40E0D0; color: #064f49; }
+    .char-dance .ep-char { color: #2BA89F; }
+    .char-wealth .ep-badge { background: #D4AF37; color: #fff; }
+    .char-wealth .ep-char { color: #A07A0A; }
+    .char-default .ep-badge { background: #bbb; color: #fff; }
+    .char-default .ep-char { color: #888; }
+
+    .grid-note { color: #999; font-size: 14px; text-align: center; padding: 20px; }
+
+    .bug-group { margin-bottom: 30px; }
+    .bug-heading { font-family: var(--font-heading); font-size: 20px; font-weight: 700; margin-bottom: 14px; padding-left: 12px; border-left: 5px solid currentColor; line-height: 1.2; }
+    .bug-heading.char-candy  { color: #5C9B22; }
+    .bug-heading.char-love   { color: #D63A75; }
+    .bug-heading.char-happy  { color: #C97D00; }
+    .bug-heading.char-tease  { color: #B89400; }
+    .bug-heading.char-dance  { color: #2BA89F; }
+    .bug-heading.char-wealth { color: #A07A0A; }
+    .bug-heading.char-default { color: #888; }
+
+    .app-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: var(--nav-h); background: #fff; border-top: 2px solid #eee;
+      display: flex; z-index: 100;
+    }
+    .app-nav a {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1px;
+      font-size: 10px; font-weight: 700; color: #bbb;
+      text-decoration: none; font-family: var(--font-body);
+      -webkit-tap-highlight-color: transparent;
+      text-transform: uppercase; letter-spacing: 0.3px;
+    }
+    .app-nav a .ni { font-size: 22px; }
+    .app-nav a.active { color: #C97D00; }
+
+    @media (max-width: 480px) {
+      .episode-grid { grid-template-columns: 1fr; }
+      .page-hero h1 { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-hero">
+    <h1>📚 Stories</h1>
+    <p>Cosy bedtime stories with the Luvbugs — listen directly below.</p>
+  </div>
+
+  <section class="bg-soft" id="player">
+    <div class="section-inner">
+      <div class="section-label">Listen now</div>
+      <h2 class="section-title">Player</h2>
+      <div class="spotify-wrap">
+        <div id="spotify-player"></div>
+      </div>
+      <p class="player-hint">▶ Tap a story below to play it here — or browse directly in the player.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-inner">
+      <div class="section-label" id="ep-count">Episodes</div>
+      <h2 class="section-title">All stories</h2>
+      <div id="episode-list">
+        <p class="grid-note">Loading episodes…</p>
+      </div>
+    </div>
+  </section>
+
+  <nav class="app-nav">
+    <a href="/app/"><span class="ni">🏠</span>Home</a>
+    <a href="/app/watch.html"><span class="ni">🎬</span>Watch</a>
+    <a href="/app/stories.html" class="active"><span class="ni">📚</span>Stories</a>
+    <a href="/app/games.html"><span class="ni">🎮</span>Games</a>
+    <a href="/app/greetings.html"><span class="ni">💌</span>Card</a>
+  </nav>
+
+  <script>
+    (function () {
+      var list = document.getElementById('episode-list');
+      var player = document.getElementById('player');
+
+      function goPlayer(e) {
+        if (e) e.preventDefault();
+        player.scrollIntoView({ block: 'start' });
+      }
+
+      var EP_IDS = {
+        '1.1': '7fbSv4wGULkUjDNaw2Ll8P', '1.2': '0agvRBPyohB5BgFRMvZv3a', '1.3': '2tt6JfTXRNWMqtuF7aYFLA',
+        '1.4': '0RSKJ0tTXXbP11a86E0niX', '1.5': '0EC4bAqqPyLDFhGX29lKc8', '1.6': '76xxSPXKbzcxQDjOJDUcj6',
+        '1.7': '5RiVZCzbtuFXHegX2hjfi8', '1.8': '4HRnyrnMXjunOLIXUAULUR',
+        '2.1': '52cwX0Oq4qeJ0uKSKwKKJk', '2.2': '6BuXsV6kF1LOiEyG1sHzsn',
+        '3.1': '1PYRTEvTqIQUYe1jJiuDE4', '3.2': '1LqXJAI0d1jmxdSffKbqzv',
+        '4.1': '53EFTIbYIYNY1uxbcN1B2Y',
+        '5.1': '0Y0pq9SrElBUROTl6Ia9J2', '5.2': '20w0SkoiQraCfJBxvNWvbA',
+        '6.1': '26k63BFOeW8gsD5RAnn2rL', '6.2': '5fhRcpVzz8Se3k02IPDy0r'
+      };
+
+      var spotifyController = null, pendingUri = null;
+      window.onSpotifyIframeApiReady = function (IFrameAPI) {
+        IFrameAPI.createController(
+          document.getElementById('spotify-player'),
+          { width: '100%', height: 520, uri: 'spotify:show:2X0WwBDFy6mdud7rfAIzrZ' },
+          function (ctrl) {
+            spotifyController = ctrl;
+            if (pendingUri) { ctrl.loadUri(pendingUri); ctrl.play(); pendingUri = null; }
+          }
+        );
+      };
+      function startFallbackTimer() {
+        setTimeout(function () {
+          var host = document.getElementById('spotify-player');
+          if (!spotifyController && host && !host.querySelector('iframe')) {
+            host.innerHTML = '<iframe src="https://open.spotify.com/embed/show/2X0WwBDFy6mdud7rfAIzrZ" width="100%" height="520" frameborder="0" allow="encrypted-media" loading="lazy" title="Luvbugs — stories"></iframe>';
+          }
+        }, 4000);
+      }
+
+      function playEpisode(id) {
+        if (spotifyController) {
+          spotifyController.loadUri('spotify:episode:' + id);
+          spotifyController.play();
+        } else {
+          var ifr = document.querySelector('#spotify-player iframe');
+          if (ifr) ifr.src = 'https://open.spotify.com/embed/episode/' + id;
+          else pendingUri = 'spotify:episode:' + id;
+        }
+        player.scrollIntoView({ block: 'start' });
+      }
+
+      var BUGS = [
+        { re: /godisbacill|candy.?bug/i,   cls: 'char-candy',  name: 'Candy Bug' },
+        { re: /k(ä|a)rleksbacill|love.?bug|heart.?bug/i, cls: 'char-love', name: 'Love Bug' },
+        { re: /gl(ä|a)djebacill|smiley.?bug|joy.?bug/i,  cls: 'char-happy', name: 'Smiley Bug' },
+        { re: /retbacill|tease.?bug/i,     cls: 'char-tease',  name: 'Tease Bug' },
+        { re: /dansbacill|disco.?bug/i,    cls: 'char-dance',  name: 'Disco Bug' },
+        { re: /rikedomsbacill|rich.?bug/i, cls: 'char-wealth', name: 'Rich Bug' }
+      ];
+
+      function fmtDur(d) {
+        if (!d) return '';
+        var p = d.split(':').map(function (n) { return parseInt(n, 10) || 0; });
+        if (p.length === 3) return (p[0] * 60 + p[1]) + ':' + String(p[2]).padStart(2, '0');
+        if (p.length === 2) return p[0] + ':' + String(p[1]).padStart(2, '0');
+        return Math.floor(p[0] / 60) + ':' + String(p[0] % 60).padStart(2, '0');
+      }
+
+      function esc(s) {
+        return (s || '').replace(/[&<>"]/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+        });
+      }
+
+      function stripHtml(s) {
+        var d = document.createElement('div');
+        d.innerHTML = s || '';
+        var t = (d.textContent || '').replace(/\s+/g, ' ').trim();
+        return t.length > 120 ? t.slice(0, 117).trim() + '…' : t;
+      }
+
+      function detect(title) {
+        for (var i = 0; i < BUGS.length; i++) { if (BUGS[i].re.test(title)) return BUGS[i]; }
+        return { cls: 'char-default', name: 'Luvbugs' };
+      }
+
+      function showFallback() {
+        list.innerHTML = '<p class="grid-note">Could not load the episode list — use the player above to listen. ▶</p>';
+      }
+
+      function cardHtml(it) {
+        var b = it._b;
+        var img = it.image || '/bilder/alla-bacillerna.png';
+        var badgeTxt = it.episode ? ('Episode ' + it.episode) : 'Episode';
+        var epId = EP_IDS[it.season + '.' + it.episode];
+        return '<div class="ep-card ' + b.cls + '">' +
+            '<div class="ep-card-img">' +
+              '<img src="' + esc(img) + '" alt="' + esc(b.name) + '" loading="lazy">' +
+              '<span class="ep-badge">' + esc(badgeTxt) + '</span>' +
+              (it.dur ? '<span class="ep-dur">' + esc(it.dur) + '</span>' : '') +
+            '</div>' +
+            '<div class="ep-card-body">' +
+              '<h3 class="ep-title">' + esc(it.title) + '</h3>' +
+              '<p class="ep-desc">' + esc(it.desc || '') + '</p>' +
+              '<button class="ep-listen" type="button"' + (epId ? ' data-ep="' + epId + '"' : '') + '>▶ ' + (epId ? 'Play' : 'Play above') + '</button>' +
+            '</div>' +
+          '</div>';
+      }
+
+      function render(items) {
+        if (!items.length) { showFallback(); return; }
+        document.getElementById('ep-count').textContent = items.length + ' episodes';
+
+        var groups = {};
+        items.forEach(function (it) {
+          it._b = detect((it.title || '').trim());
+          var key = it.season || 99;
+          (groups[key] = groups[key] || []).push(it);
+        });
+        var keys = Object.keys(groups).map(Number).sort(function (a, b) { return a - b; });
+
+        list.innerHTML = keys.map(function (k) {
+          var grp = groups[k].sort(function (a, b) { return (a.episode || 99) - (b.episode || 99); });
+          var b = grp[0]._b;
+          return '<div class="bug-group">' +
+              '<h3 class="bug-heading ' + b.cls + '">' + esc(b.name) + '</h3>' +
+              '<div class="episode-grid">' + grp.map(cardHtml).join('') + '</div>' +
+            '</div>';
+        }).join('');
+
+        list.querySelectorAll('.ep-listen').forEach(function (btn) {
+          var ep = btn.getAttribute('data-ep');
+          btn.addEventListener('click', ep ? function () { playEpisode(ep); } : goPlayer);
+        });
+      }
+
+      function parseAndRender(raw) {
+        var xml = new DOMParser().parseFromString(raw, 'text/xml');
+        if (xml.querySelector('parsererror')) throw new Error('parse');
+        var ns = 'http://www.itunes.com/dtds/podcast-1.0.dtd';
+        var items = [].slice.call(xml.getElementsByTagName('item')).map(function (it) {
+          var titleEl = it.getElementsByTagName('title')[0];
+          var descEl = it.getElementsByTagName('description')[0] || it.getElementsByTagNameNS(ns, 'summary')[0];
+          var durEl = it.getElementsByTagNameNS(ns, 'duration')[0];
+          var imgEl = it.getElementsByTagNameNS(ns, 'image')[0];
+          var seasonEl = it.getElementsByTagNameNS(ns, 'season')[0];
+          var epEl = it.getElementsByTagNameNS(ns, 'episode')[0];
+          return {
+            title: titleEl ? titleEl.textContent : '',
+            desc: descEl ? stripHtml(descEl.textContent) : '',
+            dur: durEl ? fmtDur(durEl.textContent.trim()) : '',
+            image: imgEl ? imgEl.getAttribute('href') : '',
+            season: seasonEl ? parseInt(seasonEl.textContent, 10) : 0,
+            episode: epEl ? parseInt(epEl.textContent, 10) : 0
+          };
+        });
+        if (!items.length) throw new Error('empty');
+        render(items);
+      }
+
+      function load() {
+        var RSS = 'https://anchor.fm/s/110f36784/podcast/rss';
+        fetch(RSS)
+          .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.text(); })
+          .then(parseAndRender)
+          .catch(function () {
+            var PROXY = 'https://api.allorigins.win/get?url=' + encodeURIComponent(RSS);
+            return fetch(PROXY)
+              .then(function (r) { return r.json(); })
+              .then(function (data) {
+                var raw = data.contents || '';
+                if (raw.indexOf('data:') === 0) return fetch(raw).then(function (r) { return r.text(); });
+                return raw;
+              })
+              .then(parseAndRender);
+          })
+          .catch(function () { showFallback(); });
+      }
+
+      var s = document.createElement('script');
+      s.src = 'https://open.spotify.com/embed/iframe-api/v1';
+      s.async = true;
+      document.body.appendChild(s);
+      startFallbackTimer();
+      load();
+    })();
+  </script>
+
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "e985bdf04c164c86b40875af0397828c"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

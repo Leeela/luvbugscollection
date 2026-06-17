@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Greetings – Luvbugs Collection</title>
+  <link rel="manifest" href="/app/manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --candy: #7BC142; --candy-deep: #5C9B22; --candy-light: #E5F4D6;
+      --love: #FF6B9D; --love-deep: #D63A75; --love-light: #FFE0EE;
+      --happy: #FFB347; --happy-deep: #C97D00; --happy-light: #FFF0D6;
+      --tease: #FFD93D; --tease-deep: #B89400; --tease-light: #FFFBE0;
+      --brand-deep: #E55A40;
+      --font-heading: 'Fredoka', sans-serif;
+      --font-body: 'Nunito', sans-serif;
+      --nav-h: 68px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background: #fff; color: #2a2a2a; padding-bottom: calc(var(--nav-h) + 20px); }
+    button { font-family: var(--font-body); }
+
+    .page-hero {
+      background: linear-gradient(135deg, var(--love-light) 0%, var(--happy-light) 100%);
+      padding: 28px 20px 30px; text-align: center;
+    }
+    .page-hero h1 { font-family: var(--font-heading); font-size: 34px; font-weight: 700; }
+    .page-hero p { font-size: 15px; color: #555; margin-top: 8px; max-width: 380px; margin-left: auto; margin-right: auto; line-height: 1.5; }
+
+    .step { padding: 22px 16px; max-width: 600px; margin: 0 auto; }
+    .step + .step { border-top: 1px solid #f0f0f0; }
+    .step-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .step-num {
+      width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+      font-family: var(--font-heading); font-size: 17px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--love); color: white; transition: background 0.2s;
+    }
+    .step-num.pending { background: #ddd; color: #aaa; }
+    .step-num.done { background: var(--candy); }
+    .step-title { font-family: var(--font-heading); font-size: 21px; font-weight: 700; }
+
+    .char-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .char-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      background: white; border: 3px solid #eee; border-radius: 18px;
+      padding: 14px 8px; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      -webkit-tap-highlight-color: transparent; user-select: none;
+    }
+    .char-btn img { width: 64px; height: 64px; object-fit: contain; display: block; }
+    .char-btn .char-name { font-family: var(--font-heading); font-size: 12px; font-weight: 700; text-align: center; line-height: 1.2; }
+    .loading-note { color: #bbb; font-size: 14px; grid-column: 1 / -1; text-align: center; padding: 12px; }
+
+    .msg-options { display: flex; flex-direction: column; gap: 10px; }
+    .msg-placeholder { color: #bbb; font-size: 14px; }
+    .msg-btn {
+      display: flex; flex-direction: column; gap: 4px;
+      background: white; border: 3px solid #eee; border-radius: 14px;
+      padding: 14px 16px; cursor: pointer; text-align: left; width: 100%;
+      -webkit-tap-highlight-color: transparent; user-select: none;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .msg-btn.selected { border-color: var(--candy); background: var(--candy-light); }
+    .msg-title { font-family: var(--font-heading); font-size: 16px; font-weight: 700; color: #2a2a2a; }
+    .msg-prev { font-size: 13px; color: #666; line-height: 1.5; }
+
+    .preview-area { max-width: 600px; margin: 0 auto; padding: 20px 16px; }
+    .preview-label { font-family: var(--font-heading); font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #aaa; margin-bottom: 10px; }
+    .preview-video {
+      display: block; width: 100%; max-width: 240px; margin: 0 auto 14px;
+      aspect-ratio: 9 / 16; background: #000; border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+    }
+    .preview-title { font-family: var(--font-heading); font-size: 19px; font-weight: 700; text-align: center; margin-bottom: 6px; }
+    .preview-text { font-size: 14px; color: #555; line-height: 1.6; text-align: center; margin-bottom: 18px; }
+
+    .name-fields { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+    .name-fields label { font-size: 13px; font-weight: 700; color: #777; display: block; margin-bottom: 4px; }
+    .name-fields input {
+      width: 100%; border: 2px solid #e0e0e0; border-radius: 12px;
+      padding: 12px 14px; font-family: var(--font-body); font-size: 15px; outline: none;
+      transition: border-color 0.15s;
+    }
+    .name-fields input:focus { border-color: var(--love); }
+    .hint { font-weight: 600; color: #aaa; font-size: 12px; }
+
+    .send-btn {
+      display: block; width: 100%;
+      background: linear-gradient(135deg, var(--love), var(--love-deep));
+      color: white; border: none; border-radius: 999px;
+      font-family: var(--font-heading); font-size: 22px; font-weight: 700;
+      padding: 18px 20px; cursor: pointer;
+      box-shadow: 0 4px 18px rgba(214,58,117,0.35);
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.1s;
+    }
+    .send-btn:active { transform: scale(0.97); }
+
+    .fallback-area { max-width: 600px; margin: 0 auto; padding: 0 16px 20px; }
+    .fallback-label { font-family: var(--font-heading); font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #aaa; margin-bottom: 8px; }
+    .fallback-box { background: #f7f7f7; border: 2px solid #eee; border-radius: 12px; padding: 16px; font-size: 13px; line-height: 1.7; word-break: break-all; color: #333; margin-bottom: 12px; }
+    .copy-btn { background: var(--candy); color: white; border: none; border-radius: 999px; font-family: var(--font-heading); font-size: 17px; font-weight: 700; padding: 12px 28px; cursor: pointer; }
+
+    .gate-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6); z-index: 500;
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .gate-overlay.open { display: flex; }
+    .gate-card {
+      background: white; border-radius: 24px;
+      padding: 30px 24px 24px; max-width: 340px; width: 100%;
+      text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .gate-icon { font-size: 46px; margin-bottom: 8px; }
+    .gate-title { font-family: var(--font-heading); font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+    .gate-text { font-size: 14px; color: #555; line-height: 1.5; margin-bottom: 16px; }
+    .gate-problem { font-family: var(--font-heading); font-size: 32px; font-weight: 700; color: var(--love-deep); margin-bottom: 14px; }
+    .gate-input {
+      display: block; width: 100%; max-width: 130px; margin: 0 auto 6px;
+      border: 3px solid #ddd; border-radius: 12px; outline: none;
+      font-family: var(--font-heading); font-size: 30px; font-weight: 700;
+      text-align: center; padding: 10px 8px;
+      transition: border-color 0.15s;
+      -moz-appearance: textfield;
+    }
+    .gate-input::-webkit-inner-spin-button,
+    .gate-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    .gate-input:focus { border-color: var(--love); }
+    .gate-input.shake { border-color: var(--brand-deep); animation: shake 0.35s; }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-8px); }
+      40%      { transform: translateX(8px); }
+      60%      { transform: translateX(-6px); }
+      80%      { transform: translateX(6px); }
+    }
+    .gate-error { font-size: 13px; color: var(--brand-deep); font-weight: 700; min-height: 20px; margin: 6px 0 12px; }
+    .gate-confirm {
+      display: block; width: 100%;
+      background: var(--love); color: white; border: none; border-radius: 999px;
+      font-family: var(--font-heading); font-size: 18px; font-weight: 700;
+      padding: 13px 20px; cursor: pointer; margin-bottom: 10px;
+    }
+    .gate-cancel-btn { background: none; border: none; color: #bbb; font-family: var(--font-body); font-size: 13px; font-weight: 700; cursor: pointer; padding: 4px; text-decoration: underline; }
+
+    .app-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: var(--nav-h); background: #fff; border-top: 2px solid #eee;
+      display: flex; z-index: 100;
+    }
+    .app-nav a {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1px;
+      font-size: 10px; font-weight: 700; color: #bbb;
+      text-decoration: none; font-family: var(--font-body);
+      -webkit-tap-highlight-color: transparent;
+      text-transform: uppercase; letter-spacing: 0.3px;
+    }
+    .app-nav a .ni { font-size: 22px; }
+    .app-nav a.active { color: var(--love-deep); }
+  </style>
+</head>
+<body>
+
+  <div class="page-hero">
+    <h1>💌 Send a greeting</h1>
+    <p>Pick a bug and a message. A grown-up can help send the animation!</p>
+  </div>
+
+  <!-- STEP 1: PICK A BUG -->
+  <div class="step" id="step1">
+    <div class="step-head">
+      <div class="step-num done" id="num1">1</div>
+      <div class="step-title">Pick a bug</div>
+    </div>
+    <div class="char-grid" id="char-grid">
+      <p class="loading-note">Loading bugs…</p>
+    </div>
+  </div>
+
+  <!-- STEP 2: PICK A MESSAGE -->
+  <div class="step" id="step2">
+    <div class="step-head">
+      <div class="step-num pending" id="num2">2</div>
+      <div class="step-title">Pick a message</div>
+    </div>
+    <div class="msg-options" id="msg-options">
+      <p class="msg-placeholder">Pick a bug above first.</p>
+    </div>
+  </div>
+
+  <!-- PREVIEW + SEND -->
+  <div class="preview-area" id="preview-area" style="display:none;">
+    <div class="preview-label">Preview</div>
+    <video class="preview-video" id="preview-video" controls playsinline preload="metadata"></video>
+    <div class="preview-title" id="preview-title"></div>
+    <div class="preview-text" id="preview-text"></div>
+    <div class="name-fields">
+      <div>
+        <label for="till">To whom? <span class="hint">(optional)</span></label>
+        <input type="text" id="till" maxlength="30" autocomplete="off" placeholder="e.g. Grandma">
+      </div>
+      <div>
+        <label for="fran">From? <span class="hint">(optional)</span></label>
+        <input type="text" id="fran" maxlength="30" autocomplete="off" placeholder="e.g. Lily">
+      </div>
+    </div>
+    <button class="send-btn" id="send-btn">Send the greeting 💌</button>
+  </div>
+
+  <!-- FALLBACK (when Web Share is unavailable) -->
+  <div class="fallback-area" id="fallback-area" style="display:none;">
+    <div class="fallback-label">Copy the link and paste it in an app:</div>
+    <div class="fallback-box" id="fallback-box"></div>
+    <button class="copy-btn" id="copy-btn">Copy link 📋</button>
+  </div>
+
+  <!-- PARENT GATE -->
+  <div class="gate-overlay" id="gate-overlay">
+    <div class="gate-card">
+      <div class="gate-icon">🔐</div>
+      <h2 class="gate-title">Grown-up check!</h2>
+      <p class="gate-text">A grown-up needs to help send this. Solve:</p>
+      <div class="gate-problem" id="gate-problem"></div>
+      <input
+        type="number" id="gate-input" class="gate-input"
+        inputmode="numeric" pattern="[0-9]*"
+        min="1" max="999" autocomplete="off"
+        aria-label="Answer to the maths problem">
+      <p class="gate-error" id="gate-error" aria-live="polite"></p>
+      <button class="gate-confirm" id="gate-confirm">Confirm</button>
+      <button class="gate-cancel-btn" id="gate-cancel">Cancel</button>
+    </div>
+  </div>
+
+  <nav class="app-nav">
+    <a href="/app/"><span class="ni">🏠</span>Home</a>
+    <a href="/app/watch.html"><span class="ni">🎬</span>Watch</a>
+    <a href="/app/stories.html"><span class="ni">📚</span>Stories</a>
+    <a href="/app/games.html"><span class="ni">🎮</span>Games</a>
+    <a href="/app/greetings.html" class="active"><span class="ni">💌</span>Card</a>
+  </nav>
+
+  <script>
+    var DATA = null;
+    var selKey = null, selBug = null, selMsg = null;
+    var gateA = 0, gateB = 0;
+
+    fetch('/love/data/messages.json')
+      .then(function (r) { return r.json(); })
+      .then(function (data) { DATA = data; renderBugs(); })
+      .catch(function () {
+        document.getElementById('char-grid').innerHTML =
+          '<p class="loading-note">Could not load the bugs. Check your connection and try again.</p>';
+      });
+
+    function scrollToId(id) {
+      setTimeout(function () {
+        document.getElementById(id).scrollIntoView({ block: 'start' });
+      }, 100);
+    }
+
+    function renderBugs() {
+      var grid = document.getElementById('char-grid');
+      var entries = Object.keys(DATA.baciller).filter(function (k) { return DATA.baciller[k].aktiv; });
+      grid.innerHTML = entries.map(function (k) {
+        var b = DATA.baciller[k];
+        return '<button class="char-btn" type="button" data-key="' + k + '">' +
+                 '<img src="/love/' + b.image_en + '" alt="' + b.namn_en + '">' +
+                 '<span class="char-name">' + b.namn_en + '</span>' +
+               '</button>';
+      }).join('');
+      grid.querySelectorAll('.char-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () { pickBug(btn.dataset.key, btn); });
+      });
+    }
+
+    function pickBug(key, btn) {
+      selKey = key; selBug = DATA.baciller[key]; selMsg = null;
+      document.querySelectorAll('#char-grid .char-btn').forEach(function (b) {
+        b.style.borderColor = '#eee'; b.style.background = '#fff';
+      });
+      btn.style.borderColor = selBug.farg_primar;
+      btn.style.background = selBug.farg_mjuk;
+      document.getElementById('num1').classList.remove('pending');
+      document.getElementById('num1').classList.add('done');
+      renderMessages();
+      updatePreview();
+      scrollToId('step2');
+    }
+
+    function renderMessages() {
+      var c = document.getElementById('msg-options');
+      if (!selBug) {
+        c.innerHTML = '<p class="msg-placeholder">Pick a bug above first.</p>';
+        return;
+      }
+      var msgs = selBug.meddelanden.filter(function (m) { return m.aktiv; });
+      c.innerHTML = msgs.map(function (m, i) {
+        return '<button class="msg-btn" type="button" data-idx="' + i + '">' +
+                 '<span class="msg-title">' + m.titel_en + '</span>' +
+                 '<span class="msg-prev">' + m.forhandsvisning_en + '</span>' +
+               '</button>';
+      }).join('');
+      c.querySelectorAll('.msg-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          pickMsg(msgs[parseInt(btn.dataset.idx, 10)], btn);
+        });
+      });
+      document.getElementById('num2').classList.remove('pending');
+    }
+
+    function pickMsg(m, btn) {
+      selMsg = m;
+      document.querySelectorAll('#msg-options .msg-btn').forEach(function (b) { b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      document.getElementById('num2').classList.add('done');
+      updatePreview();
+      scrollToId('preview-area');
+    }
+
+    function updatePreview() {
+      var area = document.getElementById('preview-area');
+      if (selBug && selMsg) {
+        var v = document.getElementById('preview-video');
+        v.src = '/love/videos/' + selMsg.video_en;
+        document.getElementById('preview-title').textContent = selMsg.titel_en;
+        document.getElementById('preview-text').textContent = selMsg.forhandsvisning_en;
+        area.style.display = 'block';
+        document.getElementById('fallback-area').style.display = 'none';
+      } else {
+        area.style.display = 'none';
+        document.getElementById('fallback-area').style.display = 'none';
+      }
+    }
+
+    function buildLink() {
+      var till = document.getElementById('till').value.trim();
+      var fran = document.getElementById('fran').value.trim();
+      var enc = function (s) {
+        return (s || '')
+          .replace(/[.#\s]/g, function (c) {
+            return '%' + c.charCodeAt(0).toString(16).padStart(2, '0').toUpperCase();
+          });
+      };
+      var parts = [selKey, String(selMsg.id)];
+      if (till || fran) parts.push(enc(till));
+      if (fran) parts.push(enc(fran));
+      return location.origin + '/love/k/#' + parts.join('.');
+    }
+
+    function newProblem() {
+      do {
+        gateA = Math.floor(Math.random() * 8) + 2;
+        gateB = Math.floor(Math.random() * 8) + 2;
+      } while (gateA * gateB < 12);
+      document.getElementById('gate-problem').textContent = gateA + ' \xD7 ' + gateB + ' = ?';
+      var inp = document.getElementById('gate-input');
+      inp.value = '';
+      inp.classList.remove('shake');
+      document.getElementById('gate-error').textContent = '';
+    }
+
+    function openGate() {
+      if (!selBug || !selMsg) return;
+      newProblem();
+      document.getElementById('gate-overlay').classList.add('open');
+    }
+    function closeGate() {
+      document.getElementById('gate-overlay').classList.remove('open');
+    }
+
+    document.getElementById('send-btn').addEventListener('click', openGate);
+    document.getElementById('gate-cancel').addEventListener('click', closeGate);
+    document.getElementById('gate-confirm').addEventListener('click', checkGate);
+    document.getElementById('gate-input').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') checkGate();
+    });
+
+    function checkGate() {
+      var inp = document.getElementById('gate-input');
+      var val = parseInt(inp.value, 10);
+      if (val === gateA * gateB) {
+        closeGate();
+        doShare();
+      } else {
+        inp.classList.add('shake');
+        document.getElementById('gate-error').textContent = 'Wrong answer — try again!';
+        setTimeout(newProblem, 700);
+      }
+    }
+
+    function doShare() {
+      var link = buildLink();
+      var shareText = 'I sent you a greeting from the Luvbugs — a fun animated clip 💛';
+      try {
+        if (navigator.share) {
+          navigator.share({ title: 'A greeting from the Luvbugs', text: shareText, url: link })
+            .catch(function (err) { if (err && err.name !== 'AbortError') showFallback(link); });
+        } else {
+          showFallback(link);
+        }
+      } catch (e) {
+        showFallback(link);
+      }
+    }
+
+    function showFallback(link) {
+      document.getElementById('fallback-box').textContent = link;
+      document.getElementById('fallback-area').style.display = 'block';
+      document.getElementById('fallback-area').scrollIntoView();
+    }
+
+    document.getElementById('copy-btn').addEventListener('click', function () {
+      var link = document.getElementById('fallback-box').textContent;
+      var btn = document.getElementById('copy-btn');
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(link).then(function () {
+          btn.textContent = 'Copied! ✅';
+          setTimeout(function () { btn.textContent = 'Copy link 📋'; }, 2500);
+        });
+      }
+    });
+  </script>
+
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "e985bdf04c164c86b40875af0397828c"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
