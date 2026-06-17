@@ -116,6 +116,27 @@
       transform: scale(1.05);
     }
 
+    .char-btn.active[data-char="gladje"] {
+      border-color: #FFB347;
+      background: #FFF1DC;
+      color: #8a5a00;
+      transform: scale(1.05);
+    }
+
+    .char-btn.active[data-char="ret"] {
+      border-color: #FFD93D;
+      background: #FFFBE0;
+      color: #8a7000;
+      transform: scale(1.05);
+    }
+
+    .char-btn.active[data-char="dans"] {
+      border-color: #4ECDC4;
+      background: #E0F7F5;
+      color: #1f7a73;
+      transform: scale(1.05);
+    }
+
     .char-btn:focus-visible { outline: 3px solid var(--candy); outline-offset: 2px; }
 
     @media (max-width: 420px) {
@@ -305,6 +326,18 @@
       <img src="../bilder/karleksbacillen.png" alt="Love Bug">
       <span>Love Bug</span>
     </button>
+    <button class="char-btn" data-char="gladje" aria-label="Choose Joy Bug">
+      <img src="../bilder/gladjebacillen.png" alt="Joy Bug">
+      <span>Joy Bug</span>
+    </button>
+    <button class="char-btn" data-char="ret" aria-label="Choose Tease Bug">
+      <img src="../bilder/retbacillen.png" alt="Tease Bug">
+      <span>Tease Bug</span>
+    </button>
+    <button class="char-btn" data-char="dans" aria-label="Choose Disco Bug">
+      <img src="../bilder/dansbacillen.png" alt="Disco Bug">
+      <span>Disco Bug</span>
+    </button>
     <button class="char-btn" data-char="rikedom" aria-label="Choose Wealth Bug">
       <img src="../bilder/rikedomsbacillen.png" alt="Wealth Bug">
       <span>Wealth Bug</span>
@@ -346,11 +379,19 @@ const ACCESSORIES = [
   { id: 'butterfly',     emoji: '🦋', label: 'Butterfly' },
   { id: 'guitar',        emoji: '🎸', label: 'Guitar' },
   { id: 'heart',         emoji: '❤️', label: 'Heart' },
+  { id: 'cap',           emoji: '🧢', label: 'Cap' },
+  { id: 'sunhat',        emoji: '👒', label: 'Sun Hat' },
+  { id: 'wand',          emoji: '🪄', label: 'Magic Wand' },
+  { id: 'lollipop',      emoji: '🍭', label: 'Lollipop' },
+  { id: 'balloon',       emoji: '🎈', label: 'Balloon' },
 ];
 
 const CHARACTERS = {
   godis:   { src: '../bilder/godisbacillen.png',    alt: 'Candy Bug' },
   karlek:  { src: '../bilder/karleksbacillen.png',  alt: 'Love Bug' },
+  gladje:  { src: '../bilder/gladjebacillen.png',   alt: 'Joy Bug' },
+  ret:     { src: '../bilder/retbacillen.png',      alt: 'Tease Bug' },
+  dans:    { src: '../bilder/dansbacillen.png',     alt: 'Disco Bug' },
   rikedom: { src: '../bilder/rikedomsbacillen.png', alt: 'Wealth Bug' },
 };
 
