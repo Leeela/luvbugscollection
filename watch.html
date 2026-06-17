@@ -92,7 +92,6 @@
   .section-inner { max-width: 920px; margin: 0 auto; }
   .section-eyebrow { font-family: var(--font-body); font-weight: 700; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--char-color-deep); margin-bottom: 8px; }
   .section-title { font-family: var(--font-heading); font-weight: 700; font-size: 36px; margin: 0 0 18px 0; color: var(--color-text-primary); line-height: 1.2; }
-  .prose { font-size: 17px; color: var(--color-text-secondary); line-height: 1.75; margin: 0 0 32px 0; max-width: 640px; }
 
   .player-wrap { background: white; border: 2px solid var(--color-border); border-radius: var(--radius-lg); padding: 12px; box-shadow: 0 6px 24px rgba(0,0,0,0.06); margin-bottom: 16px; }
   .player-frame { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: var(--radius-md); background: #000; }
@@ -102,24 +101,12 @@
   .player-meta a { color: var(--char-color-deep); text-decoration: none; font-weight: 700; }
   .player-meta a:hover { text-decoration: underline; }
 
-  .episode-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 24px; }
-  .episode-link { display: flex; align-items: center; gap: 14px; background: white; border: 2px solid var(--color-border); border-radius: var(--radius-md); padding: 14px 18px; text-decoration: none; transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s; }
-  .episode-link:hover { transform: translateY(-2px); border-color: var(--char-color); box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
-  .episode-num { font-family: var(--font-heading); font-weight: 700; font-size: 14px; color: white; background: var(--char-color); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; letter-spacing: 0; }
-  .episode-title { font-family: var(--font-body); font-weight: 600; font-size: 14px; color: var(--color-text-primary); line-height: 1.3; }
-
-  .btn { display: inline-block; padding: 14px 28px; border-radius: var(--radius-pill); font-family: var(--font-body); font-weight: 700; font-size: 15px; text-decoration: none; border: none; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
-  .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.15); }
-  .btn-primary { background: var(--char-color); color: white; }
-  .btn-primary:hover { background: var(--char-color-deep); }
-
   @media (max-width: 720px) {
     .hero-parent { padding: 48px 20px 56px; }
     .hero-parent h1 { font-size: 36px; }
     .hero-parent p { font-size: 16px; }
     section { padding: 56px 20px; }
     .section-title { font-size: 26px; }
-    .episode-list { grid-template-columns: 1fr; }
   }
 
   .site-footer { background: #f2f2f2; color: #333; padding: 48px 32px 32px; }
