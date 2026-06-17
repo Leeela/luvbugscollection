@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Watch – Luvbugs Collection</title>
+  <link rel="manifest" href="/app/manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --candy: #7BC142; --candy-deep: #5C9B22;
+      --brand: #FF8A75; --brand-deep: #E55A40; --brand-light: #FFD9CE;
+      --love: #FF6B9D; --love-deep: #D63A75;
+      --happy: #FFB347; --happy-deep: #C97D00;
+      --tease: #FFD93D; --tease-deep: #B89400;
+      --dance: #4ECDC4; --dance-deep: #2BA89F;
+      --wealth: #D4A017; --wealth-deep: #A07A0A;
+      --font-heading: 'Fredoka', sans-serif;
+      --font-body: 'Nunito', sans-serif;
+      --nav-h: 68px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background: #fff; color: #2a2a2a; padding-bottom: var(--nav-h); }
+    a { color: inherit; text-decoration: none; }
+
+    .page-hero {
+      background: linear-gradient(180deg, var(--brand-light) 0%, #FFEFEA 100%);
+      padding: 32px 20px 36px;
+      text-align: center;
+    }
+    .page-hero h1 { font-family: var(--font-heading); font-size: 38px; font-weight: 700; color: #2a2a2a; }
+    .page-hero p { font-size: 16px; color: #555; margin-top: 8px; max-width: 420px; margin-left: auto; margin-right: auto; line-height: 1.5; }
+
+    section { padding: 28px 16px; }
+    section:nth-child(even) { background: #fafafa; }
+    .section-inner { max-width: 720px; margin: 0 auto; }
+    .section-label { font-family: var(--font-body); font-weight: 700; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--brand-deep); margin-bottom: 6px; }
+    .section-title { font-family: var(--font-heading); font-size: 26px; font-weight: 700; margin-bottom: 14px; color: #2a2a2a; }
+
+    .player-wrap { background: white; border: 2px solid #f0f0f0; border-radius: 18px; padding: 10px; box-shadow: 0 4px 18px rgba(0,0,0,0.07); margin-bottom: 8px; }
+    .player-frame { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; background: #000; }
+    .player-frame iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+    .player-label { padding: 8px 4px 2px; font-size: 13px; color: #888; }
+    .player-label strong { color: #2a2a2a; font-family: var(--font-heading); font-size: 15px; }
+
+    .app-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      background: #fff; border-top: 2px solid #eee;
+      display: flex; z-index: 100;
+    }
+    .app-nav a {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1px;
+      font-size: 10px; font-weight: 700; color: #bbb;
+      text-decoration: none; font-family: var(--font-body);
+      -webkit-tap-highlight-color: transparent;
+      text-transform: uppercase; letter-spacing: 0.3px;
+    }
+    .app-nav a .ni { font-size: 22px; }
+    .app-nav a.active { color: var(--brand-deep); }
+
+    @media (max-width: 480px) {
+      .page-hero h1 { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-hero">
+    <h1>🎬 Watch</h1>
+    <p>Short animations with the Luvbugs — new episodes on YouTube!</p>
+  </div>
+
+  <section>
+    <div class="section-inner">
+      <div class="section-label">All videos</div>
+      <h2 class="section-title">Candy Bug</h2>
+      <div class="player-wrap">
+        <div class="player-frame">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/videoseries?list=PL-8MlwtgM26Qcwr6RluZ3_WKKNOuDS8RQ&rel=0&iv_load_policy=3&modestbranding=1"
+            title="Candy Bug — all videos"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen></iframe>
+        </div>
+        <div class="player-label"><strong>CANDY BUG</strong> · All videos</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-inner">
+      <div class="section-label" style="color:var(--love-deep);">💗 Heart Bug</div>
+      <h2 class="section-title">Heart Bug</h2>
+      <div class="player-wrap">
+        <div class="player-frame">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/videoseries?list=PL-8MlwtgM26RBjcMnNEtL4dlzfW2yNOzA&rel=0&iv_load_policy=3&modestbranding=1"
+            title="Heart Bug — Shorts"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen></iframe>
+        </div>
+        <div class="player-label"><strong>HEART BUG</strong> · Shorts</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-inner">
+      <div class="section-label" style="color:var(--happy-deep);">😄 Smiley Bug</div>
+      <h2 class="section-title">Smiley Bug</h2>
+      <div class="player-wrap">
+        <div class="player-frame">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/videoseries?list=PL-8MlwtgM26QPinT0BHfM8FVH568-pi8J&rel=0&iv_load_policy=3&modestbranding=1"
+            title="Smiley Bug — Shorts"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen></iframe>
+        </div>
+        <div class="player-label"><strong>SMILEY BUG</strong> · Shorts</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-inner">
+      <div class="section-label" style="color:var(--tease-deep);">😜 Tease Bug</div>
+      <h2 class="section-title">Tease Bug</h2>
+      <div class="player-wrap">
+        <div class="player-frame">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/videoseries?list=PL-8MlwtgM26TFnpv1eEzNN9F6ch17XjFe&rel=0&iv_load_policy=3&modestbranding=1"
+            title="Tease Bug — Shorts"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen></iframe>
+        </div>
+        <div class="player-label"><strong>TEASE BUG</strong> · Shorts</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-inner">
+      <div class="section-label" style="color:var(--dance-deep);">💃 Disco Bug</div>
+      <h2 class="section-title">Disco Bug</h2>
+      <div class="player-wrap">
+        <div class="player-frame">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/videoseries?list=PL-8MlwtgM26RhPTm4QiZnKAz96EGseHnv&rel=0&iv_load_policy=3&modestbranding=1"
+            title="Disco Bug — Shorts"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen></iframe>
+        </div>
+        <div class="player-label"><strong>DISCO BUG</strong> · Shorts</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-inner">
+      <div class="section-label" style="color:var(--wealth-deep);">💰 Rich Bug</div>
+      <h2 class="section-title">Rich Bug</h2>
+      <div class="player-wrap">
+        <div class="player-frame">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/videoseries?list=PL-8MlwtgM26RzpCI6sqRkHZc1d8A0Livw&rel=0&iv_load_policy=3&modestbranding=1"
+            title="Rich Bug — Shorts"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen></iframe>
+        </div>
+        <div class="player-label"><strong>RICH BUG</strong> · Shorts</div>
+      </div>
+    </div>
+  </section>
+
+  <nav class="app-nav">
+    <a href="/app/"><span class="ni">🏠</span>Home</a>
+    <a href="/app/watch.html" class="active"><span class="ni">🎬</span>Watch</a>
+    <a href="/app/sagor.html"><span class="ni">📚</span>Stories</a>
+    <a href="/app/spel.html"><span class="ni">🎮</span>Games</a>
+    <a href="/app/halsning.html"><span class="ni">💌</span>Card</a>
+  </nav>
+
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "e985bdf04c164c86b40875af0397828c"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
