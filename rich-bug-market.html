@@ -10,9 +10,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Luv Bugs">
 <link rel="apple-touch-icon" href="/icons/icon-180.png">
-<title>Wealth Bug's Market – Kids Game | Luv Bugs Collection</title>
-<meta name="description" content="Help Wealth Bug make smart deals! Buy or skip — what's worth your gold coins? Fun learning game for kids ages 4–8.">
-<link rel="canonical" href="https://luvbugscollection.com/wealth-bug-market.html" />
+<title>Rich Bug's Market – Kids Game | Luv Bugs Collection</title>
+<meta name="description" content="Help Rich Bug make smart deals! Buy or skip — what's worth your gold coins? Fun learning game for kids ages 4–8.">
+<link rel="canonical" href="https://luvbugscollection.com/rich-bug-market.html" />
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; touch-action: manipulation; }
@@ -237,8 +237,8 @@ body {
 
 <!-- MENU -->
 <div class="screen active" id="screen-menu">
-  <img src="/bilder/rikedomsbacillen.png" id="menu-bug" alt="Wealth Bug">
-  <h1>Wealth Bug's<br>Market 🏪</h1>
+  <img src="/bilder/rikedomsbacillen.png" id="menu-bug" alt="Rich Bug">
+  <h1>Rich Bug's<br>Market 🏪</h1>
   <p>Smart deal or waste of gold coins? You decide!</p>
   <button class="play-btn" onclick="startGame()">🟡 Play!</button>
 </div>
@@ -255,7 +255,7 @@ body {
   </div>
 
   <div class="char-row">
-    <img src="/bilder/rikedomsbacillen.png" class="char-img" id="charImg" alt="Wealth Bug">
+    <img src="/bilder/rikedomsbacillen.png" class="char-img" id="charImg" alt="Rich Bug">
     <div class="bubble" id="bubble">Welcome to the market! 🤑</div>
   </div>
 
@@ -284,7 +284,7 @@ body {
   <div id="end-emoji">🎉</div>
   <h1 id="end-title">Great job!</h1>
   <p id="end-msg">You made it through the market!</p>
-  <img src="/bilder/rikedomsbacillen.png" id="end-bug" alt="Wealth Bug">
+  <img src="/bilder/rikedomsbacillen.png" id="end-bug" alt="Rich Bug">
   <button class="play-btn" onclick="startGame()">🔄 Play again</button>
   <a href="/games.html" style="font-family:'Fredoka',sans-serif;font-size:clamp(14px,3vmin,18px);color:var(--gold-deep);text-decoration:none;font-weight:600;">← Back to games</a>
 </div>
@@ -308,7 +308,8 @@ const ITEMS = [
   { emoji:'🎁', name:'Mystery gift',     price:6,  worth:14, valuable:true  },
 ];
 
-const BUBBLES_OFFER  = ['Want to buy a {name} for {price} coins? 🤔','Look what I found! A {name} for just {price} coins! 🤑','Special offer! {name} — price: {price} coins. Deal? 😏'];
+const BUBBLES_OFFER  = ['Want to buy {an} {name} for {price} coins? 🤔','Look what I found! {An} {name} for just {price} coins! 🤑','Special offer! {name} — price: {price} coins. Deal? 😏'];
+function article(name, cap) { const a = /^[aeiou]/i.test(name) ? 'an' : 'a'; return cap ? a[0].toUpperCase()+a[1] : a; }
 const BUBBLES_GOOD   = ['Wonderful! That was a great deal! 🤑','Smart move! You earned coins on that purchase! 🥳','Exactly right! Wealth comes from wise choices! 🏆'];
 const BUBBLES_WASTE  = ['Hmm… that wasn\'t my best deal! 😅','Oops! Bad buys cost coins! 💸','Next time — think a little more! 🤔'];
 const BUBBLES_SMART  = ['Clever! You didn\'t waste your coins! 👏','Smart! Not everything shiny is gold! ✨','Exactly! Save your coins for better deals! 💰'];
@@ -360,7 +361,7 @@ function nextRound() {
   emojiEl.style.filter = item.gold ? 'sepia(1) saturate(6) hue-rotate(5deg) brightness(1.1)' : '';
   document.getElementById('itemName').textContent = item.name;
   document.getElementById('itemPrice').textContent = item.price + ' coins';
-  const offerText = pick(BUBBLES_OFFER).replace('{name}', item.name).replace('{price}', item.price);
+  const offerText = pick(BUBBLES_OFFER).replace('{an}', article(item.name, false)).replace('{An}', article(item.name, true)).replace('{name}', item.name).replace('{price}', item.price);
   document.getElementById('bubble').textContent = offerText;
   document.getElementById('feedback').className = 'feedback neutral';
   document.getElementById('feedback').textContent = 'Is it worth your gold coins?';
@@ -422,7 +423,7 @@ function endGame() {
   let emoji, title, msg;
   if (coins <= 0) {
     emoji = '😢'; title = 'No coins left!';
-    msg = 'Wealth Bug wants to train you more. Try again!';
+    msg = 'Rich Bug wants to train you more. Try again!';
   } else if (coins > 25) {
     emoji = '🏆'; title = 'Master Trader!';
     msg = `You ended with 🟡${coins} coins — fantastic!`;
