@@ -318,6 +318,25 @@ const BUBBLES_MISSED = ['You missed a good deal! But it happens! 😮','Sometime
 const TOTAL = 8;
 let coins = 15, round = 0, order = [], waiting = true;
 
+function playCoinSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [1046, 1318, 1568].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+      const t = ctx.currentTime + i * 0.09;
+      gain.gain.setValueAtTime(0.28, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+      osc.start(t);
+      osc.stop(t + 0.45);
+    });
+  } catch(e) {}
+}
+
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 function shuffle(arr) {
   const a = [...arr];
@@ -394,6 +413,7 @@ function answer(bought) {
       fb.className = 'feedback good';
       fb.textContent = `🎉 Great deal! ${item.name} is worth 🟡${item.worth} — you earned ${gain} coins!`;
       document.getElementById('bubble').textContent = pick(BUBBLES_GOOD);
+      playCoinSound();
     } else {
       coins -= item.price;
       fb.className = 'feedback bad';
@@ -409,6 +429,7 @@ function answer(bought) {
       fb.className = 'feedback good';
       fb.textContent = `✅ Smart! ${item.name} wasn't worth a single coin. Good call!`;
       document.getElementById('bubble').textContent = pick(BUBBLES_SMART);
+      playCoinSound();
     }
   }
 
