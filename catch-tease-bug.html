@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="/back-to-app.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<link rel="manifest" href="/app/manifest.json">
+<meta name="theme-color" content="#FFD700">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="LuvBugs Collection">
+<link rel="apple-touch-icon" href="/icons/icon-180.png">
+<title>Catch Tease Bug – Kids Game | LuvBugs Collection</title>
+<meta name="description" content="Tap Tease Bug before he runs away! A fun reaction game for kids. Choose easy, medium or hard.">
+<link rel="canonical" href="https://luvbugscollection.com/catch-tease-bug.html" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; touch-action: manipulation; }
+
+:root {
+  --safe-top:    env(safe-area-inset-top,    0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left:   env(safe-area-inset-left,   0px);
+  --safe-right:  env(safe-area-inset-right,  0px);
+}
+
+body {
+  font-family: 'Fredoka', sans-serif;
+  background: #FFF9C4;
+  height: 100dvh;
+  overflow: hidden;
+  user-select: none;
+}
+
+.screen {
+  position: fixed; inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
+}
+.screen.active { display: flex; }
+
+/* ── MENU ── */
+#screen-menu {
+  justify-content: center;
+  gap: clamp(12px, 3vmin, 22px);
+  background: linear-gradient(160deg, #FFF9C4 0%, #FFE57A 100%);
+}
+
+#screen-menu h1 {
+  font-size: clamp(24px, 6vmin, 48px);
+  color: #C44D00;
+  text-align: center;
+}
+
+#menu-bug {
+  width: clamp(90px, 24vmin, 180px);
+  animation: bob 2s ease-in-out infinite;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.15));
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50%       { transform: translateY(-10px) rotate(3deg); }
+}
+
+.level-btn {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(17px, 4.5vmin, 26px);
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  padding: clamp(11px,2.5vmin,16px) clamp(28px,6vmin,48px);
+  width: clamp(190px, 55vw, 300px);
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+  box-shadow: 0 6px 0 rgba(0,0,0,0.15);
+}
+.level-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 rgba(0,0,0,0.15); }
+
+#btn-easy   { background: #7BC142; color: white; }
+#btn-medium { background: #FFD700; color: #5A3A00; }
+#btn-hard   { background: #E55A40; color: white; }
+
+#menu-more-games {
+  margin-top: 4px;
+  font-size: clamp(14px, 3.5vmin, 18px);
+  color: #C44D00;
+  text-decoration: none;
+  opacity: 0.75;
+  padding: 8px 16px;
+}
+#menu-more-games:hover { opacity: 1; text-decoration: underline; }
+
+/* ── GAME ── */
+#screen-game {
+  background: #FFF9C4;
+  justify-content: flex-start;
+}
+
+#hud {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255,215,0,0.4);
+  backdrop-filter: blur(4px);
+  min-height: 52px;
+  flex-shrink: 0;
+}
+
+#hud-back {
+  font-size: clamp(18px, 4.5vmin, 26px);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  color: #C44D00;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  min-width: 44px; min-height: 44px;
+  display: flex; align-items: center; justify-content: center;
+}
+#hud-back:active { background: rgba(0,0,0,0.08); }
+
+#hud-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: clamp(18px, 4.5vmin, 26px);
+  font-weight: 600;
+  color: #C44D00;
+  letter-spacing: 2px;
+}
+
+#hud-right {
+  font-size: clamp(18px, 4.5vmin, 26px);
+  font-weight: 600;
+  color: #C44D00;
+  text-align: right;
+  min-width: 70px;
+}
+
+#arena {
+  flex: 1;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+#bug {
+  position: absolute;
+  width: clamp(80px, 20vmin, 150px);
+  height: auto;
+  cursor: pointer;
+  display: none;
+  transform-origin: center center;
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.2));
+}
+#bug.pop-in  { animation: popIn  0.28s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+#bug.pop-out { animation: popOut 0.22s ease-in forwards; }
+
+@keyframes popIn {
+  from { transform: scale(0) rotate(-15deg); opacity: 0; }
+  to   { transform: scale(1) rotate(0deg);   opacity: 1; }
+}
+@keyframes popOut {
+  from { transform: scale(1); opacity: 1; }
+  to   { transform: scale(0) rotate(15deg); opacity: 0; }
+}
+
+#hit-text {
+  position: absolute;
+  font-size: clamp(28px, 9vmin, 60px);
+  font-weight: 700;
+  color: #E55A40;
+  pointer-events: none;
+  display: none;
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+}
+@keyframes floatUp {
+  from { transform: translateY(0) scale(1); opacity: 1; }
+  to   { transform: translateY(-50px) scale(1.3); opacity: 0; }
+}
+
+/* ── RESULT ── */
+#screen-result {
+  justify-content: center;
+  gap: clamp(10px, 2.5vmin, 18px);
+  background: linear-gradient(160deg, #FFF9C4 0%, #FFE57A 100%);
+  text-align: center;
+  padding-left: max(20px, var(--safe-left));
+  padding-right: max(20px, var(--safe-right));
+}
+
+#result-emoji  { font-size: clamp(44px, 13vmin, 80px); }
+#result-title  { font-size: clamp(22px, 6vmin, 40px); font-weight: 700; color: #C44D00; }
+#result-label  { font-size: clamp(15px, 3.5vmin, 22px); color: #666; }
+#result-score  { font-size: clamp(56px, 16vmin, 100px); font-weight: 700; color: #E55A40; line-height: 1; }
+#result-unit   { font-size: clamp(15px, 3.5vmin, 22px); color: #666; }
+
+.result-btn {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(15px, 4vmin, 22px);
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  padding: clamp(10px,2.5vmin,14px) clamp(24px,5vmin,40px);
+  width: clamp(200px, 60vw, 300px);
+  cursor: pointer;
+  box-shadow: 0 5px 0 rgba(0,0,0,0.15);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.result-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.15); }
+
+#btn-replay     { background: #FFD700; color: #5A3A00; }
+#btn-next-level { background: #E55A40; color: white; }
+#btn-back-menu  { background: white; color: #888; border: 1px solid #ddd; box-shadow: none; }
+</style>
+</head>
+<body>
+
+<!-- ── MENU ── -->
+<div id="screen-menu" class="screen">
+  <img id="menu-bug" src="/bilder/retbacillen.png" alt="Tease Bug">
+  <h1>Catch Tease Bug!</h1>
+  <button class="level-btn" id="btn-easy"   onclick="startGame('easy')">😊 Easy</button>
+  <button class="level-btn" id="btn-medium" onclick="startGame('medium')">😏 Medium</button>
+  <button class="level-btn" id="btn-hard"   onclick="startGame('hard')">😤 Hard</button>
+  <a href="/games.html" id="menu-more-games">🎮 More games</a>
+</div>
+
+<!-- ── GAME ── -->
+<div id="screen-game" class="screen">
+  <div id="hud">
+    <button id="hud-back" onclick="goMenu()">←</button>
+    <div id="hud-center"></div>
+    <div id="hud-right"></div>
+  </div>
+  <div id="arena">
+    <img id="bug" src="/bilder/retbacillen.png" alt="Tease Bug" onclick="catchBug()">
+    <div id="hit-text">Got ya!</div>
+  </div>
+</div>
+
+<!-- ── RESULT ── -->
+<div id="screen-result" class="screen">
+  <div id="result-emoji">🏆</div>
+  <div id="result-title"></div>
+  <div id="result-label">You caught</div>
+  <div id="result-score"></div>
+  <div id="result-unit">Tease Bugs!</div>
+  <button class="result-btn" id="btn-replay"     onclick="replayGame()">🔄 Play again</button>
+  <button class="result-btn" id="btn-next-level" onclick="goNextLevel()"></button>
+  <button class="result-btn" id="btn-back-menu"  onclick="goMenu()">← Choose level</button>
+</div>
+
+<script>
+const LEVELS = {
+  easy:   { showTime: 2200, missDelay: 600, lives: Infinity, countdown: 0 },
+  medium: { showTime: 1500, missDelay: 500, lives: 3,        countdown: 0 },
+  hard:   { showTime: 900,  missDelay: 350, lives: Infinity, countdown: 60 },
+};
+const NEXT_LEVEL = { easy: 'medium', medium: 'hard', hard: null };
+const NEXT_LABEL = { easy: '😏 Try Medium!', medium: '😤 Try Hard!', hard: null };
+
+let level, score, lives, timeLeft, active;
+let bugTimer, countdownInterval, nextTimer;
+let currentLevel = 'easy';
+
+const $ = id => document.getElementById(id);
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+const SFX = {
+  nanana: new Audio('/ljud/nanana.mp3'),
+  aj:     new Audio('/ljud/aj.mp3'),
+  skratt: new Audio('/ljud/skratt.mp3'),
+};
+function speak(key) {
+  const sfx = SFX[key];
+  if (!sfx) return;
+  sfx.currentTime = 0;
+  sfx.play().catch(() => {});
+}
+
+function updateHud() {
+  $('hud-right').textContent = '⭐ ' + score;
+  if (lives !== Infinity) {
+    $('hud-center').textContent = '❤️'.repeat(Math.max(0, lives));
+  } else if (level.countdown) {
+    $('hud-center').textContent = '⏱ ' + timeLeft + 's';
+  } else {
+    $('hud-center').textContent = '';
+  }
+}
+
+function startGame(lvlKey) {
+  currentLevel = lvlKey;
+  level  = LEVELS[lvlKey];
+  score  = 0;
+  lives  = level.lives;
+  timeLeft = level.countdown;
+  active = true;
+  show('screen-game');
+  updateHud();
+
+  if (level.countdown) {
+    countdownInterval = setInterval(() => {
+      timeLeft--;
+      updateHud();
+      if (timeLeft <= 0) endGame();
+    }, 1000);
+  }
+
+  scheduleBug();
+}
+
+function scheduleBug() {
+  if (!active) return;
+  nextTimer = setTimeout(showBug, level.missDelay);
+}
+
+function showBug() {
+  if (!active) return;
+  const bug   = $('bug');
+  const arena = $('arena');
+  const bw = bug.offsetWidth  || 120;
+  const bh = bug.offsetHeight || 120;
+  const margin = 20;
+
+  const x = margin + Math.random() * Math.max(0, arena.offsetWidth  - bw - margin * 2);
+  const y = margin + Math.random() * Math.max(0, arena.offsetHeight - bh - margin * 2);
+
+  bug.style.left = x + 'px';
+  bug.style.top  = y + 'px';
+  bug.style.display = 'block';
+  bug.className = 'pop-in';
+
+  speak('nanana');
+  bugTimer = setTimeout(missedBug, level.showTime);
+}
+
+function catchBug() {
+  if (!active) return;
+  clearTimeout(bugTimer);
+  score++;
+  speak('aj');
+  showHitText();
+  hideBug(() => scheduleBug());
+  updateHud();
+}
+
+function missedBug() {
+  if (!active) return;
+  speak('skratt');
+  hideBug(() => {
+    if (lives !== Infinity) {
+      lives--;
+      updateHud();
+      if (lives <= 0) { endGame(); return; }
+    }
+    scheduleBug();
+  });
+}
+
+function hideBug(cb) {
+  const bug = $('bug');
+  bug.className = 'pop-out';
+  setTimeout(() => {
+    bug.style.display = 'none';
+    bug.className = '';
+    if (cb) cb();
+  }, 220);
+}
+
+function showHitText() {
+  const bug = $('bug');
+  const hit = $('hit-text');
+  hit.style.left   = (parseInt(bug.style.left)  + 20) + 'px';
+  hit.style.top    = (parseInt(bug.style.top)   - 10) + 'px';
+  hit.style.display = 'block';
+  hit.style.animation = 'none';
+  void hit.offsetWidth;
+  hit.style.animation = 'floatUp 0.6s ease-out forwards';
+  setTimeout(() => { hit.style.display = 'none'; }, 600);
+}
+
+function stopGame() {
+  active = false;
+  clearTimeout(bugTimer);
+  clearTimeout(nextTimer);
+  clearInterval(countdownInterval);
+  $('bug').style.display = 'none';
+}
+
+function endGame() {
+  stopGame();
+  $('result-emoji').textContent = score >= 15 ? '🏆' : score >= 8 ? '⭐' : '😅';
+  $('result-title').textContent = currentLevel === 'hard' ? 'Time\'s up!' : 'Game over!';
+  $('result-score').textContent = score;
+
+  const nextLvl = NEXT_LEVEL[currentLevel];
+  const nextBtn = $('btn-next-level');
+  if (nextLvl) {
+    nextBtn.textContent = NEXT_LABEL[currentLevel];
+    nextBtn.style.display = '';
+  } else {
+    nextBtn.style.display = 'none';
+  }
+
+  setTimeout(() => show('screen-result'), 400);
+}
+
+function replayGame()   { startGame(currentLevel); }
+function goNextLevel()  { startGame(NEXT_LEVEL[currentLevel]); }
+function goMenu() {
+  stopGame();
+  show('screen-menu');
+}
+
+show('screen-menu');
+</script>
+</body>
+</html>
