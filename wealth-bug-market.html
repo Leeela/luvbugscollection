@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="/app-mode.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#D4A017">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Luv Bugs">
+<link rel="apple-touch-icon" href="/icons/icon-180.png">
+<title>Wealth Bug's Market – Kids Game | Luv Bugs Collection</title>
+<meta name="description" content="Help Wealth Bug make smart deals! Buy or skip — what's worth your gold coins? Fun learning game for kids ages 4–8.">
+<link rel="canonical" href="https://luvbugscollection.com/wealth-bug-market.html" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; touch-action: manipulation; }
+
+:root {
+  --safe-top:    env(safe-area-inset-top,    0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left:   env(safe-area-inset-left,   0px);
+  --safe-right:  env(safe-area-inset-right,  0px);
+  --gold:        #D4A017;
+  --gold-deep:   #A07A0A;
+  --gold-light:  #FEF3C7;
+  --gold-mid:    #FDE68A;
+}
+
+body {
+  font-family: 'Fredoka', sans-serif;
+  background: var(--gold-light);
+  height: 100dvh;
+  overflow: hidden;
+  user-select: none;
+}
+
+.screen {
+  position: fixed; inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
+}
+.screen.active { display: flex; }
+
+/* ── MENU ── */
+#screen-menu {
+  justify-content: center;
+  gap: clamp(10px, 2.5vmin, 20px);
+  background: linear-gradient(160deg, #fffbea 0%, #fef3c7 60%, #fde68a 100%);
+}
+#menu-bug {
+  width: clamp(110px, 28vmin, 200px);
+  animation: bob 2.2s ease-in-out infinite;
+  filter: drop-shadow(0 8px 18px rgba(160,120,0,0.2));
+}
+@keyframes bob {
+  0%,100% { transform: translateY(0) rotate(-2deg); }
+  50%      { transform: translateY(-12px) rotate(2deg); }
+}
+#screen-menu h1 { font-size: clamp(22px,5.5vmin,42px); color: var(--gold-deep); text-align: center; line-height: 1.2; }
+#screen-menu p  { font-size: clamp(14px,3.5vmin,20px); color: #78350f; text-align: center; max-width: 320px; }
+
+.play-btn {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(18px,4.5vmin,28px);
+  font-weight: 700;
+  border: none;
+  border-radius: 50px;
+  padding: clamp(12px,2.5vmin,18px) clamp(36px,8vmin,60px);
+  background: linear-gradient(135deg, var(--gold-deep), var(--gold));
+  color: #3d1f00;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(160,120,0,0.4);
+  transition: transform 0.1s;
+}
+.play-btn:active { transform: scale(0.95); }
+
+/* ── GAME ── */
+#screen-game {
+  background: linear-gradient(180deg, #fffbea 0%, var(--gold-light) 100%);
+  justify-content: flex-start;
+}
+
+.game-header {
+  width: 100%;
+  background: linear-gradient(135deg, var(--gold-deep), var(--gold));
+  padding: clamp(8px,1.5vmin,12px) clamp(14px,3vmin,22px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--gold-deep);
+  flex-shrink: 0;
+}
+.coin-display {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(0,0,0,0.15);
+  border-radius: 20px;
+  padding: 5px 14px;
+}
+.coin-display span { color: #fff; font-size: clamp(1rem,3vmin,1.4rem); font-weight: 700; }
+.round-display { color: #3d1f00; font-size: clamp(0.85rem,2.5vmin,1rem); font-weight: 700; }
+
+.char-row {
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(8px,2vmin,14px);
+  padding: clamp(10px,2vmin,16px) clamp(12px,3vmin,20px) clamp(6px,1vmin,10px);
+  width: 100%;
+  max-width: 500px;
+  flex-shrink: 0;
+}
+.char-img {
+  width: clamp(70px,18vmin,110px);
+  height: clamp(70px,18vmin,110px);
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 10px rgba(160,120,0,0.3));
+}
+.char-img.bounce { animation: cbounce 0.5s ease; }
+@keyframes cbounce { 0%,100%{transform:translateY(0)} 40%{transform:translateY(-14px)} }
+.bubble {
+  flex: 1;
+  background: #fff;
+  border: 2.5px solid var(--gold);
+  border-radius: 18px 18px 18px 4px;
+  padding: clamp(9px,2vmin,13px) clamp(12px,2.5vmin,16px);
+  font-size: clamp(0.85rem,2.5vmin,1rem);
+  color: #78350f;
+  font-weight: 600;
+  line-height: 1.4;
+  box-shadow: 0 2px 8px rgba(160,120,0,0.12);
+  min-height: clamp(54px,12vmin,72px);
+  display: flex;
+  align-items: center;
+}
+
+.item-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(4px,1vmin,10px) clamp(12px,3vmin,20px);
+  width: 100%;
+}
+.item-box {
+  background: #fffdf0;
+  border: 3px solid var(--gold);
+  border-radius: 22px;
+  padding: clamp(14px,3vmin,22px);
+  text-align: center;
+  min-width: clamp(130px,35vmin,180px);
+  box-shadow: 0 4px 16px rgba(212,160,23,0.2);
+}
+.item-box.pop { animation: pop 0.35s ease; }
+@keyframes pop { 0%{transform:scale(0.65) rotate(-4deg)} 70%{transform:scale(1.06)} 100%{transform:scale(1)} }
+.item-emoji { font-size: clamp(3rem,10vmin,5rem); margin-bottom: 4px; display: block; }
+.item-name { font-size: clamp(0.9rem,2.5vmin,1.1rem); color: #78350f; font-weight: 700; margin-bottom: 10px; }
+.price-tag {
+  background: linear-gradient(135deg, var(--gold-deep), var(--gold));
+  border-radius: 20px;
+  padding: 5px 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(160,120,0,0.35);
+}
+.price-tag span { font-size: clamp(0.85rem,2.5vmin,1rem); font-weight: 800; color: #3d1f00; }
+
+.btn-row {
+  display: flex;
+  gap: clamp(10px,2.5vmin,16px);
+  padding: clamp(6px,1.5vmin,10px) clamp(12px,3vmin,20px);
+  width: 100%;
+  max-width: 500px;
+  flex-shrink: 0;
+}
+.action-btn {
+  flex: 1;
+  border: none;
+  border-radius: 18px;
+  padding: clamp(14px,3.5vmin,20px);
+  font-size: clamp(1.1rem,3.5vmin,1.5rem);
+  font-weight: 800;
+  cursor: pointer;
+  font-family: 'Fredoka', sans-serif;
+  transition: transform 0.1s;
+}
+.action-btn:active { transform: scale(0.93); }
+.btn-yes { background: linear-gradient(135deg,#16a34a,#22c55e); color:#fff; box-shadow:0 4px 14px rgba(22,163,74,0.4); }
+.btn-no  { background: linear-gradient(135deg,#dc2626,#ef4444); color:#fff; box-shadow:0 4px 14px rgba(220,38,38,0.35); }
+.action-btn:disabled { opacity: 0.5; cursor: default; }
+
+.feedback {
+  width: 100%;
+  padding: clamp(9px,2vmin,13px) clamp(14px,3vmin,20px);
+  text-align: center;
+  font-size: clamp(0.82rem,2.3vmin,0.95rem);
+  font-weight: 700;
+  flex-shrink: 0;
+  min-height: clamp(40px,9vmin,52px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 2px solid var(--gold);
+  transition: background 0.3s;
+}
+.feedback.good    { background: linear-gradient(135deg,#d1fae5,#a7f3d0); color:#065f46; }
+.feedback.bad     { background: linear-gradient(135deg,#fee2e2,#fecaca); color:#991b1b; }
+.feedback.neutral { background: linear-gradient(135deg,var(--gold-mid),var(--gold-light)); color:#78350f; }
+
+.dots { display:flex; gap:6px; padding:clamp(4px,1vmin,8px) 0; flex-shrink:0; }
+.dot  { width:10px;height:10px;border-radius:50%;background:var(--gold);opacity:0.3;transition:opacity 0.3s; }
+.dot.done { opacity:1; }
+
+/* ── END ── */
+#screen-end {
+  justify-content: center;
+  gap: clamp(10px,2.5vmin,18px);
+  background: linear-gradient(160deg,#fffbea 0%,#fef3c7 60%,#fde68a 100%);
+  text-align: center;
+  padding-left: clamp(16px,4vmin,32px);
+  padding-right: clamp(16px,4vmin,32px);
+}
+#end-emoji { font-size: clamp(4rem,12vmin,7rem); }
+#end-title { font-size: clamp(1.6rem,5vmin,3rem); color: var(--gold-deep); }
+#end-msg   { font-size: clamp(1rem,3vmin,1.4rem); color:#78350f; }
+#end-bug   { width:clamp(80px,20vmin,140px); filter:drop-shadow(0 6px 14px rgba(160,120,0,0.2)); }
+</style>
+</head>
+<body>
+
+<!-- MENU -->
+<div class="screen active" id="screen-menu">
+  <img src="/bilder/rikedomsbacillen.png" id="menu-bug" alt="Wealth Bug">
+  <h1>Wealth Bug's<br>Market 🏪</h1>
+  <p>Smart deal or waste of gold coins? You decide!</p>
+  <button class="play-btn" onclick="startGame()">🟡 Play!</button>
+</div>
+
+<!-- GAME -->
+<div class="screen" id="screen-game">
+  <div class="game-header">
+    <span style="color:#3d1f00;font-weight:700;font-size:clamp(0.85rem,2.5vmin,1rem);">💰 Your coins</span>
+    <div class="coin-display">
+      <span>🟡</span>
+      <span id="coinCount">15</span>
+    </div>
+    <div class="round-display" id="roundDisplay">Round 1/8</div>
+  </div>
+
+  <div class="char-row">
+    <img src="/bilder/rikedomsbacillen.png" class="char-img" id="charImg" alt="Wealth Bug">
+    <div class="bubble" id="bubble">Welcome to the market! 🤑</div>
+  </div>
+
+  <div class="item-area">
+    <div class="item-box" id="itemBox">
+      <span class="item-emoji" id="itemEmoji">🎁</span>
+      <div class="item-name" id="itemName">Loading…</div>
+      <div class="price-tag">
+        <span>🟡</span>
+        <span id="itemPrice">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="action-btn btn-yes" id="btnYes" onclick="answer(true)">✅ YES!</button>
+    <button class="action-btn btn-no"  id="btnNo"  onclick="answer(false)">❌ NO!</button>
+  </div>
+
+  <div class="dots" id="dots"></div>
+  <div class="feedback neutral" id="feedback">Is it worth your gold coins?</div>
+</div>
+
+<!-- END -->
+<div class="screen" id="screen-end">
+  <div id="end-emoji">🎉</div>
+  <h1 id="end-title">Great job!</h1>
+  <p id="end-msg">You made it through the market!</p>
+  <img src="/bilder/rikedomsbacillen.png" id="end-bug" alt="Wealth Bug">
+  <button class="play-btn" onclick="startGame()">🔄 Play again</button>
+  <a href="/games.html" style="font-family:'Fredoka',sans-serif;font-size:clamp(14px,3vmin,18px);color:var(--gold-deep);text-decoration:none;font-weight:600;">← Back to games</a>
+</div>
+
+<script>
+const ITEMS = [
+  { emoji:'🏠', name:'House',            price:12, worth:28, valuable:true  },
+  { emoji:'👟', name:'Old shoe',         price:5,  worth:0,  valuable:false },
+  { emoji:'⌚', name:'Gold watch',       price:10, worth:22, valuable:true, gold:true },
+  { emoji:'🧦', name:'Torn sock',        price:4,  worth:0,  valuable:false },
+  { emoji:'🍬', name:'Bag of candy',     price:5,  worth:0,  valuable:false },
+  { emoji:'🗑️', name:'Empty bin',       price:3,  worth:0,  valuable:false },
+  { emoji:'🏆', name:'Gold trophy',      price:7,  worth:15, valuable:true  },
+  { emoji:'🌂', name:'Broken umbrella',  price:4,  worth:0,  valuable:false },
+  { emoji:'🪙', name:'Silver coin',      price:5,  worth:0,  valuable:false },
+  { emoji:'📦', name:'Empty box',        price:3,  worth:0,  valuable:false },
+  { emoji:'🥕', name:'Carrot',           price:2,  worth:7,  valuable:true  },
+  { emoji:'🧸', name:'Fancy stuffed toy',price:10, worth:0,  valuable:false },
+  { emoji:'📚', name:'Book',             price:4,  worth:11, valuable:true  },
+  { emoji:'🚗', name:'Expensive toy car',price:9,  worth:0,  valuable:false },
+  { emoji:'🎁', name:'Mystery gift',     price:6,  worth:14, valuable:true  },
+];
+
+const BUBBLES_OFFER  = ['Want to buy a {name} for {price} coins? 🤔','Look what I found! A {name} for just {price} coins! 🤑','Special offer! {name} — price: {price} coins. Deal? 😏'];
+const BUBBLES_GOOD   = ['Wonderful! That was a great deal! 🤑','Smart move! You earned coins on that purchase! 🥳','Exactly right! Wealth comes from wise choices! 🏆'];
+const BUBBLES_WASTE  = ['Hmm… that wasn\'t my best deal! 😅','Oops! Bad buys cost coins! 💸','Next time — think a little more! 🤔'];
+const BUBBLES_SMART  = ['Clever! You didn\'t waste your coins! 👏','Smart! Not everything shiny is gold! ✨','Exactly! Save your coins for better deals! 💰'];
+const BUBBLES_MISSED = ['You missed a good deal! But it happens! 😮','Sometimes we miss out — but you\'re still in the game! 🙂','That was worth a lot — but you\'ll manage! 💪'];
+
+const TOTAL = 8;
+let coins = 15, round = 0, order = [], waiting = true;
+
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startGame() {
+  coins = 15; round = 0;
+  order = shuffle(ITEMS).slice(0, TOTAL);
+  buildDots();
+  show('screen-game');
+  nextRound();
+}
+
+function buildDots() {
+  const d = document.getElementById('dots');
+  d.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const el = document.createElement('div');
+    el.className = 'dot';
+    el.id = 'dot'+i;
+    d.appendChild(el);
+  }
+}
+
+function nextRound() {
+  if (round >= TOTAL || coins <= 0) { endGame(); return; }
+  waiting = false;
+  const item = order[round];
+  document.getElementById('roundDisplay').textContent = `Round ${round+1}/${TOTAL}`;
+  const emojiEl = document.getElementById('itemEmoji');
+  emojiEl.textContent = item.emoji;
+  emojiEl.style.filter = item.gold ? 'sepia(1) saturate(6) hue-rotate(5deg) brightness(1.1)' : '';
+  document.getElementById('itemName').textContent = item.name;
+  document.getElementById('itemPrice').textContent = item.price + ' coins';
+  const offerText = pick(BUBBLES_OFFER).replace('{name}', item.name).replace('{price}', item.price);
+  document.getElementById('bubble').textContent = offerText;
+  document.getElementById('feedback').className = 'feedback neutral';
+  document.getElementById('feedback').textContent = 'Is it worth your gold coins?';
+  document.getElementById('coinCount').textContent = coins;
+  const box = document.getElementById('itemBox');
+  box.classList.remove('pop');
+  void box.offsetWidth;
+  box.classList.add('pop');
+  document.getElementById('btnYes').disabled = false;
+  document.getElementById('btnNo').disabled = false;
+}
+
+function answer(bought) {
+  if (waiting) return;
+  waiting = true;
+  document.getElementById('btnYes').disabled = true;
+  document.getElementById('btnNo').disabled = true;
+
+  const item = order[round];
+  const fb = document.getElementById('feedback');
+  const img = document.getElementById('charImg');
+  img.classList.remove('bounce');
+  void img.offsetWidth;
+  img.classList.add('bounce');
+
+  if (bought) {
+    if (item.valuable) {
+      const gain = item.worth - item.price;
+      coins += gain;
+      fb.className = 'feedback good';
+      fb.textContent = `🎉 Great deal! ${item.name} is worth 🟡${item.worth} — you earned ${gain} coins!`;
+      document.getElementById('bubble').textContent = pick(BUBBLES_GOOD);
+    } else {
+      coins -= item.price;
+      fb.className = 'feedback bad';
+      fb.textContent = `😬 Oops! ${item.name} was worth nothing — you lost ${item.price} coins!`;
+      document.getElementById('bubble').textContent = pick(BUBBLES_WASTE);
+    }
+  } else {
+    if (item.valuable) {
+      fb.className = 'feedback neutral';
+      fb.textContent = `💭 You missed a good deal! ${item.name} was worth 🟡${item.worth}.`;
+      document.getElementById('bubble').textContent = pick(BUBBLES_MISSED);
+    } else {
+      fb.className = 'feedback good';
+      fb.textContent = `✅ Smart! ${item.name} wasn't worth a single coin. Good call!`;
+      document.getElementById('bubble').textContent = pick(BUBBLES_SMART);
+    }
+  }
+
+  document.getElementById('coinCount').textContent = coins;
+  document.getElementById('dot'+round).classList.add('done');
+  round++;
+  setTimeout(nextRound, 2300);
+}
+
+function endGame() {
+  show('screen-end');
+  let emoji, title, msg;
+  if (coins <= 0) {
+    emoji = '😢'; title = 'No coins left!';
+    msg = 'Wealth Bug wants to train you more. Try again!';
+  } else if (coins > 25) {
+    emoji = '🏆'; title = 'Master Trader!';
+    msg = `You ended with 🟡${coins} coins — fantastic!`;
+  } else {
+    emoji = '🎉'; title = 'Great job!';
+    msg = `You ended with 🟡${coins} coins!`;
+  }
+  document.getElementById('end-emoji').textContent = emoji;
+  document.getElementById('end-title').textContent = title;
+  document.getElementById('end-msg').textContent = msg;
+}
+</script>
+</body>
+</html>
