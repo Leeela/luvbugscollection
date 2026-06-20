@@ -337,6 +337,13 @@ function playCoinSound() {
   } catch(e) {}
 }
 
+function playVoice(name) {
+  try {
+    const audio = new Audio('/ljud/' + name + '.mp3');
+    audio.play().catch(() => {});
+  } catch(e) {}
+}
+
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 function shuffle(arr) {
   const a = [...arr];
@@ -413,6 +420,7 @@ function answer(bought) {
       fb.className = 'feedback good';
       fb.textContent = `🎉 Great deal! ${item.name} is worth 🟡${item.worth} — you earned ${gain} coins!`;
       document.getElementById('bubble').textContent = pick(BUBBLES_GOOD);
+      playVoice('wow');
       playCoinSound();
     } else {
       coins -= item.price;
@@ -429,6 +437,7 @@ function answer(bought) {
       fb.className = 'feedback good';
       fb.textContent = `✅ Smart! ${item.name} wasn't worth a single coin. Good call!`;
       document.getElementById('bubble').textContent = pick(BUBBLES_SMART);
+      playVoice('smart');
       playCoinSound();
     }
   }
