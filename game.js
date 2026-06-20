@@ -283,8 +283,13 @@ function handleStart() {
     setTimeout(preloadVideos, 1000);
   });
 }
-startBtn?.addEventListener('click', e => { e.stopPropagation(); handleStart(); });
-startScreen.addEventListener('click', handleStart);
+startBtn?.addEventListener('click', e => {
+  e.stopPropagation();
+  requestAnimationFrame(() => requestAnimationFrame(handleStart));
+});
+startScreen.addEventListener('click', () => {
+  requestAnimationFrame(() => requestAnimationFrame(handleStart));
+});
 
 // ==========================================
 //  BAKGRUNDSRADERING (schackruta + vit)
@@ -767,16 +772,18 @@ function getPos(e) {
 }
 function onDown(e) {
   e.preventDefault();
-  if (isShowingVideo || crash.isActive || levelTransition > 0) return;
   const p = getPos(e);
-  for (let i = candies.length - 1; i >= 0; i--) {
-    const c = candies[i];
-    if (!c.eaten && c.contains(p.x, p.y)) {
-      draggingCandy = c; c.dragging = true;
-      dragOffX = c.x - p.x; dragOffY = c.y - p.y;
-      break;
+  requestAnimationFrame(() => {
+    if (isShowingVideo || crash.isActive || levelTransition > 0) return;
+    for (let i = candies.length - 1; i >= 0; i--) {
+      const c = candies[i];
+      if (!c.eaten && c.contains(p.x, p.y)) {
+        draggingCandy = c; c.dragging = true;
+        dragOffX = c.x - p.x; dragOffY = c.y - p.y;
+        break;
+      }
     }
-  }
+  });
 }
 function onMove(e) {
   e.preventDefault();

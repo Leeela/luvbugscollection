@@ -524,7 +524,9 @@ function onPanelDragStart(e, itemEl) {
   ghostAcc = ACCESSORIES.find(a => a.id === id);
   if (!ghostAcc) return;
   const { x, y } = getClientXY(e);
-  createGhost(ghostAcc, x, y);
+  requestAnimationFrame(() => {
+    createGhost(ghostAcc, x, y);
+  });
 }
 
 document.getElementById('accessory-panel').addEventListener('mousedown', e => {
