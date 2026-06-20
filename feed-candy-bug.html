@@ -184,11 +184,11 @@
   onmouseleave="this.style.opacity='0.85';this.style.transform='scale(1)'"
   >🎮 More games!</a>
 
-  <!-- 🅰️ Permanent YouTube button (bottom left) -->
-  <a id="yt-btn" href="https://www.youtube.com/@LuvbugsBacillerna/playlists" target="_blank" rel="noopener"
+  <!-- Watch button (bottom left) -->
+  <a id="yt-btn" href="/app/watch.html"
     style="
       position: fixed; bottom: 18px; left: 16px; z-index: 9;
-      background: #ff0000; color: white;
+      background: #2D8659; color: white;
       border-radius: 50px; padding: 10px 18px;
       font-size: 16px; font-weight: 900;
       text-decoration: none;
@@ -200,10 +200,7 @@
     onmouseenter="this.style.opacity='1';this.style.transform='scale(1.05)'"
     onmouseleave="this.style.opacity='0.85';this.style.transform='scale(1)'"
   >
-    <svg width="22" height="16" viewBox="0 0 22 16" fill="white">
-      <path d="M21.5 2.5s-.2-1.5-.9-2.1C19.8-.3 18.9-.3 18.5-.3 15.5-.5 11-.5 11-.5S6.5-.5 3.5-.3C3.1-.3 2.2-.3 1.4.4.7 1 .5 2.5.5 2.5S.3 4.2.3 6v1.7c0 1.7.2 3.5.2 3.5s.2 1.5.9 2.1c.8.7 1.9.7 2.4.7C5.3 14.2 11 14.2 11 14.2s4.5 0 7.5-.3c.4 0 1.3-.1 2.1-.8.7-.6.9-2.1.9-2.1s.2-1.8.2-3.5V6C21.7 4.2 21.5 2.5 21.5 2.5zM8.8 9.7V4.5l6 2.6-6 2.6z"/>
-    </svg>
-    Watch more!
+    ▶ Watch more!
   </a>
 
   <!-- 🅱️ YouTube CTA after sugar crash -->
@@ -224,18 +221,18 @@
         Want to watch more videos?
       </div>
       <div style="font-size: 16px; color: #666; margin-bottom: 20px;">
-        Candy Bug has lots of fun adventures on YouTube!
+        Candy Bug has lots of fun adventures to watch!
       </div>
-      <a href="https://www.youtube.com/@LuvbugsBacillerna/playlists" target="_blank" rel="noopener"
+      <a href="/app/watch.html"
         style="
-          display: block; background: #ff0000; color: white;
+          display: block; background: #2D8659; color: white;
           border-radius: 50px; padding: 14px 24px;
           font-size: 20px; font-weight: 900;
           text-decoration: none; margin-bottom: 12px;
         "
         onclick="document.getElementById('yt-cta').style.display='none'"
       >
-        ▶ &nbsp;Open YouTube!
+        ▶ &nbsp;Watch more videos!
       </a>
       <button onclick="document.getElementById('yt-cta').style.display='none'; if(window.restartGame) window.restartGame();"
         style="
