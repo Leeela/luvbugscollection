@@ -128,7 +128,6 @@
   <script>
   (async () => {
     const RSS = 'https://anchor.fm/s/111d46338/podcast/rss';
-    const PROXY = 'https://api.allorigins.win/get?url=' + encodeURIComponent(RSS);
 
     const CHARS = [
       { key: 'candy', label: 'Candy Bug',  color: '#5C9B22', kw: ['candy bug'] },
@@ -160,9 +159,9 @@
     }
 
     try {
-      const res = await fetch(PROXY);
-      const { contents } = await res.json();
-      const xml = new DOMParser().parseFromString(contents, 'text/xml');
+      const res = await fetch(RSS);
+      const text = await res.text();
+      const xml = new DOMParser().parseFromString(text, 'text/xml');
       const ns = 'http://www.itunes.com/dtds/podcast-1.0.dtd';
 
       const items = [...xml.querySelectorAll('item')];
