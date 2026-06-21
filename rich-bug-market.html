@@ -231,6 +231,33 @@ body {
 #end-title { font-size: clamp(1.6rem,5vmin,3rem); color: var(--gold-deep); }
 #end-msg   { font-size: clamp(1rem,3vmin,1.4rem); color:#78350f; }
 #end-bug   { width:clamp(80px,20vmin,140px); filter:drop-shadow(0 6px 14px rgba(160,120,0,0.2)); }
+
+/* ── TREASURE PILE ── */
+.char-stack { display:flex; flex-direction:column; align-items:center; gap:2px; flex-shrink:0; }
+.coin-pile { width:clamp(72px,18vmin,112px); height:clamp(42px,10vmin,60px); position:relative; }
+.coin-pile svg { width:100%; height:100%; overflow:visible; transform-origin:50% 82%; }
+.coin-pile svg.grow   { animation:pileGrow 0.5s ease; }
+.coin-pile svg.shrink { animation:pileShrink 0.5s ease; }
+@keyframes pileGrow   { 0%,100%{transform:scale(1)} 45%{transform:scale(1.13)} }
+@keyframes pileShrink { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-3px)} 75%{transform:translateX(3px)} }
+.float-coin { position:absolute; left:50%; top:0; transform:translateX(-50%); font-weight:800; font-size:clamp(0.9rem,3vmin,1.25rem); pointer-events:none; opacity:0; text-shadow:0 1px 2px rgba(255,255,255,0.8); }
+.float-coin.go   { animation:floatUp   1.1s ease forwards; }
+.float-coin.lose { animation:floatDown 1.1s ease forwards; }
+@keyframes floatUp   { 0%{opacity:0;transform:translate(-50%,8px)} 20%{opacity:1} 100%{opacity:0;transform:translate(-50%,-30px)} }
+@keyframes floatDown { 0%{opacity:0;transform:translate(-50%,-8px)} 20%{opacity:1} 100%{opacity:0;transform:translate(-50%,30px)} }
+
+/* ── MYSTERY BOX ── */
+.mystery-row { display:flex; gap:clamp(12px,3vmin,20px); justify-content:center; align-items:stretch; width:100%; }
+.mystery-box { flex:1; max-width:clamp(120px,34vmin,160px); border:3px solid var(--gold); border-radius:22px; padding:clamp(12px,3vmin,20px) clamp(8px,2vmin,14px); background:#fffdf0; cursor:pointer; text-align:center; transition:transform 0.12s; position:relative; font-family:'Fredoka',sans-serif; }
+.mystery-box:active { transform:scale(0.94); }
+.mystery-box .mbox-emoji { font-size:clamp(2.6rem,9vmin,4.2rem); display:block; }
+.mystery-box .mbox-label { font-size:clamp(0.8rem,2.4vmin,1rem); font-weight:700; color:#78350f; margin-top:4px; }
+.mystery-box.shiny { animation:shimmer 1.4s ease-in-out infinite; }
+@keyframes shimmer { 0%,100%{box-shadow:0 0 0 rgba(212,160,23,0)} 50%{box-shadow:0 0 20px rgba(212,160,23,0.8)} }
+.mystery-box.dusty { background:#ece9e4; border-color:#b9b4a9; filter:grayscale(0.35); }
+.mbox-tag { position:absolute; top:6px; right:9px; font-size:clamp(0.9rem,2.6vmin,1.15rem); }
+.mystery-box.opened { animation:pop 0.35s ease; }
+.mystery-box:disabled { cursor:default; }
 </style>
 </head>
 <body>
@@ -255,7 +282,10 @@ body {
   </div>
 
   <div class="char-row">
-    <img src="/bilder/rikedomsbacillen.png" class="char-img" id="charImg" alt="Rich Bug">
+    <div class="char-stack">
+      <img src="/bilder/rikedomsbacillen.png" class="char-img" id="charImg" alt="Rich Bug">
+      <div class="coin-pile" id="coinPile"></div>
+    </div>
     <div class="bubble" id="bubble">Welcome to the market! 🤑</div>
   </div>
 
@@ -268,9 +298,21 @@ body {
         <span id="itemPrice">—</span>
       </div>
     </div>
+    <div class="mystery-row" id="mysteryArea" style="display:none;">
+      <button class="mystery-box" id="mboxL" onclick="pickMystery('L')">
+        <span class="mbox-tag" id="tagL"></span>
+        <span class="mbox-emoji" id="emojiL">📦</span>
+        <span class="mbox-label" id="labelL">?</span>
+      </button>
+      <button class="mystery-box" id="mboxR" onclick="pickMystery('R')">
+        <span class="mbox-tag" id="tagR"></span>
+        <span class="mbox-emoji" id="emojiR">📦</span>
+        <span class="mbox-label" id="labelR">?</span>
+      </button>
+    </div>
   </div>
 
-  <div class="btn-row">
+  <div class="btn-row" id="btnRow">
     <button class="action-btn btn-yes" id="btnYes" onclick="answer(true)">✅ YES!</button>
     <button class="action-btn btn-no"  id="btnNo"  onclick="answer(false)">❌ NO!</button>
   </div>
@@ -309,14 +351,16 @@ const ITEMS = [
 ];
 
 const BUBBLES_OFFER  = ['Want to buy {an} {name} for {price} coins? 🤔','Look what I found! {An} {name} for just {price} coins! 🤑','Special offer! {name} — price: {price} coins. Deal? 😏'];
-function article(name, cap) { const a = /^[aeiou]/i.test(name) ? 'an' : 'a'; return cap ? a[0].toUpperCase()+a[1] : a; }
+function article(name, cap) { const a = /^[aeiou]/i.test(name) ? 'an' : 'a'; return cap ? a.charAt(0).toUpperCase() + a.slice(1) : a; }
 const BUBBLES_GOOD   = ['Wonderful! That was a great deal! 🤑','Smart move! You earned coins on that purchase! 🥳','Exactly right! Wealth comes from wise choices! 🏆'];
 const BUBBLES_WASTE  = ['Hmm… that wasn\'t my best deal! 😅','Oops! Bad buys cost coins! 💸','Next time — think a little more! 🤔'];
 const BUBBLES_SMART  = ['Clever! You didn\'t waste your coins! 👏','Smart! Not everything shiny is gold! ✨','Exactly! Save your coins for better deals! 💰'];
 const BUBBLES_MISSED = ['You missed a good deal! But it happens! 😮','Sometimes we miss out — but you\'re still in the game! 🙂','That was worth a lot — but you\'ll manage! 💪'];
 
 const TOTAL = 8;
+const MYS_WIN = 8, MYS_LOSS = 5;
 let coins = 15, round = 0, order = [], waiting = true;
+let mysteryRound = -1, mysteryDone = false, winnerSide = 'L';
 
 function playCoinSound() {
   try {
@@ -361,9 +405,60 @@ function show(id) {
 function startGame() {
   coins = 15; round = 0;
   order = shuffle(ITEMS).slice(0, TOTAL);
+  mysteryRound = 1 + Math.floor(Math.random() * (TOTAL - 1));
+  mysteryDone = false;
   buildDots();
+  renderPile(coins);
   show('screen-game');
   nextRound();
+}
+
+function renderPile(n) {
+  const cap = [5,4,3,2,1,1];
+  const drawn = Math.max(0, Math.min(n, 16));
+  const coinR = 8, dx = 17, dy = 12, baseY = 66, cx = 60;
+  let circles = '', remaining = drawn;
+  const bottomCount = Math.min(remaining, cap[0]);
+  for (let i = 0; i < cap.length && remaining > 0; i++) {
+    const k = Math.min(remaining, cap[i]);
+    const y = baseY - i * dy;
+    const startX = cx - ((k - 1) * dx) / 2;
+    for (let j = 0; j < k; j++) {
+      const x = startX + j * dx;
+      const fill = (i + j) % 2 === 0 ? '#D4A017' : '#FDE68A';
+      circles += `<circle cx="${x}" cy="${y}" r="${coinR}" fill="${fill}" stroke="#A07A0A" stroke-width="1.5"/>`;
+    }
+    remaining -= k;
+  }
+  const shadowW = Math.max(12, bottomCount * 9);
+  const shadow = `<ellipse cx="${cx}" cy="${baseY + 9}" rx="${shadowW}" ry="6" fill="#A07A0A" opacity="0.22"/>`;
+  document.getElementById('coinPile').innerHTML =
+    `<svg viewBox="0 0 120 84" role="img" aria-label="Treasure pile with ${n} coins">${shadow}${circles}</svg>`;
+}
+
+function animatePile(gain) {
+  const svg = document.querySelector('#coinPile svg');
+  if (!svg) return;
+  svg.classList.remove('grow','shrink');
+  void svg.offsetWidth;
+  svg.classList.add(gain ? 'grow' : 'shrink');
+}
+
+function floatCoin(text, gain) {
+  const pile = document.getElementById('coinPile');
+  const el = document.createElement('div');
+  el.className = 'float-coin ' + (gain ? 'go' : 'lose');
+  el.style.color = gain ? '#16a34a' : '#dc2626';
+  el.textContent = text;
+  pile.appendChild(el);
+  setTimeout(() => el.remove(), 1200);
+}
+
+function bounceChar() {
+  const img = document.getElementById('charImg');
+  img.classList.remove('bounce');
+  void img.offsetWidth;
+  img.classList.add('bounce');
 }
 
 function buildDots() {
@@ -379,9 +474,18 @@ function buildDots() {
 
 function nextRound() {
   if (round >= TOTAL || coins <= 0) { endGame(); return; }
+  document.getElementById('roundDisplay').textContent = `Round ${round+1}/${TOTAL}`;
+  document.getElementById('coinCount').textContent = coins;
+  renderPile(coins);
+
+  if (round === mysteryRound && !mysteryDone) { startMysteryRound(); return; }
+
+  document.getElementById('itemBox').style.display = '';
+  document.getElementById('mysteryArea').style.display = 'none';
+  document.getElementById('btnRow').style.display = 'flex';
+
   waiting = false;
   const item = order[round];
-  document.getElementById('roundDisplay').textContent = `Round ${round+1}/${TOTAL}`;
   const emojiEl = document.getElementById('itemEmoji');
   emojiEl.textContent = item.emoji;
   emojiEl.style.filter = item.gold ? 'sepia(1) saturate(6) hue-rotate(5deg) brightness(1.1)' : '';
@@ -420,6 +524,7 @@ function answer(bought) {
       fb.className = 'feedback good';
       fb.textContent = `🎉 Great deal! ${item.name} is worth 🟡${item.worth} — you earned ${gain} coins!`;
       document.getElementById('bubble').textContent = pick(BUBBLES_GOOD);
+      renderPile(coins); animatePile(true); floatCoin('+' + gain, true);
       playVoice('wow');
       playCoinSound();
     } else {
@@ -427,6 +532,7 @@ function answer(bought) {
       fb.className = 'feedback bad';
       fb.textContent = `😬 Oops! ${item.name} was worth nothing — you lost ${item.price} coins!`;
       document.getElementById('bubble').textContent = pick(BUBBLES_WASTE);
+      renderPile(coins); animatePile(false); floatCoin('-' + item.price, false);
     }
   } else {
     if (item.valuable) {
@@ -446,6 +552,75 @@ function answer(bought) {
   document.getElementById('dot'+round).classList.add('done');
   round++;
   setTimeout(nextRound, 2300);
+}
+
+function startMysteryRound() {
+  waiting = false;
+  document.getElementById('itemBox').style.display = 'none';
+  document.getElementById('mysteryArea').style.display = 'flex';
+  document.getElementById('btnRow').style.display = 'none';
+  document.getElementById('feedback').className = 'feedback neutral';
+  document.getElementById('feedback').textContent = 'Tap a box — but choose wisely! 👀';
+  document.getElementById('bubble').textContent = 'One box hides treasure — the other is junk! Which do you dare open? 😏';
+
+  winnerSide = Math.random() < 0.5 ? 'L' : 'R';
+  const loserSide = winnerSide === 'L' ? 'R' : 'L';
+  ['L','R'].forEach(s => {
+    const box = document.getElementById('mbox' + s);
+    box.disabled = false;
+    box.classList.remove('opened','shiny','dusty');
+    document.getElementById('emoji' + s).textContent = '📦';
+    document.getElementById('label' + s).textContent = '?';
+    document.getElementById('tag' + s).textContent = '';
+  });
+  document.getElementById('mbox' + winnerSide).classList.add('shiny');
+  document.getElementById('tag' + winnerSide).textContent = '✨';
+  document.getElementById('mbox' + loserSide).classList.add('dusty');
+  document.getElementById('tag' + loserSide).textContent = '🕸️';
+}
+
+function pickMystery(side) {
+  if (waiting) return;
+  waiting = true;
+  mysteryDone = true;
+  document.getElementById('mboxL').disabled = true;
+  document.getElementById('mboxR').disabled = true;
+
+  const win = side === winnerSide;
+  const loserSide = winnerSide === 'L' ? 'R' : 'L';
+  document.getElementById('emoji' + winnerSide).textContent = '💎';
+  document.getElementById('label' + winnerSide).textContent = 'Treasure!';
+  document.getElementById('emoji' + loserSide).textContent = '🕸️';
+  document.getElementById('label' + loserSide).textContent = 'Junk';
+  document.getElementById('mbox' + side).classList.add('opened');
+
+  const fb = document.getElementById('feedback');
+  bounceChar();
+  if (win) {
+    coins += MYS_WIN;
+    fb.className = 'feedback good';
+    fb.textContent = `🎉 You picked the shiny box — treasure! +${MYS_WIN} coins! 💎`;
+    document.getElementById('bubble').textContent = 'You looked at the clues! Smart move! 🤑';
+    renderPile(coins); animatePile(true); floatCoin('+' + MYS_WIN, true);
+    playVoice('wow');
+    playCoinSound();
+  } else {
+    coins -= MYS_LOSS;
+    fb.className = 'feedback bad';
+    fb.textContent = `😬 Oops! The dusty box was junk — you lost ${MYS_LOSS} coins. Never buy blindly! 💡`;
+    document.getElementById('bubble').textContent = 'Look at the clues next time — the shiny one was the treasure! 💡';
+    renderPile(coins); animatePile(false); floatCoin('-' + MYS_LOSS, false);
+  }
+
+  document.getElementById('coinCount').textContent = coins;
+  document.getElementById('dot' + round).classList.add('done');
+  round++;
+  setTimeout(() => {
+    document.getElementById('mysteryArea').style.display = 'none';
+    document.getElementById('itemBox').style.display = '';
+    document.getElementById('btnRow').style.display = 'flex';
+    nextRound();
+  }, 2800);
 }
 
 function endGame() {
