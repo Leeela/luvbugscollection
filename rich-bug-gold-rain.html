@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="/app-mode.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#D4A017">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Luv Bugs">
+<link rel="apple-touch-icon" href="/icons/icon-180.png">
+<title>Rich Bug's Gold Rain – Kids Game | Luv Bugs Collection</title>
+<meta name="description" content="Collect gold coins with Rich Bug! Find the treasure to trigger a magical gold rain. Kids game for ages 3–6.">
+<link rel="canonical" href="https://luvbugscollection.com/rich-bug-gold-rain.html" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; touch-action: manipulation; }
+
+:root {
+  --safe-top:    env(safe-area-inset-top,    0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left:   env(safe-area-inset-left,   0px);
+  --safe-right:  env(safe-area-inset-right,  0px);
+  --gold:        #D4A017;
+  --gold-deep:   #A07A0A;
+  --gold-light:  #FEF3C7;
+  --gold-mid:    #FDE68A;
+}
+
+body {
+  font-family: 'Fredoka', sans-serif;
+  background: var(--gold-light);
+  height: 100dvh;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.screen {
+  position: fixed; inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
+}
+.screen.active { display: flex; }
+
+/* ── START SCREEN ── */
+#screen-menu {
+  justify-content: center;
+  gap: clamp(12px, 3vmin, 24px);
+  background: linear-gradient(160deg, #fffbea 0%, #fef3c7 60%, #fde68a 100%);
+}
+#menu-bug {
+  width: clamp(100px, 26vmin, 180px);
+  animation: bob 2.2s ease-in-out infinite;
+  filter: drop-shadow(0 8px 18px rgba(160,120,0,0.25));
+}
+@keyframes bob {
+  0%,100% { transform: translateY(0) rotate(-2deg); }
+  50%      { transform: translateY(-12px) rotate(2deg); }
+}
+#screen-menu h1 {
+  font-size: clamp(20px, 5.5vmin, 40px);
+  color: var(--gold-deep);
+  text-align: center;
+  line-height: 1.2;
+}
+#screen-menu p {
+  font-size: clamp(13px, 3.2vmin, 18px);
+  color: #78350f;
+  text-align: center;
+  max-width: 300px;
+}
+.mode-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 2.5vmin, 18px);
+  width: 100%;
+  max-width: 320px;
+  padding: 0 20px;
+}
+.mode-btn {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(17px, 4.5vmin, 26px);
+  font-weight: 700;
+  border: none;
+  border-radius: 50px;
+  padding: clamp(14px, 3vmin, 20px) clamp(20px, 5vmin, 40px);
+  cursor: pointer;
+  transition: transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.mode-btn:active { transform: scale(0.95); }
+.mode-btn.easy {
+  background: linear-gradient(135deg, #4CAF50, #2D8659);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(45,134,89,0.4);
+}
+.mode-btn.medium {
+  background: linear-gradient(135deg, var(--gold-deep), var(--gold));
+  color: #3d1f00;
+  box-shadow: 0 6px 20px rgba(160,120,0,0.4);
+}
+.mode-label { font-size: clamp(11px, 2.5vmin, 15px); font-weight: 400; opacity: 0.85; }
+.back-btn {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(14px, 3.5vmin, 18px);
+  background: none;
+  border: 2px solid var(--gold);
+  color: var(--gold-deep);
+  border-radius: 30px;
+  padding: 8px 24px;
+  cursor: pointer;
+}
+.back-btn:active { opacity: 0.7; }
+
+/* ── GAME SCREEN ── */
+#screen-game {
+  background: linear-gradient(180deg, #fffbea 0%, var(--gold-light) 100%);
+  justify-content: flex-start;
+}
+.score-bar {
+  width: 100%;
+  background: linear-gradient(135deg, var(--gold-deep), var(--gold));
+  padding: clamp(8px,1.5vmin,12px) clamp(14px,3vmin,22px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 8px;
+}
+.score-side {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(0,0,0,0.15);
+  border-radius: 20px;
+  padding: 4px 12px;
+  color: #fff;
+  font-size: clamp(0.95rem, 2.8vmin, 1.3rem);
+  font-weight: 700;
+  min-width: 70px;
+  justify-content: center;
+}
+.score-center {
+  color: #3d1f00;
+  font-size: clamp(1.2rem, 4vmin, 1.8rem);
+  font-weight: 700;
+  text-align: center;
+  flex: 1;
+}
+
+#game-area {
+  flex: 1;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+#bug-char {
+  position: absolute;
+  bottom: clamp(8px, 2vmin, 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: clamp(70px, 18vmin, 100px);
+  height: clamp(70px, 18vmin, 100px);
+  display: none;
+  pointer-events: none;
+  z-index: 5;
+  transition: left 0.05s;
+}
+#bug-char img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(160,120,0,0.3));
+}
+#bug-char.bounce-catch {
+  animation: bugBounce 0.3s ease;
+}
+@keyframes bugBounce {
+  0%,100% { transform: translateX(-50%) scale(1); }
+  50%      { transform: translateX(-50%) scale(1.2); }
+}
+
+#drag-hint {
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  height: clamp(80px,20vmin,120px);
+  background: linear-gradient(180deg, transparent 0%, rgba(212,160,23,0.08) 100%);
+  border-top: 2px dashed rgba(212,160,23,0.3);
+  display: none;
+  pointer-events: none;
+}
+
+/* ── COINS ── */
+.coin {
+  position: absolute;
+  width: clamp(64px, 15vmin, 86px);
+  height: clamp(64px, 15vmin, 86px);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  z-index: 10;
+  animation: coinAppear 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  filter: drop-shadow(0 5px 12px rgba(0,0,0,0.35));
+}
+.coin svg { width: 100%; height: 100%; display: block; }
+@keyframes coinAppear {
+  from { transform: scale(0) rotate(-25deg); opacity: 0; }
+  to   { transform: scale(1) rotate(0deg);   opacity: 1; }
+}
+.coin.special {
+  width: clamp(72px, 17vmin, 96px);
+  height: clamp(72px, 17vmin, 96px);
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(44px, 12vmin, 64px);
+  animation: specialPulse 0.75s ease-in-out infinite alternate, coinAppear 0.35s ease-out;
+  filter: drop-shadow(0 0 12px rgba(255,215,0,0.95));
+}
+@keyframes specialPulse {
+  from { transform: scale(1)    rotate(-6deg); filter: drop-shadow(0 0 8px gold); }
+  to   { transform: scale(1.2)  rotate(6deg);  filter: drop-shadow(0 0 22px gold) drop-shadow(0 0 8px #fff); }
+}
+.coin.caught {
+  animation: catchPop 0.32s ease-out forwards !important;
+  pointer-events: none;
+}
+@keyframes catchPop {
+  0%   { transform: scale(1);   opacity: 1; }
+  45%  { transform: scale(1.6); opacity: 0.8; }
+  100% { transform: scale(0);   opacity: 0; }
+}
+.coin.falling {
+  top: 0;
+  animation: fallDown var(--fall-dur, 2.5s) linear forwards,
+             coinAppear 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes fallDown {
+  from { transform: translateY(-90px); }
+  to   { transform: translateY(110vh); }
+}
+.coin.falling.special {
+  animation: fallDown var(--fall-dur,2.5s) linear forwards,
+             specialPulse 0.75s ease-in-out infinite alternate;
+}
+
+/* Float points */
+.float-pts {
+  position: fixed;
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(20px, 5vmin, 28px);
+  font-weight: 700;
+  color: var(--gold-deep);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  pointer-events: none;
+  z-index: 100;
+  animation: floatUp 0.8s ease-out forwards;
+  transform: translateX(-50%);
+}
+@keyframes floatUp {
+  0%   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-60px); }
+}
+
+/* ── GOLD RAIN VIDEO ── */
+#screen-rain {
+  background: #000;
+  justify-content: center;
+}
+#rain-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── BONUS ROUND ── */
+#screen-bonus {
+  background: linear-gradient(180deg, #1a1a4e 0%, #2d2d7a 60%, #1a1a4e 100%);
+  justify-content: flex-start;
+}
+.bonus-header {
+  width: 100%;
+  padding: clamp(10px,2.5vmin,18px) clamp(16px,4vmin,28px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+.bonus-title {
+  font-size: clamp(22px, 6vmin, 38px);
+  font-weight: 700;
+  color: #FFD700;
+  text-shadow: 0 0 16px rgba(255,215,0,0.6);
+}
+.bonus-timer-wrap {
+  background: rgba(255,215,0,0.15);
+  border: 2px solid #FFD700;
+  border-radius: 20px;
+  padding: 6px 16px;
+  color: #FFD700;
+  font-size: clamp(20px, 5vmin, 32px);
+  font-weight: 700;
+}
+#bonus-area {
+  flex: 1;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+#bonus-area .coin {
+  animation: fallDown var(--fall-dur, 2.5s) linear forwards;
+}
+.bonus-score-flash {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  color: #FFD700;
+  font-size: clamp(24px, 6vmin, 40px);
+  font-weight: 700;
+  text-shadow: 0 0 20px rgba(255,215,0,0.5);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.bonus-score-flash.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- ── START SCREEN ── -->
+<div id="screen-menu" class="screen active">
+  <img id="menu-bug" src="bilder/rikedomsbacillen.png" alt="Rich Bug">
+  <h1>Rich Bug's<br>Gold Rain 🪙</h1>
+  <p>Collect coins and find the treasure — then comes the gold rain!</p>
+  <div class="mode-buttons">
+    <button class="mode-btn easy" onclick="startGame('easy')">
+      <span>⭐ Easy</span>
+      <span class="mode-label">Tap the coins</span>
+    </button>
+    <button class="mode-btn medium" onclick="startGame('medium')">
+      <span>🏆 Medium</span>
+      <span class="mode-label">Move Rich Bug</span>
+    </button>
+  </div>
+</div>
+
+<!-- ── GAME SCREEN ── -->
+<div id="screen-game" class="screen">
+  <div class="score-bar">
+    <div class="score-side">🥇 <span id="score-gold">0</span></div>
+    <div class="score-center">⭐ <span id="score-total">0</span></div>
+    <div class="score-side">🥈 <span id="score-silver">0</span></div>
+  </div>
+  <div id="game-area">
+    <div id="drag-hint"></div>
+    <div id="bug-char">
+      <img src="bilder/rikedomsbacillen.png" alt="Rich Bug">
+    </div>
+  </div>
+  <button class="back-btn" style="margin:8px 0 calc(8px + var(--safe-bottom));" onclick="goMenu()">← Menu</button>
+</div>
+
+<!-- ── GOLD RAIN VIDEO ── -->
+<div id="screen-rain" class="screen">
+  <video id="rain-video" playsinline webkit-playsinline onended="videoEnded()">
+    <source src="Rich_Bug_Money_Rain.mp4" type="video/mp4">
+  </video>
+</div>
+
+<!-- ── BONUS ROUND ── -->
+<div id="screen-bonus" class="screen">
+  <div class="bonus-header">
+    <div class="bonus-title">💰 GOLD RAIN!</div>
+    <div class="bonus-timer-wrap">⏱ <span id="bonus-timer">8</span></div>
+  </div>
+  <div id="bonus-area">
+    <div class="bonus-score-flash" id="bonus-flash">
+      <div id="bonus-flash-text">+0 ⭐</div>
+      <div style="font-size:clamp(14px,3.5vmin,20px);opacity:0.8;">Great job!</div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ── AUDIO ── */
+function makeAudio(src) {
+  const a = new Audio(src);
+  a.preload = 'auto';
+  return a;
+}
+const SFX = {
+  gold:   makeAudio('ljud/coin.mp3'),
+  silver: makeAudio('ljud/coin.mp3'),
+  ching:  makeAudio('ljud/cha-ching.mp3'),
+  yay:    makeAudio('ljud/YaaaaY.mp3'),
+  rain:   makeAudio('ljud/Money rain sound.mp3'),
+  wow:    makeAudio('ljud/wow.mp3'),
+};
+SFX.rain.loop = true;
+
+function play(key) {
+  const a = SFX[key];
+  if (!a) return;
+  a.currentTime = 0;
+  a.play().catch(() => {});
+}
+function stop(key) {
+  const a = SFX[key];
+  if (!a) return;
+  a.pause();
+  a.currentTime = 0;
+}
+
+/* ── STATE ── */
+let mode = 'easy';
+let score = 0;
+let goldCount = 0;
+let silverCount = 0;
+let coinsMinted = 0;
+let gameActive = false;
+let nextSpecialAt = 0;
+let spawnTimer = null;
+let collisionTimer = null;
+let activeFallingCoins = [];
+
+const GOLD_PTS   = 5;
+const SILVER_PTS = 2;
+const BONUS_PTS  = 3;
+
+function rnd(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ── SVG COINS ── */
+let _coinId = 0;
+
+function goldSVG() {
+  const id = ++_coinId;
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="gf${id}" cx="36%" cy="28%" r="68%">
+      <stop offset="0%"   stop-color="#FFF9C4"/>
+      <stop offset="25%"  stop-color="#FFD700"/>
+      <stop offset="60%"  stop-color="#F9A825"/>
+      <stop offset="100%" stop-color="#BF360C"/>
+    </radialGradient>
+    <radialGradient id="gs${id}" cx="36%" cy="28%" r="48%">
+      <stop offset="0%"   stop-color="rgba(255,255,255,0.55)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+  </defs>
+  <circle cx="50" cy="50" r="49" fill="#5C2A00"/>
+  <circle cx="50" cy="50" r="46" fill="#D4A017"/>
+  <circle cx="50" cy="50" r="43" fill="#7B3F00"/>
+  <circle cx="50" cy="50" r="40" fill="url(#gf${id})"/>
+  <circle cx="50" cy="50" r="30" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
+  <text x="50" y="58" text-anchor="middle" font-family="serif" font-size="26" fill="rgba(255,255,255,0.82)" font-weight="bold">★</text>
+  <circle cx="50" cy="50" r="40" fill="url(#gs${id})"/>
+</svg>`;
+}
+
+function silverSVG() {
+  const id = ++_coinId;
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="sf${id}" cx="36%" cy="28%" r="68%">
+      <stop offset="0%"   stop-color="#FFFFFF"/>
+      <stop offset="25%"  stop-color="#E0E0E0"/>
+      <stop offset="60%"  stop-color="#9E9E9E"/>
+      <stop offset="100%" stop-color="#424242"/>
+    </radialGradient>
+    <radialGradient id="ss${id}" cx="36%" cy="28%" r="48%">
+      <stop offset="0%"   stop-color="rgba(255,255,255,0.65)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+  </defs>
+  <circle cx="50" cy="50" r="49" fill="#1A1A1A"/>
+  <circle cx="50" cy="50" r="46" fill="#757575"/>
+  <circle cx="50" cy="50" r="43" fill="#424242"/>
+  <circle cx="50" cy="50" r="40" fill="url(#sf${id})"/>
+  <circle cx="50" cy="50" r="30" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+  <text x="50" y="58" text-anchor="middle" font-family="serif" font-size="26" fill="rgba(255,255,255,0.75)" font-weight="bold">★</text>
+  <circle cx="50" cy="50" r="40" fill="url(#ss${id})"/>
+</svg>`;
+}
+
+/* ── START / MENU ── */
+function startGame(selectedMode) {
+  mode = selectedMode;
+  score = 0; goldCount = 0; silverCount = 0; coinsMinted = 0;
+  gameActive = true;
+  activeFallingCoins = [];
+  nextSpecialAt = rnd(8, 12);
+  updateScore();
+
+  const bugEl = document.getElementById('bug-char');
+  const hintEl = document.getElementById('drag-hint');
+  if (mode === 'medium') {
+    bugEl.style.display = 'flex';
+    hintEl.style.display = 'block';
+    setupDrag();
+  } else {
+    bugEl.style.display = 'none';
+    hintEl.style.display = 'none';
+  }
+
+  clearGameArea();
+  show('screen-game');
+  startSpawning();
+}
+
+function goMenu() {
+  stopGame();
+  show('screen-menu');
+}
+
+function stopGame() {
+  gameActive = false;
+  clearInterval(spawnTimer);
+  clearInterval(collisionTimer);
+  stop('rain');
+  clearGameArea();
+  activeFallingCoins = [];
+}
+
+function clearGameArea() {
+  document.getElementById('game-area').querySelectorAll('.coin').forEach(c => c.remove());
+}
+
+/* ── SPAWNING ── */
+function startSpawning() {
+  const interval = mode === 'easy' ? 1200 : 1600;
+  spawnTimer = setInterval(spawnCoin, interval);
+  if (mode === 'medium') {
+    collisionTimer = setInterval(checkCollisions, 80);
+  }
+}
+
+function spawnCoin() {
+  if (!gameActive) return;
+  coinsMinted++;
+
+  const area = document.getElementById('game-area');
+
+  if (coinsMinted >= nextSpecialAt) {
+    nextSpecialAt = coinsMinted + rnd(8, 12);
+    spawnSpecial(area);
+    return;
+  }
+
+  const isGold = Math.random() < 0.38;
+  const el = document.createElement('div');
+  el.className = `coin ${isGold ? 'gold' : 'silver'}`;
+  el.dataset.points = isGold ? GOLD_PTS : SILVER_PTS;
+  el.dataset.type   = isGold ? 'gold' : 'silver';
+  el.innerHTML = isGold ? goldSVG() : silverSVG();
+
+  if (mode === 'easy') {
+    el.style.left = rnd(5, 80) + '%';
+    el.style.top  = rnd(8, 72) + '%';
+    el.addEventListener('pointerdown', () => catchCoin(el));
+    area.appendChild(el);
+    setTimeout(() => { if (el.parentNode) el.remove(); }, 2600);
+  } else {
+    const dur = rnd(2000, 3600);
+    el.style.setProperty('--fall-dur', dur + 'ms');
+    el.style.left = rnd(4, 84) + '%';
+    el.classList.add('falling');
+    area.appendChild(el);
+    activeFallingCoins.push(el);
+    setTimeout(() => removeFalling(el), dur + 100);
+  }
+}
+
+function spawnSpecial(area) {
+  const opts = ['💰', '👑', '⭐'];
+  const emoji = opts[Math.floor(Math.random() * opts.length)];
+  const el = document.createElement('div');
+  el.className = 'coin special';
+  el.textContent = emoji;
+  el.dataset.type = 'special';
+
+  if (mode === 'easy') {
+    el.style.left = rnd(8, 76) + '%';
+    el.style.top  = rnd(10, 68) + '%';
+    el.addEventListener('pointerdown', () => catchSpecial(el));
+    area.appendChild(el);
+    setTimeout(() => { if (el.parentNode) el.remove(); }, 4000);
+  } else {
+    const dur = rnd(3000, 4500);
+    el.style.setProperty('--fall-dur', dur + 'ms');
+    el.style.left = rnd(4, 84) + '%';
+    el.classList.add('falling');
+    area.appendChild(el);
+    activeFallingCoins.push(el);
+    setTimeout(() => removeFalling(el), dur + 100);
+  }
+}
+
+function removeFalling(el) {
+  const i = activeFallingCoins.indexOf(el);
+  if (i > -1) activeFallingCoins.splice(i, 1);
+  if (el.parentNode) el.remove();
+}
+
+/* ── CATCH ── */
+function catchCoin(el) {
+  if (!gameActive || el.dataset.caught) return;
+  el.dataset.caught = '1';
+
+  const isGold = el.dataset.type === 'gold';
+  const pts = parseInt(el.dataset.points);
+  if (isGold) { goldCount++; play('gold'); }
+  else         { silverCount++; play('silver'); }
+  score += pts;
+  updateScore();
+  floatPts(el, '+' + pts);
+
+  el.classList.add('caught');
+  el.style.animation = 'catchPop 0.32s ease-out forwards';
+  setTimeout(() => el.remove(), 320);
+
+  if (mode === 'medium') bounceBug();
+}
+
+function catchSpecial(el) {
+  if (!gameActive || el.dataset.caught) return;
+  el.dataset.caught = '1';
+  gameActive = false;
+
+  el.classList.add('caught');
+  el.style.animation = 'catchPop 0.32s ease-out forwards';
+  play('ching');
+
+  clearInterval(spawnTimer);
+  clearInterval(collisionTimer);
+
+  setTimeout(() => {
+    clearGameArea();
+    activeFallingCoins = [];
+    showRainVideo();
+  }, 500);
+}
+
+/* ── MEDIUM MODE: DRAG & COLLISION ── */
+function setupDrag() {
+  const area = document.getElementById('game-area');
+  const bugEl = document.getElementById('bug-char');
+
+  function moveBug(clientX) {
+    const rect = area.getBoundingClientRect();
+    const halfW = bugEl.offsetWidth / 2;
+    const x = Math.max(halfW, Math.min(rect.width - halfW, clientX - rect.left));
+    bugEl.style.left = x + 'px';
+    bugEl.style.transform = 'translateX(-50%)';
+  }
+
+  area.addEventListener('mousemove', e => { if (gameActive) moveBug(e.clientX); });
+  area.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (gameActive) moveBug(e.touches[0].clientX);
+  }, { passive: false });
+}
+
+function checkCollisions() {
+  if (!gameActive) return;
+  const bugEl = document.getElementById('bug-char');
+  const bugRect = bugEl.getBoundingClientRect();
+
+  activeFallingCoins.slice().forEach(coin => {
+    if (coin.dataset.caught || !coin.parentNode) return;
+    const r = coin.getBoundingClientRect();
+    if (r.bottom >= bugRect.top && r.top <= bugRect.bottom &&
+        r.right >= bugRect.left && r.left <= bugRect.right) {
+      if (coin.dataset.type === 'special') catchSpecial(coin);
+      else catchCoin(coin);
+    }
+  });
+}
+
+function bounceBug() {
+  const b = document.getElementById('bug-char');
+  b.classList.remove('bounce-catch');
+  void b.offsetWidth;
+  b.classList.add('bounce-catch');
+}
+
+/* ── SCORE ── */
+function updateScore() {
+  document.getElementById('score-total').textContent  = score;
+  document.getElementById('score-gold').textContent   = goldCount;
+  document.getElementById('score-silver').textContent = silverCount;
+}
+
+function floatPts(el, text) {
+  const r = el.getBoundingClientRect();
+  const div = document.createElement('div');
+  div.className = 'float-pts';
+  div.textContent = text;
+  div.style.left = (r.left + r.width / 2) + 'px';
+  div.style.top  = (r.top + r.height / 2) + 'px';
+  document.body.appendChild(div);
+  setTimeout(() => div.remove(), 850);
+}
+
+/* ── GOLD RAIN SEQUENCE ── */
+function showRainVideo() {
+  show('screen-rain');
+  const vid = document.getElementById('rain-video');
+  vid.currentTime = 0;
+  play('yay');
+  vid.play().catch(() => { videoEnded(); });
+}
+
+function videoEnded() {
+  startBonusRound();
+}
+
+/* ── BONUS ROUND ── */
+let bonusTimeLeft = 8;
+let bonusSpawnTimer = null;
+let bonusCountdown = null;
+let bonusScoreGained = 0;
+
+function startBonusRound() {
+  bonusTimeLeft = 8;
+  bonusScoreGained = 0;
+  show('screen-bonus');
+
+  const flash = document.getElementById('bonus-flash');
+  flash.classList.remove('show');
+  document.getElementById('bonus-timer').textContent = bonusTimeLeft;
+
+  document.getElementById('bonus-area').querySelectorAll('.coin').forEach(c => c.remove());
+
+  play('rain');
+  setTimeout(() => play('wow'), 1000);
+
+  bonusSpawnTimer = setInterval(() => {
+    if (bonusTimeLeft <= 0) { clearInterval(bonusSpawnTimer); return; }
+    const el = document.createElement('div');
+    el.className = 'coin gold';
+    el.dataset.points = BONUS_PTS;
+    el.dataset.type = 'gold';
+    el.innerHTML = goldSVG();
+    const dur = rnd(1800, 3000);
+    el.style.setProperty('--fall-dur', dur + 'ms');
+    el.style.left = rnd(4, 84) + '%';
+    el.style.top = '0';
+    el.addEventListener('pointerdown', () => catchBonusCoin(el));
+    document.getElementById('bonus-area').appendChild(el);
+    setTimeout(() => { if (el.parentNode) el.remove(); }, dur + 100);
+  }, 350);
+
+  bonusCountdown = setInterval(() => {
+    bonusTimeLeft--;
+    document.getElementById('bonus-timer').textContent = Math.max(0, bonusTimeLeft);
+    if (bonusTimeLeft <= 0) {
+      clearInterval(bonusCountdown);
+      clearInterval(bonusSpawnTimer);
+      endBonusRound();
+    }
+  }, 1000);
+}
+
+function catchBonusCoin(el) {
+  if (el.dataset.caught) return;
+  el.dataset.caught = '1';
+  score += BONUS_PTS;
+  goldCount++;
+  bonusScoreGained += BONUS_PTS;
+  updateScore();
+  floatPts(el, '+' + BONUS_PTS);
+  play('gold');
+  el.style.animation = 'catchPop 0.32s ease-out forwards';
+  setTimeout(() => el.remove(), 320);
+}
+
+function endBonusRound() {
+  stop('rain');
+  document.getElementById('bonus-area').querySelectorAll('.coin').forEach(c => c.remove());
+
+  const flash = document.getElementById('bonus-flash');
+  document.getElementById('bonus-flash-text').textContent = `+${bonusScoreGained} ⭐`;
+  flash.classList.add('show');
+
+  setTimeout(() => {
+    flash.classList.remove('show');
+    returnToGame();
+  }, 1600);
+}
+
+function returnToGame() {
+  gameActive = true;
+  activeFallingCoins = [];
+  clearGameArea();
+  show('screen-game');
+  startSpawning();
+}
+</script>
+</body>
+</html>
