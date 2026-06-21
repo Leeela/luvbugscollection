@@ -15,7 +15,11 @@
 <link rel="canonical" href="https://luvbugscollection.com/rich-bug-gold-rain.html" />
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; touch-action: manipulation; }
+* {
+  margin: 0; padding: 0; box-sizing: border-box; touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
 
 :root {
   --safe-top:    env(safe-area-inset-top,    0px);
@@ -209,6 +213,12 @@ body {
   height: clamp(64px, 15vmin, 86px);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  background: transparent;
+  outline: none;
+  border: none;
   z-index: 10;
   animation: coinAppear 0.35s cubic-bezier(0.34,1.56,0.64,1);
   filter: drop-shadow(0 5px 12px rgba(0,0,0,0.35));
@@ -240,15 +250,18 @@ body {
   100% { transform: scale(0);   opacity: 0; }
 }
 .coin.falling {
-  top: 0;
+  top: -90px;
   animation: fallDown var(--fall-dur, 2.5s) linear forwards,
              coinAppear 0.35s cubic-bezier(0.34,1.56,0.64,1);
 }
+/* Fallet animerar 'top' (inte transform) så att pulsering/pop-animationen
+   kan använda transform samtidigt utan att skriva över fallet. */
 @keyframes fallDown {
-  from { transform: translateY(-90px); }
-  to   { transform: translateY(110vh); }
+  from { top: -90px; }
+  to   { top: 110vh; }
 }
 .coin.falling.special {
+  top: -90px;
   animation: fallDown var(--fall-dur,2.5s) linear forwards,
              specialPulse 0.75s ease-in-out infinite alternate;
 }
