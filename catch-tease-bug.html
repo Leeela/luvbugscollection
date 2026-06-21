@@ -244,8 +244,8 @@ body {
     <div id="hud-right"></div>
   </div>
   <div id="arena">
-    <img id="bug" src="/bilder/retbacillen.png" alt="Tease Bug" onclick="catchBug()">
-    <div id="hit-text">Got ya!</div>
+    <img id="bug" src="/bilder/retbacillen.png" alt="" onclick="catchBug()">
+    <div id="hit-text"></div>
   </div>
 </div>
 
@@ -292,6 +292,19 @@ function speak(key) {
   sfx.currentTime = 0;
   sfx.play().catch(() => {});
 }
+
+const DISTRACTORS = [
+  '/bilder/godisbacillen.png',
+  '/bilder/karleksbacillen.png',
+  '/bilder/dansbacillen.png',
+  '/bilder/gladjebacillen.png',
+  '/bilder/rikedomsbacillen.png',
+  '/bilder/Partyhatt.png',
+  '/bilder/Bananglasögonen_ska_användas_om_accessoar_202605222149.png',
+  '/bilder/eggglasogon.png',
+];
+const REAL_CHANCE = 0.35;
+let isRealBug = true;
 
 function updateHud() {
   $('hud-right').textContent = '⭐ ' + score;
@@ -341,36 +354,50 @@ function showBug() {
   const x = margin + Math.random() * Math.max(0, arena.offsetWidth  - bw - margin * 2);
   const y = margin + Math.random() * Math.max(0, arena.offsetHeight - bh - margin * 2);
 
+  isRealBug = Math.random() < REAL_CHANCE;
+  bug.src = isRealBug
+    ? '/bilder/retbacillen.png'
+    : DISTRACTORS[Math.floor(Math.random() * DISTRACTORS.length)];
+
   bug.style.left = x + 'px';
   bug.style.top  = y + 'px';
   bug.style.display = 'block';
   bug.className = 'pop-in';
 
-  speak('nanana');
+  if (isRealBug) speak('nanana');
   bugTimer = setTimeout(missedBug, level.showTime);
 }
 
 function catchBug() {
   if (!active) return;
   clearTimeout(bugTimer);
-  score++;
-  speak('aj');
-  showHitText();
+  if (isRealBug) {
+    score++;
+    speak('aj');
+    showHitText('Got ya! 😤', '#E55A40');
+    updateHud();
+  } else {
+    navigator.vibrate?.([80, 60, 80]);
+    showHitText('Wrong! 😊', '#7BC142');
+  }
   hideBug(() => scheduleBug());
-  updateHud();
 }
 
 function missedBug() {
   if (!active) return;
-  speak('skratt');
-  hideBug(() => {
-    if (lives !== Infinity) {
-      lives--;
-      updateHud();
-      if (lives <= 0) { endGame(); return; }
-    }
-    scheduleBug();
-  });
+  if (isRealBug) {
+    speak('skratt');
+    hideBug(() => {
+      if (lives !== Infinity) {
+        lives--;
+        updateHud();
+        if (lives <= 0) { endGame(); return; }
+      }
+      scheduleBug();
+    });
+  } else {
+    hideBug(() => scheduleBug());
+  }
 }
 
 function hideBug(cb) {
@@ -383,9 +410,11 @@ function hideBug(cb) {
   }, 220);
 }
 
-function showHitText() {
+function showHitText(text, color) {
   const bug = $('bug');
   const hit = $('hit-text');
+  hit.textContent = text || 'Got ya!';
+  hit.style.color = color || '#E55A40';
   hit.style.left   = (parseInt(bug.style.left)  + 20) + 'px';
   hit.style.top    = (parseInt(bug.style.top)   - 10) + 'px';
   hit.style.display = 'block';
