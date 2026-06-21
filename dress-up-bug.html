@@ -37,8 +37,11 @@
   <meta property="og:description" content="Dress up Candy Bug and Love Bug with fun accessories and save your creation!" />
   <meta property="og:image" content="https://luvbugscollection.com/bilder/godisbacillen.png" />
   <meta property="og:site_name" content="LuvBugsCollection" />
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap"></noscript>
+  <!-- html2canvas loads lazily (only when Save is tapped) — see the script at the bottom -->
   <style>
     :root {
       --candy: #7BC142;
@@ -349,7 +352,7 @@
 
   <!-- Game board -->
   <div id="stage">
-    <img id="character-img" src="../bilder/godisbacillen.png" alt="Bug" draggable="false">
+    <img id="character-img" src="../bilder/godisbacillen.png" alt="Bug" draggable="false" decoding="async">
     <!-- Placed accessories are rendered dynamically here -->
   </div>
 
@@ -649,16 +652,45 @@ function showStarRain() {
   setTimeout(() => { container.innerHTML = ''; }, 1800);
 }
 
+// html2canvas loads lazily — not render-blocking in <head> — so early taps
+// (e.g. switching character) aren't delayed by parsing the script.
+let _h2cPromise = null;
+function ensureHtml2Canvas() {
+  if (window.html2canvas) return Promise.resolve();
+  if (_h2cPromise) return _h2cPromise;
+  _h2cPromise = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://html2canvas.hertzen.com/dist/html2canvas.min.js';
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+  return _h2cPromise;
+}
+
+// Preload in the background while the browser is idle: html2canvas + all character
+// images. Makes both Save and character switching instant, without blocking the
+// first interaction.
+function idle(fn, timeout) {
+  ('requestIdleCallback' in window) ? requestIdleCallback(fn, { timeout: timeout }) : setTimeout(fn, timeout);
+}
+idle(() => { ensureHtml2Canvas().catch(() => {}); }, 4000);
+idle(() => {
+  Object.values(CHARACTERS).forEach(c => { const im = new Image(); im.src = c.src; });
+}, 2500);
+
 document.getElementById('save-btn').addEventListener('click', (e) => {
   const btn = e.currentTarget;
   btn.disabled = true;
   const stage = document.getElementById('stage');
-  html2canvas(stage, {
-    backgroundColor: '#ffffff',
-    scale: 2,
-    useCORS: true,
-    allowTaint: false,
-  }).then(canvas => {
+  ensureHtml2Canvas()
+    .then(() => html2canvas(stage, {
+      backgroundColor: '#ffffff',
+      scale: 2,
+      useCORS: true,
+      allowTaint: false,
+    }))
+    .then(canvas => {
     const link = document.createElement('a');
     link.download = 'my-bug.png';
     link.href = canvas.toDataURL('image/png');

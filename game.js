@@ -249,6 +249,7 @@ function drawLevelTransition() {
 const startBtn  = document.querySelector('.start-btn');
 const startBug  = document.getElementById('start-bug');
 let gameStarted = false;
+let loopStarted = false;
 
 bugLoop.addEventListener('canplay', () => {
   if (!startBug.src && !startBug.currentSrc) {
@@ -263,6 +264,11 @@ function handleStart() {
   gameStarted = true;
 
   startScreen.style.display = 'none';
+
+  // Start the heavy game loop ONLY when the game starts — otherwise it draws
+  // (with costly per-frame getImageData) behind the start screen and makes the
+  // START button laggy (poor INP).
+  if (!loopStarted) { loopStarted = true; requestAnimationFrame(loop); }
 
   requestAnimationFrame(() => {
     video.muted = true;
@@ -911,4 +917,5 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
-loop();
+// The loop is started in handleStart() — not at page load — so the heavy
+// per-frame processing doesn't block the first interaction (INP) behind the start screen.
