@@ -147,6 +147,7 @@ body {
   justify-content: center;
   padding: clamp(4px,1vmin,10px) clamp(12px,3vmin,20px);
   width: 100%;
+  position: relative;
 }
 .item-box {
   background: #fffdf0;
@@ -241,6 +242,8 @@ body {
 @keyframes pileGrow   { 0%,100%{transform:scale(1)} 45%{transform:scale(1.13)} }
 @keyframes pileShrink { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-3px)} 75%{transform:translateX(3px)} }
 .float-coin { position:absolute; left:50%; top:0; transform:translateX(-50%); font-weight:800; font-size:clamp(0.9rem,3vmin,1.25rem); pointer-events:none; opacity:0; text-shadow:0 1px 2px rgba(255,255,255,0.8); }
+.float-heart { position:absolute; bottom:10%; font-size:clamp(1.4rem,5vmin,2.2rem); pointer-events:none; opacity:0; animation:heartUp 1.3s ease-out forwards; }
+@keyframes heartUp { 0%{opacity:0; transform:translateY(10px) scale(0.6)} 20%{opacity:1} 100%{opacity:0; transform:translateY(-90px) scale(1.1)} }
 .float-coin.go   { animation:floatUp   1.1s ease forwards; }
 .float-coin.lose { animation:floatDown 1.1s ease forwards; }
 @keyframes floatUp   { 0%{opacity:0;transform:translate(-50%,8px)} 20%{opacity:1} 100%{opacity:0;transform:translate(-50%,-30px)} }
@@ -348,6 +351,30 @@ const ITEMS = [
   { emoji:'📚', name:'Book',             price:4,  worth:11, valuable:true  },
   { emoji:'🚗', name:'Expensive toy car',price:9,  worth:0,  valuable:false },
   { emoji:'🎁', name:'Mystery gift',     price:6,  worth:14, valuable:true  },
+
+  /* More valuables (good deals) */
+  { emoji:'💎', name:'Diamond',          price:11, worth:30, valuable:true  },
+  { emoji:'💍', name:'Gold ring',        price:9,  worth:20, valuable:true, gold:true },
+  { emoji:'🥇', name:'Gold medal',       price:6,  worth:16, valuable:true, gold:true },
+  { emoji:'👑', name:'Sparkly crown',    price:12, worth:26, valuable:true, gold:true },
+  { emoji:'🖼️', name:'Fine painting',    price:8,  worth:19, valuable:true  },
+  { emoji:'💰', name:'Treasure chest',   price:10, worth:24, valuable:true, gold:true },
+
+  /* More useless toys/junk (bad buys) */
+  { emoji:'🪀', name:'Broken yo-yo',     price:5,  worth:0,  valuable:false },
+  { emoji:'🎈', name:'Popped balloon',   price:4,  worth:0,  valuable:false },
+  { emoji:'🤖', name:'Broken robot',     price:8,  worth:0,  valuable:false },
+  { emoji:'🪁', name:'Ripped kite',      price:6,  worth:0,  valuable:false },
+  { emoji:'🛼', name:'Broken roller skate', price:7, worth:0, valuable:false },
+  { emoji:'🦖', name:'Plastic dinosaur', price:9,  worth:0,  valuable:false },
+
+  /* Treats to enjoy — ONE is fine (💖), but several is too much */
+  { emoji:'🍦', name:'Ice cream',        price:3,  worth:0,  treat:true },
+  { emoji:'🍟', name:'Chips',            price:3,  worth:0,  treat:true },
+  { emoji:'🥤', name:'Soda',             price:3,  worth:0,  treat:true },
+  { emoji:'🍭', name:'Lollipop',         price:2,  worth:0,  treat:true },
+  { emoji:'🧁', name:'Cupcake',          price:4,  worth:0,  treat:true },
+  { emoji:'🍫', name:'Chocolate',        price:3,  worth:0,  treat:true },
 ];
 
 const BUBBLES_OFFER  = ['Want to buy {an} {name} for {price} coins? 🤔','Look what I found! {An} {name} for just {price} coins! 🤑','Special offer! {name} — price: {price} coins. Deal? 😏'];
@@ -356,10 +383,13 @@ const BUBBLES_GOOD   = ['Wonderful! That was a great deal! 🤑','Smart move! Yo
 const BUBBLES_WASTE  = ['Hmm… that wasn\'t my best deal! 😅','Oops! Bad buys cost coins! 💸','Next time — think a little more! 🤔'];
 const BUBBLES_SMART  = ['Clever! You didn\'t waste your coins! 👏','Smart! Not everything shiny is gold! ✨','Exactly! Save your coins for better deals! 💰'];
 const BUBBLES_MISSED = ['You missed a good deal! But it happens! 😮','Sometimes we miss out — but you\'re still in the game! 🙂','That was worth a lot — but you\'ll manage! 💪'];
+const BUBBLES_TREAT_JOY  = ['Yum! Treating yourself sometimes makes you happy! 💖','Lovely! A little treat makes life more fun! 🥰','A small treat — it\'s okay to be kind to yourself! 😋'];
+const BUBBLES_TREAT_MUCH = ['Whoa! Too many treats at once! 😵','Oops! All at once is too much! 🤢','Just enough is best — one treat is plenty! 😅'];
+const BUBBLES_TREAT_SKIP = ['Wisely saved — but feel free to treat yourself sometimes! 😊','It\'s okay to wait too! 👍','You kept your coins — treat yourself another time! 💛'];
 
 const TOTAL = 8;
 const MYS_WIN = 8, MYS_LOSS = 5;
-let coins = 15, round = 0, order = [], waiting = true;
+let coins = 15, round = 0, order = [], waiting = true, treatsBought = 0;
 let mysteryRound = -1, mysteryDone = false, winnerSide = 'L';
 
 function playCoinSound() {
@@ -403,7 +433,7 @@ function show(id) {
 }
 
 function startGame() {
-  coins = 15; round = 0;
+  coins = 15; round = 0; treatsBought = 0;
   order = shuffle(ITEMS).slice(0, TOTAL);
   mysteryRound = 1 + Math.floor(Math.random() * (TOTAL - 1));
   mysteryDone = false;
@@ -452,6 +482,21 @@ function floatCoin(text, gain) {
   el.textContent = text;
   pile.appendChild(el);
   setTimeout(() => el.remove(), 1200);
+}
+
+function floatHearts() {
+  const area = document.querySelector('.item-area') || document.getElementById('itemBox');
+  if (!area) return;
+  const hearts = ['💖','💕','💗','😋','🥰'];
+  for (let i = 0; i < 5; i++) {
+    const el = document.createElement('div');
+    el.className = 'float-heart';
+    el.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+    el.style.left = (25 + Math.random() * 50) + '%';
+    el.style.animationDelay = (i * 0.12) + 's';
+    area.appendChild(el);
+    setTimeout(() => el.remove(), 1600 + i * 120);
+  }
 }
 
 function bounceChar() {
@@ -517,7 +562,32 @@ function answer(bought) {
   void img.offsetWidth;
   img.classList.add('bounce');
 
-  if (bought) {
+  if (item.treat) {
+    if (bought) {
+      treatsBought++;
+      if (treatsBought === 1) {
+        // First treat — it's okay to enjoy! Hearts, no coins lost.
+        fb.className = 'feedback good';
+        fb.textContent = `💖 Yum! A little ${item.name.toLowerCase()} makes you happy — and you kept all your coins!`;
+        document.getElementById('bubble').textContent = pick(BUBBLES_TREAT_JOY);
+        floatHearts();
+        playVoice('wow');
+        playCoinSound();
+      } else {
+        // Several treats in one game — too much, bad deal.
+        coins -= item.price;
+        fb.className = 'feedback bad';
+        fb.textContent = `😬 Oops! Too many treats at once — ${item.name} cost you ${item.price} coins!`;
+        document.getElementById('bubble').textContent = pick(BUBBLES_TREAT_MUCH);
+        renderPile(coins); animatePile(false); floatCoin('-' + item.price, false);
+      }
+    } else {
+      // Skipped a treat — always fine.
+      fb.className = 'feedback neutral';
+      fb.textContent = `👍 It's okay to save too! You can treat yourself to ${item.name.toLowerCase()} another time.`;
+      document.getElementById('bubble').textContent = pick(BUBBLES_TREAT_SKIP);
+    }
+  } else if (bought) {
     if (item.valuable) {
       const gain = item.worth - item.price;
       coins += gain;
