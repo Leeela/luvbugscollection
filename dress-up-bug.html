@@ -280,6 +280,36 @@
       animation: poff 0.3s ease-out forwards;
     }
 
+    /* Selected accessory (shows the rotate handle) */
+    .placed-accessory.selected {
+      outline: 3px dashed var(--candy);
+      outline-offset: 6px;
+      border-radius: 8px;
+    }
+
+    /* Rotate handle (drag to spin) */
+    .rotate-handle {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 38px;
+      height: 38px;
+      transform: translate(-50%, -130%);
+      background: var(--candy);
+      color: #fff;
+      border: 3px solid #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: grab;
+      touch-action: none;
+      z-index: 30;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    }
+    .rotate-handle:active { cursor: grabbing; transform: translate(-50%, -130%) scale(0.9); }
+
     @keyframes poff {
       0%   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
       60%  { transform: translate(-50%, -50%) scale(1.4); opacity: 0.6; }
@@ -445,6 +475,7 @@ function switchCharacter(charKey) {
   });
 
   document.querySelectorAll('.placed-accessory').forEach(el => el.remove());
+  deselectAll();
 }
 
 document.querySelectorAll('.char-btn').forEach(btn => {
@@ -516,9 +547,16 @@ function placeAccessory(acc, x, y) {
   }
   el.style.left = (x - rect.left) + 'px';
   el.style.top  = (y - rect.top) + 'px';
+  el.dataset.angle = '0';
   stage.appendChild(el);
   initPlacedDrag(el);
   initLongPress(el);
+  selectAccessory(el);
+}
+
+function applyTransform(el) {
+  const angle = parseFloat(el.dataset.angle) || 0;
+  el.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
 }
 
 function onPanelDragStart(e, itemEl) {
@@ -546,14 +584,16 @@ document.getElementById('accessory-panel').addEventListener('touchstart', e => {
 
 document.addEventListener('mousemove', e => {
   moveGhost(e.clientX, e.clientY);
-  if (draggingPlaced) movePlaced(e.clientX, e.clientY);
+  if (draggingHandle) rotateFromPointer(e.clientX, e.clientY);
+  else if (draggingPlaced) movePlaced(e.clientX, e.clientY);
 });
 
 document.addEventListener('touchmove', e => {
   e.preventDefault();
   const { x, y } = getClientXY(e);
   moveGhost(x, y);
-  if (draggingPlaced) movePlaced(x, y);
+  if (draggingHandle) rotateFromPointer(x, y);
+  else if (draggingPlaced) movePlaced(x, y);
 }, { passive: false });
 
 function onDrop(x, y) {
@@ -564,7 +604,10 @@ function onDrop(x, y) {
     removeGhost();
     ghostAcc = null;
   }
+  // Tap (without dragging) a placed accessory = select it and show the rotate handle
+  if (draggingPlaced && !placedMoved) selectAccessory(draggingPlaced);
   draggingPlaced = null;
+  draggingHandle = null;
 }
 
 document.addEventListener('mouseup', e => onDrop(e.clientX, e.clientY));
@@ -577,11 +620,23 @@ document.addEventListener('touchcancel', () => {
   removeGhost();
   ghostAcc = null;
   draggingPlaced = null;
+  draggingHandle = null;
+});
+
+// Tapping the empty stage (or the bug) deselects and hides the handle
+['mousedown', 'touchstart'].forEach(evt => {
+  document.getElementById('stage').addEventListener(evt, e => {
+    if (e.target.id === 'stage' || e.target.id === 'character-img') deselectAll();
+  }, { passive: true });
 });
 
 let placedOffsetX = 0;
 let placedOffsetY = 0;
 let longPressTimer = null;
+let draggingHandle = null;
+let placedDownX = 0;
+let placedDownY = 0;
+let placedMoved = false;
 
 function initPlacedDrag(el) {
   function startDrag(e) {
@@ -595,6 +650,9 @@ function initPlacedDrag(el) {
     const elTop  = parseFloat(el.style.top);
     placedOffsetX = x - (stageRect.left + elLeft);
     placedOffsetY = y - (stageRect.top  + elTop);
+    placedDownX = x;
+    placedDownY = y;
+    placedMoved = false;
     draggingPlaced = el;
   }
 
@@ -604,12 +662,56 @@ function initPlacedDrag(el) {
 
 function movePlaced(x, y) {
   if (!draggingPlaced) return;
+  if (Math.abs(x - placedDownX) > 6 || Math.abs(y - placedDownY) > 6) placedMoved = true;
   const stage = document.getElementById('stage');
   const rect = stage.getBoundingClientRect();
   const newLeft = x - rect.left - placedOffsetX;
   const newTop  = y - rect.top  - placedOffsetY;
   draggingPlaced.style.left = newLeft + 'px';
   draggingPlaced.style.top  = newTop  + 'px';
+}
+
+// --- Select + rotate ---
+function selectAccessory(el) {
+  deselectAll();
+  el.classList.add('selected');
+  const handle = document.createElement('div');
+  handle.className = 'rotate-handle';
+  handle.textContent = '🔄';
+  handle.setAttribute('data-html2canvas-ignore', 'true');
+  handle.setAttribute('aria-label', 'Rotate accessory');
+  el.appendChild(handle);
+  initHandleDrag(handle, el);
+}
+
+function deselectAll() {
+  document.querySelectorAll('.placed-accessory.selected').forEach(el => {
+    el.classList.remove('selected');
+    el.querySelectorAll('.rotate-handle').forEach(h => h.remove());
+  });
+}
+
+function initHandleDrag(handle, el) {
+  function startRotate(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    clearTimeout(longPressTimer);
+    draggingHandle = el;
+  }
+  handle.addEventListener('mousedown', startRotate);
+  handle.addEventListener('touchstart', startRotate, { passive: false });
+}
+
+function rotateFromPointer(x, y) {
+  if (!draggingHandle) return;
+  const stage = document.getElementById('stage');
+  const rect = stage.getBoundingClientRect();
+  const cx = rect.left + parseFloat(draggingHandle.style.left);
+  const cy = rect.top  + parseFloat(draggingHandle.style.top);
+  // The handle sits straight above the center, so +90° makes it follow the finger around.
+  const deg = Math.atan2(y - cy, x - cx) * 180 / Math.PI + 90;
+  draggingHandle.dataset.angle = deg;
+  applyTransform(draggingHandle);
 }
 
 function removeAccessory(el) {
@@ -682,6 +784,7 @@ idle(() => {
 document.getElementById('save-btn').addEventListener('click', (e) => {
   const btn = e.currentTarget;
   btn.disabled = true;
+  deselectAll(); // hide the rotate handle/selection so it doesn't end up in the image
   const stage = document.getElementById('stage');
   ensureHtml2Canvas()
     .then(() => html2canvas(stage, {
