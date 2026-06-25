@@ -30,20 +30,35 @@
     }
     canvas { display: block; }
 
-    /* ── Reaction video overlay ── */
+    /* ── Reaction video: small corner bubble, game keeps running behind it ── */
     #video-overlay {
       display: none;
-      position: fixed; inset: 0; z-index: 10;
-      background: rgba(255,255,255,0.96);
+      position: fixed; top: 12px; right: 12px; z-index: 10;
+      pointer-events: none;            /* taps pass through to the game */
       justify-content: center;
       align-items: center;
     }
     #video-overlay.active { display: flex; }
     #reaction-video {
       aspect-ratio: 9 / 16;
-      width: auto; max-width: 92%; max-height: 92%;
+      height: min(22vh, 168px);
+      border-radius: 18px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+      background: rgba(255,255,255,0.55);
+    }
+    /* Fullscreen — only for the sugar-crash / win video (a deliberate pause) */
+    #video-overlay.fullscreen {
+      inset: 0; top: 0; right: 0;
+      background: rgba(255,255,255,0.96);
+      pointer-events: auto;
+    }
+    #video-overlay.fullscreen #reaction-video {
+      height: auto;
+      width: min(50vh, 88vw);
+      max-width: 92%; max-height: 92%;
       border-radius: 24px;
       box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+      background: transparent;
     }
 
     /* ── Start screen ── */
@@ -269,12 +284,12 @@
       autoplay muted loop playsinline webkit-playsinline></video>
 
     <div class="start-title">FEED<br>CANDY BUG!</div>
-    <div class="start-sub">🍬 Drag candy to its mouth! 🍬</div>
+    <div class="start-sub">🥕 Feed the mouth – veggies heal teeth! 🦷</div>
 
     <button class="start-btn">▶ &nbsp;START!</button>
   </div>
 
-  <script src="game.js?v=4"></script>
+  <script src="game.js?v=5"></script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "ed976efd0efe494b82f446b3970b03e9"}'></script><!-- End Cloudflare Web Analytics -->
 <script src="/back-to-app.js"></script>
 </body>

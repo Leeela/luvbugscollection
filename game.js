@@ -67,21 +67,15 @@ const LEVELS = {
 function getLevelConfig() { return LEVELS[level] || LEVELS[3]; }
 
 // ==========================================
-//  HIGHSCORE (localStorage)
+//  TEETH (score = consequence)
+//  Candy cracks a tooth 🦷 — veggies heal one.
 // ==========================================
-let totalStars = 0;
-let bestStars  = parseInt(localStorage.getItem('godisbacillen-best') || '0', 10);
-let isNewRecord = false;
-let newRecordTimer = 0;
+const MAX_TEETH = 8;
+let brokenTeeth = 0;
+let teethPulse  = 0; // short pulse animation when a tooth changes
 
-function saveBest() {
-  if (totalStars > bestStars) {
-    bestStars = totalStars;
-    localStorage.setItem('godisbacillen-best', bestStars.toString());
-    isNewRecord = true;
-    newRecordTimer = 180; // visa i 3 sekunder
-  }
-}
+function crackTooth() { brokenTeeth = Math.min(MAX_TEETH, brokenTeeth + 1); teethPulse = 14; }
+function healTooth()  { brokenTeeth = Math.max(0, brokenTeeth - 1);          teethPulse = 14; }
 
 // ==========================================
 //  VIDEO FILES — lazy loading
@@ -110,7 +104,6 @@ function preloadVideos() {
 
 let isShowingVideo = false;
 let candyEaten = 0;
-let stars      = 0;
 
 // ==========================================
 //  BAKGRUNDSMUSIK (Web Audio API)
@@ -184,9 +177,9 @@ function drawInstruction() {
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillStyle = 'rgba(0,0,0,0.15)';
-  ctx.fillText('🍬 Drag candy to its mouth! 🍬', W/2 + 2, H * 0.18 + 2);
-  ctx.fillStyle = '#c62828';
-  ctx.fillText('🍬 Drag candy to its mouth! 🍬', W/2, H * 0.18);
+  ctx.fillText('🥕 Veggies heal teeth! 🦷', W/2 + 2, H * 0.18 + 2);
+  ctx.fillStyle = '#2e7d32';
+  ctx.fillText('🥕 Veggies heal teeth! 🦷', W/2, H * 0.18);
   ctx.restore();
 }
 
@@ -429,12 +422,10 @@ const crash = {
     this.phase = 'playing';
     const levelAtStart = level; // save which level the crash belongs to
 
-    // Play the Falls-Asleep video
-    playVideo('EN_Somnar.mp4', false, () => {
+    // Play the Falls-Asleep video (fullscreen — a deliberate pause before next level)
+    playVideo('EN_Somnar.mp4', () => {
       // Check that we are still on the same level (prevent double level-up)
       if (level !== levelAtStart) { this.phase = 'idle'; isShowingVideo = false; return; }
-
-      saveBest();
 
       if (level < 3) {
         level++;
@@ -448,7 +439,7 @@ const crash = {
       } else {
         candyEaten = 0;
         candies = candies.filter(c => !c.eaten);
-        playVideo(VIDEOS.win, false, () => {
+        playVideo(VIDEOS.win, () => {
           this.phase = 'idle';
           document.getElementById('yt-cta').style.display = 'flex';
           isShowingVideo = true;
@@ -474,11 +465,8 @@ window.restartGame = function() {
   candyEaten = 0;
   candies = [];
   particles = [];
-  stars = 0;
-  totalStars = 0;
+  brokenTeeth = 0;
   level = 1;
-  isNewRecord = false;
-  newRecordTimer = 0;
   // updateMusicTempo();
   for (let i = 0; i < 5; i++) candies.push(new Candy(true));
 };
@@ -604,10 +592,9 @@ class Particle {
     this.vx = (Math.random() - 0.5) * 10;
     this.vy = -(Math.random() * 9 + 3);
     this.life = 1;
-    this.size = kind === 'gold' ? 32 + Math.random() * 22 : 18 + Math.random() * 14;
-    const arr = kind === 'gold'  ? ['🌟','💛','✨','🎊','🌈','⭐']
-              : kind === 'yucky' ? ['🤢','💚','😝','🥴','❌']
-              : ['⭐','✨','🌟','💫','🎉','🍬'];
+    this.size = 22 + Math.random() * 16;
+    const arr = kind === 'heal' ? ['🦷','✨','💚','🥕','😄','💪']
+                                 : ['🦷','💥','⚡','😣','🍬'];
     this.emoji = arr[Math.floor(Math.random() * arr.length)];
   }
   update() { this.x += this.vx; this.y += this.vy; this.vy += 0.38; this.life -= 0.032; }
@@ -624,8 +611,7 @@ class Particle {
 
 let particles = [];
 function spawnParticles(x, y, kind) {
-  const n = kind === 'gold' ? 16 : kind === 'yucky' ? 8 : 7;
-  for (let i = 0; i < n; i++) particles.push(new Particle(x, y, kind));
+  for (let i = 0; i < 9; i++) particles.push(new Particle(x, y, kind));
 }
 
 // ==========================================
@@ -662,28 +648,50 @@ function drawBackground() {
   ctx.fillStyle = cfg.grassColor; ctx.fill();
 }
 
-function drawScore() {
-  // Show total stars in the top left
-  if (!totalStars && !bestStars) return;
+function drawTeeth() {
+  const n = MAX_TEETH;
+  const size = Math.min(W * 0.068, 30);
+  const gap  = size * 0.18;
+  const totalW = n * size + (n - 1) * gap;
+  let x = W / 2 - totalW / 2 + size / 2;
+  const y = 74;
+
   ctx.save();
-  ctx.font = 'bold 28px serif';
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
-  ctx.globalAlpha = 0.88;
+  ctx.font = `${size}px serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
 
-  // Current stars
-  const starCount = Math.min(totalStars, 30);
-  const starText = '⭐'.repeat(Math.min(starCount, 10));
-  ctx.fillText(starText, 16, 60);
+  const pulse = teethPulse > 0
+    ? 1 + Math.sin(teethPulse * 0.5) * 0.18 * (teethPulse / 14)
+    : 1;
 
-  // Show rows if more than 10
-  if (starCount > 10) {
-    ctx.fillText('⭐'.repeat(Math.min(starCount - 10, 10)), 16, 94);
+  for (let i = 0; i < n; i++) {
+    const broken = i < brokenTeeth;
+    const isLatest = i === brokenTeeth - 1;
+    ctx.save();
+    ctx.translate(x, y);
+    if (isLatest && teethPulse > 0) ctx.scale(pulse, pulse);
+
+    // the tooth
+    ctx.globalAlpha = broken ? 0.32 : 1;
+    ctx.fillText('🦷', 0, 0);
+
+    // red crack mark on broken teeth
+    if (broken) {
+      ctx.globalAlpha = 0.85;
+      ctx.strokeStyle = '#e53935';
+      ctx.lineWidth = Math.max(2, size * 0.09);
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(-size * 0.16, -size * 0.30);
+      ctx.lineTo( size * 0.04, -size * 0.02);
+      ctx.lineTo(-size * 0.10,  size * 0.10);
+      ctx.lineTo( size * 0.16,  size * 0.32);
+      ctx.stroke();
+    }
+    ctx.restore();
+    x += size + gap;
   }
-  if (starCount > 20) {
-    ctx.fillText('⭐'.repeat(Math.min(starCount - 20, 10)), 16, 128);
-  }
-
   ctx.restore();
 }
 
@@ -716,56 +724,6 @@ function drawLevelIndicator() {
   ctx.restore();
 }
 
-function drawHighscore() {
-  if (!bestStars) return;
-  ctx.save();
-  ctx.font = `bold ${Math.min(W * 0.035, 18)}px Arial Rounded MT Bold, Arial`;
-  ctx.textAlign = 'right';
-  ctx.textBaseline = 'top';
-  ctx.globalAlpha = 0.7;
-  ctx.fillStyle = '#5d4037';
-  ctx.fillText(`🏆 Best: ${bestStars}⭐`, W - 16, 14);
-  ctx.restore();
-}
-
-function drawNewRecord() {
-  if (newRecordTimer <= 0) return;
-  newRecordTimer--;
-  const alpha = newRecordTimer < 30 ? newRecordTimer / 30 : 1;
-  const scale = 1 + Math.sin(newRecordTimer * 0.15) * 0.08;
-
-  ctx.save();
-  ctx.globalAlpha = alpha;
-  ctx.translate(W/2, H * 0.35);
-  ctx.scale(scale, scale);
-  ctx.font = `bold ${Math.min(W * 0.08, 48)}px Arial Rounded MT Bold, Arial`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillStyle = 'rgba(0,0,0,0.2)';
-  ctx.fillText('🏆 NEW RECORD! 🏆', 3, 3);
-  ctx.fillStyle = '#ffd700';
-  ctx.fillText('🏆 NEW RECORD! 🏆', 0, 0);
-  ctx.restore();
-}
-
-function drawCandyCounter() {
-  for (let i = 0; i < 5; i++) {
-    ctx.save(); ctx.font = '34px serif'; ctx.textAlign = 'center';
-    ctx.textBaseline = 'top'; ctx.globalAlpha = i < candyEaten ? 1.0 : 0.22;
-    ctx.fillText('🍬', W - 20 - (4-i) * 40, 56);
-    ctx.restore();
-  }
-}
-
-// ==========================================
-//  YUCK-FALLBACK
-// ==========================================
-let yuckAnim = 0;
-function drawYuckOverlay() {
-  if (yuckAnim <= 0) return;
-  yuckAnim -= 0.03;
-  if (yuckAnim <= 0) { isShowingVideo = false; candies = candies.filter(c => !c.eaten); }
-}
 
 // ==========================================
 //  DRAG & DROP
@@ -819,43 +777,71 @@ canvas.addEventListener('touchend',   onUp,   { passive: false });
 //  EAT CANDY
 // ==========================================
 function eatCandy(candy) {
-  candy.eaten = candy.dragging = false;
-  spawnParticles(candy.x, candy.y, candy.kind);
+  candy.dragging = false;
 
-  if (candy.kind === 'salim' || candy.kind === 'selma') { playVideo(VIDEOS.salim, true); return; }
-  if (candy.kind === 'yucky') { playVideo(VIDEOS.yuck, true); return; }
-
-  candyEaten++;
-  stars = Math.min(stars + 1, 99);
-  totalStars++;
-
-  if (candyEaten >= 5 && !crash.isActive) {
-    crash.phase = "pending"; // block new crashes immediately
-    playVideo(candy.kind === 'gold' ? VIDEOS.wow : VIDEOS.chomp, false, () => {
-      crash.start();
-    });
+  // Salim & Selma are friends — the Candy Bug refuses to eat them.
+  // The item stays and keeps falling.
+  if (candy.kind === 'salim' || candy.kind === 'selma') {
+    playReaction(VIDEOS.salim);
     return;
   }
 
-  playVideo(
-    candy.kind === 'gold'     ? VIDEOS.wow     :
-    candyEaten % 3 === 0      ? VIDEOS.merMore :
-                                VIDEOS.chomp,
-    false
+  candy.eaten = true; // eaten → disappears immediately, no waiting for the video
+
+  // Veggie → heals a tooth (the good choice!)
+  if (candy.kind === 'yucky') {
+    healTooth();
+    spawnParticles(candy.x, candy.y, 'heal');
+    playReaction(VIDEOS.wow);
+    return;
+  }
+
+  // Candy (regular + gold) → cracks a tooth
+  crackTooth();
+  spawnParticles(candy.x, candy.y, 'crack');
+  candyEaten++;
+
+  if (candyEaten >= 5 && !crash.isActive) {
+    crash.phase = "pending"; // block new crashes immediately
+    playReaction(candy.kind === 'gold' ? VIDEOS.wow : VIDEOS.chomp);
+    setTimeout(() => { if (crash.phase === 'pending') crash.start(); }, 650);
+    return;
+  }
+
+  playReaction(
+    candy.kind === 'gold' ? VIDEOS.wow     :
+    candyEaten % 3 === 0   ? VIDEOS.merMore :
+                             VIDEOS.chomp
   );
 }
 
 // ==========================================
-//  SPELA REAKTIONSVIDEO
+//  REACTION VIDEOS
 // ==========================================
-function playVideo(filename, isYuck, onDone = null) {
+// Small corner reaction — does NOT stop the game (you can keep dragging candy)
+function playReaction(filename) {
+  if (!filename) return;
+  overlay.classList.remove('fullscreen');
+  video.onended = () => hideReaction();
+  video.onerror = () => hideReaction();
+  video.src = filename;
+  overlay.classList.add('active');
+  const p = video.play();
+  if (p) p.catch(() => { video.oncanplay = () => video.play().catch(hideReaction); });
+}
+function hideReaction() {
+  overlay.classList.remove('active');
+  video.onended = video.onerror = video.oncanplay = null;
+  video.removeAttribute('src');
+  video.load();
+}
+
+// Fullscreen video (sugar crash / win) — deliberately pauses the game before next level
+function playVideo(filename, onDone = null) {
   isShowingVideo = true;
+  overlay.classList.add('fullscreen');
   video.onended = () => finishVideo(onDone);
-  video.onerror = () => {
-    overlay.classList.remove('active');
-    if (isYuck) { yuckAnim = 3.5; isShowingVideo = false; }
-    else        { finishVideo(onDone); }
-  };
+  video.onerror = () => finishVideo(onDone);
   video.src = filename;
   overlay.classList.add('active');
   video.play().catch(() => {
@@ -864,6 +850,7 @@ function playVideo(filename, isYuck, onDone = null) {
 }
 function finishVideo(onDone = null) {
   overlay.classList.remove('active');
+  overlay.classList.remove('fullscreen');
   // Reset handlers FIRST — otherwise onerror loops back into finishVideo
   video.onended  = null;
   video.onerror  = null;
@@ -895,9 +882,15 @@ function loop() {
   if (++spawnTimer >= cfg.spawnInterval) { spawnCandy(); spawnTimer = 0; }
 
   candies.forEach(c => c.update());
+  candies = candies.filter(c => !c.eaten); // remove eaten candy right away
   candies.forEach(c => c.draw());
 
-  bug.draw(draggingNear('yummy') || draggingNear('gold'), draggingNear('yucky') || draggingNear('salim') || draggingNear('selma'));
+  if (teethPulse > 0) teethPulse--;
+
+  bug.draw(
+    draggingNear('yummy') || draggingNear('gold') || draggingNear('yucky'),
+    draggingNear('salim') || draggingNear('selma')
+  );
 
   crash.update();
   crash.drawEffects();
@@ -905,13 +898,9 @@ function loop() {
   particles = particles.filter(p => p.life > 0);
   particles.forEach(p => { p.update(); p.draw(); });
 
-  drawScore();
-  drawCandyCounter();
+  drawTeeth();
   drawLevelIndicator();
-  drawHighscore();
-  drawNewRecord();
   drawInstruction();
-  drawYuckOverlay();
   drawLevelTransition();
 
   requestAnimationFrame(loop);
