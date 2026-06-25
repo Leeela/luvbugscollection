@@ -43,6 +43,7 @@
   btn.setAttribute('aria-label', label);
   var corners = {
     'bottom-left':  'bottom:14px;left:14px;',
+    'bottom-left-up':'bottom:80px;left:16px;',
     'bottom-right': 'bottom:14px;right:14px;',
     'top-left':     'top:14px;left:14px;',
     'top-right':    'top:14px;right:14px;'

@@ -792,7 +792,7 @@ function eatCandy(candy) {
   if (candy.kind === 'yucky') {
     healTooth();
     spawnParticles(candy.x, candy.y, 'heal');
-    playReaction(VIDEOS.wow);
+    playReaction(VIDEOS.yuck);   // "No, I want candy!"
     return;
   }
 
