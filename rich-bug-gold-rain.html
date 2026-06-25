@@ -348,6 +348,35 @@ body {
   transition: opacity 0.4s;
 }
 .bonus-score-flash.show { opacity: 1; }
+
+/* ── LEVEL FLASH ── */
+.level-flash {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: clamp(28px, 8vmin, 56px);
+  color: var(--gold-deep, #BF360C);
+  text-shadow: 0 2px 10px rgba(255,215,0,0.55), 0 0 4px #fff;
+  pointer-events: none;
+  z-index: 120;
+  text-align: center;
+  white-space: nowrap;
+  animation: levelPop 1.5s ease-out forwards;
+}
+.level-flash span {
+  display: block;
+  font-size: 0.55em;
+  color: #F9A825;
+}
+@keyframes levelPop {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  15%  { opacity: 1; transform: translate(-50%, -50%) scale(1.12); }
+  30%  { transform: translate(-50%, -50%) scale(1); }
+  80%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -55%) scale(0.95); }
+}
 </style>
 </head>
 <body>
@@ -441,6 +470,7 @@ function stop(key) {
 /* ── STATE ── */
 let mode = 'easy';
 let score = 0;
+let level = 1;
 let goldCount = 0;
 let silverCount = 0;
 let coinsMinted = 0;
@@ -453,6 +483,18 @@ let activeFallingCoins = [];
 const GOLD_PTS   = 5;
 const SILVER_PTS = 2;
 const BONUS_PTS  = 3;
+
+/* ── DIFFICULTY: shorter fall time per level (one level per money rain) ── */
+const SPEED_DECAY = 0.84;  // 16% shorter time per level
+const MIN_FALL    = 650;   // floor for normal coins (ms)
+const MIN_SPECIAL = 950;   // floor for the special coin (ms) – keeps a margin
+const MIN_LIFE    = 750;   // floor for tap-coin lifetime, easy mode (ms)
+const MIN_SP_LIFE = 1100;  // floor for special in easy mode (ms)
+
+// Multiplier that shrinks with the level (1.0 at level 1, smaller higher up)
+function speedFactor() {
+  return Math.pow(SPEED_DECAY, level - 1);
+}
 
 function rnd(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -519,7 +561,7 @@ function silverSVG() {
 /* ── START / MENU ── */
 function startGame(selectedMode) {
   mode = selectedMode;
-  score = 0; goldCount = 0; silverCount = 0; coinsMinted = 0;
+  score = 0; level = 1; goldCount = 0; silverCount = 0; coinsMinted = 0;
   gameActive = true;
   activeFallingCoins = [];
   nextSpecialAt = rnd(8, 12);
@@ -592,9 +634,10 @@ function spawnCoin() {
     el.style.top  = rnd(8, 72) + '%';
     el.addEventListener('pointerdown', () => catchCoin(el));
     area.appendChild(el);
-    setTimeout(() => { if (el.parentNode) el.remove(); }, 2600);
+    const life = Math.max(MIN_LIFE, Math.round(2600 * speedFactor()));
+    setTimeout(() => { if (el.parentNode) el.remove(); }, life);
   } else {
-    const dur = rnd(2000, 3600);
+    const dur = Math.max(MIN_FALL, Math.round(rnd(2000, 3600) * speedFactor()));
     el.style.setProperty('--fall-dur', dur + 'ms');
     el.style.left = rnd(4, 84) + '%';
     el.classList.add('falling');
@@ -617,9 +660,10 @@ function spawnSpecial(area) {
     el.style.top  = rnd(10, 68) + '%';
     el.addEventListener('pointerdown', () => catchSpecial(el));
     area.appendChild(el);
-    setTimeout(() => { if (el.parentNode) el.remove(); }, 4000);
+    const life = Math.max(MIN_SP_LIFE, Math.round(4000 * speedFactor()));
+    setTimeout(() => { if (el.parentNode) el.remove(); }, life);
   } else {
-    const dur = rnd(3000, 4500);
+    const dur = Math.max(MIN_SPECIAL, Math.round(rnd(3000, 4500) * speedFactor()));
     el.style.setProperty('--fall-dur', dur + 'ms');
     el.style.left = rnd(4, 84) + '%';
     el.classList.add('falling');
@@ -823,11 +867,23 @@ function endBonusRound() {
 }
 
 function returnToGame() {
+  level++;                       // each money rain = one level faster
   gameActive = true;
   activeFallingCoins = [];
   clearGameArea();
   show('screen-game');
+  showLevelFlash();
   startSpawning();
+}
+
+/* ── LEVEL FLASH: happy feedback, never a "game over" ── */
+function showLevelFlash() {
+  const area = document.getElementById('game-area');
+  const flash = document.createElement('div');
+  flash.className = 'level-flash';
+  flash.innerHTML = `Level ${level} <span>⚡ Faster!</span>`;
+  area.appendChild(flash);
+  setTimeout(() => flash.remove(), 1500);
 }
 </script>
 </body>
