@@ -310,6 +310,32 @@
     }
     .rotate-handle:active { cursor: grabbing; transform: translate(-50%, -130%) scale(0.9); }
 
+    /* Bigger/smaller buttons (shown when the accessory is selected) */
+    .scale-btn {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 36px;
+      height: 36px;
+      background: #fff;
+      border: 3px solid var(--candy);
+      color: var(--candy);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      touch-action: none;
+      z-index: 30;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    }
+    .scale-btn.smaller { transform: translate(-150%, 130%); }
+    .scale-btn.bigger  { transform: translate(50%, 130%); }
+    .scale-btn:active { filter: brightness(0.92); }
+
     @keyframes poff {
       0%   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
       60%  { transform: translate(-50%, -50%) scale(1.4); opacity: 0.6; }
@@ -548,6 +574,7 @@ function placeAccessory(acc, x, y) {
   el.style.left = (x - rect.left) + 'px';
   el.style.top  = (y - rect.top) + 'px';
   el.dataset.angle = '0';
+  el.dataset.scale = '1';
   stage.appendChild(el);
   initPlacedDrag(el);
   initLongPress(el);
@@ -556,7 +583,8 @@ function placeAccessory(acc, x, y) {
 
 function applyTransform(el) {
   const angle = parseFloat(el.dataset.angle) || 0;
-  el.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+  const scale = parseFloat(el.dataset.scale) || 1;
+  el.style.transform = `translate(-50%, -50%) rotate(${angle}deg) scale(${scale})`;
 }
 
 function onPanelDragStart(e, itemEl) {
@@ -675,6 +703,7 @@ function movePlaced(x, y) {
 function selectAccessory(el) {
   deselectAll();
   el.classList.add('selected');
+
   const handle = document.createElement('div');
   handle.className = 'rotate-handle';
   handle.textContent = '🔄';
@@ -682,13 +711,47 @@ function selectAccessory(el) {
   handle.setAttribute('aria-label', 'Rotate accessory');
   el.appendChild(handle);
   initHandleDrag(handle, el);
+
+  const smaller = document.createElement('div');
+  smaller.className = 'scale-btn smaller';
+  smaller.textContent = '−';
+  smaller.setAttribute('data-html2canvas-ignore', 'true');
+  smaller.setAttribute('aria-label', 'Make smaller');
+  el.appendChild(smaller);
+  initScaleButton(smaller, el, 1 / 1.2);
+
+  const bigger = document.createElement('div');
+  bigger.className = 'scale-btn bigger';
+  bigger.textContent = '+';
+  bigger.setAttribute('data-html2canvas-ignore', 'true');
+  bigger.setAttribute('aria-label', 'Make bigger');
+  el.appendChild(bigger);
+  initScaleButton(bigger, el, 1.2);
 }
 
 function deselectAll() {
   document.querySelectorAll('.placed-accessory.selected').forEach(el => {
     el.classList.remove('selected');
-    el.querySelectorAll('.rotate-handle').forEach(h => h.remove());
+    el.querySelectorAll('.rotate-handle, .scale-btn').forEach(h => h.remove());
   });
+}
+
+function initScaleButton(btn, el, factor) {
+  function press(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    clearTimeout(longPressTimer);
+    scaleAccessory(el, factor);
+  }
+  btn.addEventListener('mousedown', press);
+  btn.addEventListener('touchstart', press, { passive: false });
+}
+
+function scaleAccessory(el, factor) {
+  let s = (parseFloat(el.dataset.scale) || 1) * factor;
+  s = Math.min(3, Math.max(0.4, s));
+  el.dataset.scale = s;
+  applyTransform(el);
 }
 
 function initHandleDrag(handle, el) {
