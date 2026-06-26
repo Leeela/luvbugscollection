@@ -454,14 +454,14 @@ function stopVoice() {
 }
 // Play a sequence of clips back-to-back; interrupts anything already playing.
 // Falls back to TTS if any clip is missing.
-function sayClips(keys, ttsFallback) {
+function sayClips(keys, ttsFallback, onDone) {
   stopVoice();
-  if (!keys.every(clipReady)) { speak(ttsFallback); return; }
+  if (!keys.every(clipReady)) { speak(ttsFallback); if (onDone) setTimeout(onDone, 1600); return; }
   let i = 0;
   (function next() {
-    if (i >= keys.length) return;
+    if (i >= keys.length) { if (onDone) onDone(); return; }
     let a;
-    try { a = voiceEls[keys[i]].cloneNode(); } catch (e) { return; }
+    try { a = voiceEls[keys[i]].cloneNode(); } catch (e) { if (onDone) onDone(); return; }
     i++;
     voiceActive.push(a);
     a.addEventListener('ended', next, { once: true });
@@ -622,18 +622,12 @@ function win() {
 
   // Say the result + praise. The plus level says the whole sum ("a plus b equals the sum"),
   // with a slightly longer delay so the last candy's count finishes first.
+  // Say the result + praise. WAIT until the voice has finished before the next
+  // round – the plus sentence is long and must not be cut off by a new number.
   const pi = Math.floor(Math.random() * PRAISE.length);
-  if (level === 3) {
-    setTimeout(() => sayClips(
-      [String(addA), 'plus', String(addB), 'lika', String(target), PRAISE_KEYS[pi]],
-      NUM_EN[addA] + ' plus ' + NUM_EN[addB] + ' equals ' + NUM_EN[target] + '! ' + PRAISE[pi]
-    ), 650);
-  } else {
-    setTimeout(() => sayClips(
-      [String(target), PRAISE_KEYS[pi]],
-      NUM_EN[target] + '! ' + PRAISE[pi]
-    ), 250);
-  }
+  const reachedEnd = stars >= ROUNDS_TO_END;
+  let advanced = false;
+  const finish = () => { if (advanced) return; advanced = true; if (reachedEnd) showEnding(); else nextRound(); };
 
   // Clear any remaining candies nicely
   $('candies').querySelectorAll('.candy').forEach(c => {
@@ -641,8 +635,18 @@ function win() {
     c.style.transform = 'scale(0.4)'; c.style.opacity = '0';
   });
 
-  const reachedEnd = stars >= ROUNDS_TO_END;
-  setTimeout(() => { if (reachedEnd) showEnding(); else nextRound(); }, 1700);
+  let keys, tts, speakDelay, gapAfter, failsafe;
+  if (level === 3) {
+    keys = [String(addA), 'plus', String(addB), 'lika', String(target), PRAISE_KEYS[pi]];
+    tts  = NUM_EN[addA] + ' plus ' + NUM_EN[addB] + ' equals ' + NUM_EN[target] + '! ' + PRAISE[pi];
+    speakDelay = 650; gapAfter = 900; failsafe = 9000;
+  } else {
+    keys = [String(target), PRAISE_KEYS[pi]];
+    tts  = NUM_EN[target] + '! ' + PRAISE[pi];
+    speakDelay = 250; gapAfter = 650; failsafe = 4500;
+  }
+  setTimeout(() => sayClips(keys, tts, () => setTimeout(finish, gapAfter)), speakDelay);
+  setTimeout(finish, failsafe); // safety if the speech never finishes
 }
 
 /* ── Ending: doctor animation plays in the scene, then "Play again" ── */
