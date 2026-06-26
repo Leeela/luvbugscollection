@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="/back-to-app.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<link rel="manifest" href="/app/manifest.json">
+<meta name="theme-color" content="#FFC107">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="LuvBugs Collection">
+<link rel="apple-touch-icon" href="/icons/icon-180.png">
+<title>Spread the Joy! – Feelings Game with Joy Bug | LuvBugs Collection</title>
+<meta name="description" content="Learn feelings with Joy Bug! Recognize happy, sad, angry, scared, grumpy and in love – then help every friend feel good. A playful emotions game for kids 3–8.">
+<link rel="canonical" href="https://luvbugscollection.com/spread-the-joy.html" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --safe-top:    env(safe-area-inset-top,    0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left:   env(safe-area-inset-left,   0px);
+  --safe-right:  env(safe-area-inset-right,  0px);
+  --joy:    #FFC107;
+  --joy-deep:#FF9800;
+  --green:  #7BC142;
+  --ink:    #6a4a00;
+}
+
+body {
+  font-family: 'Fredoka', sans-serif;
+  background: #FFF8E1;
+  height: 100dvh;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ── SHARED SCREEN CONTAINER ── */
+.screen {
+  position: fixed; inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
+}
+.screen.active { display: flex; }
+
+/* ── START SCREEN ── */
+#screen-menu {
+  justify-content: center;
+  gap: clamp(12px, 3vmin, 22px);
+  background: linear-gradient(160deg, #FFF8E1 0%, #FFE082 100%);
+  text-align: center;
+  padding-left: max(18px, var(--safe-left));
+  padding-right: max(18px, var(--safe-right));
+}
+#menu-bug {
+  width: clamp(110px, 28vmin, 200px);
+  animation: bob 2s ease-in-out infinite;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.15));
+  cursor: pointer;
+}
+#menu-bug.laugh { animation: laughPop 0.5s ease-in-out; }
+@keyframes laughPop {
+  0%,100% { transform: scale(1) rotate(0); }
+  30%     { transform: scale(1.12) rotate(-6deg); }
+  60%     { transform: scale(1.08) rotate(6deg); }
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50%      { transform: translateY(-10px) rotate(3deg); }
+}
+#screen-menu h1 {
+  font-size: clamp(26px, 7vmin, 50px);
+  color: var(--joy-deep);
+  line-height: 1.05;
+}
+#menu-sub {
+  font-size: clamp(15px, 4vmin, 22px);
+  color: var(--ink);
+  max-width: 360px;
+}
+.big-btn {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(19px, 5vmin, 28px);
+  font-weight: 700;
+  border: none;
+  border-radius: 50px;
+  padding: clamp(13px,3vmin,18px) clamp(34px,8vmin,56px);
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+  box-shadow: 0 6px 0 rgba(0,0,0,0.15);
+  background: var(--joy);
+  color: var(--ink);
+  margin-top: 4px;
+}
+.big-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 rgba(0,0,0,0.15); }
+#menu-more-games {
+  margin-top: 2px;
+  font-size: clamp(14px, 3.5vmin, 18px);
+  color: var(--joy-deep);
+  text-decoration: none;
+  opacity: 0.8;
+  padding: 8px 16px;
+}
+#menu-more-games:hover { opacity: 1; text-decoration: underline; }
+
+/* ── GAME SCREEN ── */
+#screen-game {
+  background: linear-gradient(180deg, #FFFDF5 0%, #FFF1C9 100%);
+  justify-content: flex-start;
+}
+
+/* HUD */
+#hud {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255,193,7,0.30);
+  backdrop-filter: blur(4px);
+  min-height: 52px;
+  flex-shrink: 0;
+}
+#hud-back {
+  font-size: clamp(18px, 4.5vmin, 26px);
+  background: none; border: none; cursor: pointer;
+  padding: 4px 8px; border-radius: 8px;
+  color: var(--joy-deep);
+  font-family: 'Fredoka', sans-serif; font-weight: 600; line-height: 1;
+  min-width: 44px; min-height: 44px;
+  display: flex; align-items: center; justify-content: center;
+}
+#hud-back:active { background: rgba(0,0,0,0.08); }
+#hud-center {
+  text-align: center;
+  font-size: clamp(15px, 4vmin, 22px);
+  font-weight: 600; color: var(--joy-deep);
+}
+#hud-right {
+  font-size: clamp(18px, 4.5vmin, 26px);
+  font-weight: 700; color: var(--joy-deep);
+  text-align: right; min-width: 70px;
+}
+
+/* Arena */
+#arena {
+  flex: 1; width: 100%;
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: space-between;
+  padding: clamp(8px,2vmin,18px) clamp(12px,4vw,28px) clamp(14px,3vmin,26px);
+}
+
+/* Feeling friend */
+#kompis-wrap {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  flex: 0 0 auto;
+  margin-top: clamp(4px,2vmin,16px);
+}
+#kompis-face svg {
+  width: clamp(130px, 36vmin, 240px);
+  height: auto; display: block;
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.12));
+}
+#kompis-face.pop-in { animation: popIn 0.32s cubic-bezier(0.34,1.56,0.64,1); }
+#kompis-face.cheer  { animation: cheer 0.6s ease-in-out; }
+@keyframes popIn {
+  from { transform: scale(0) rotate(-12deg); opacity: 0; }
+  to   { transform: scale(1) rotate(0); opacity: 1; }
+}
+@keyframes cheer {
+  0%,100% { transform: translateY(0) rotate(0); }
+  30%     { transform: translateY(-16px) rotate(-6deg); }
+  60%     { transform: translateY(-8px) rotate(6deg); }
+}
+
+/* Prompt */
+#prompt {
+  font-size: clamp(19px, 5.2vmin, 30px);
+  font-weight: 700; color: var(--joy-deep);
+  text-align: center; line-height: 1.15;
+  min-height: 1.2em; flex: 0 0 auto;
+  padding: 0 6px;
+}
+
+/* Bottom area: buttons OR hero */
+#action-area {
+  width: 100%;
+  display: flex; align-items: center; justify-content: center;
+  flex: 0 0 auto; min-height: clamp(120px, 26vmin, 200px);
+  position: relative;
+}
+
+/* Answer buttons */
+#choices { display: flex; gap: clamp(10px,3vw,22px); flex-wrap: wrap; justify-content: center; }
+.choice {
+  background: #fff; border: 4px solid #FFE082; border-radius: 24px;
+  padding: clamp(6px,1.6vmin,12px); cursor: pointer;
+  transition: transform 0.1s, border-color 0.1s, box-shadow 0.1s;
+  box-shadow: 0 5px 0 rgba(0,0,0,0.10);
+  display: flex; align-items: center; justify-content: center;
+}
+.choice svg { width: clamp(70px, 20vmin, 120px); height: auto; display: block; }
+.choice:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.10); }
+.choice.wrong { animation: shake 0.4s; border-color: #FFB3B3; }
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); } 40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); } 80% { transform: translateX(6px); }
+}
+
+/* Joy Bug hero */
+#hero {
+  display: none; position: relative;
+  background: none; border: none; cursor: pointer;
+  padding: 0;
+}
+#hero img {
+  width: clamp(110px, 30vmin, 200px); height: auto; display: block;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.18));
+  animation: heroBounce 0.7s ease-in-out infinite;
+}
+#hero.jump img { animation: heroJump 0.6s ease-out; }
+@keyframes heroBounce {
+  0%,100% { transform: translateY(0) rotate(-2deg); }
+  50%     { transform: translateY(-12px) rotate(2deg); }
+}
+@keyframes heroJump {
+  0% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(-40px) scale(1.12) rotate(-8deg); }
+  70% { transform: translateY(-10px) scale(1.05) rotate(6deg); }
+  100% { transform: translateY(0) scale(1); }
+}
+.hero-hint {
+  position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
+  font-size: clamp(22px,6vmin,34px); animation: pointBounce 0.8s infinite;
+}
+@keyframes pointBounce { 0%,100%{transform:translate(-50%,0);} 50%{transform:translate(-50%,8px);} }
+
+/* Joy rush – bubbles */
+.bubble {
+  position: absolute; border-radius: 50%; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle at 30% 27%,
+              rgba(255,255,255,0.95) 0%,
+              var(--tint, rgba(255,210,80,0.4)) 52%,
+              rgba(255,255,255,0.05) 78%);
+  border: 1.5px solid rgba(255,255,255,0.65);
+  box-shadow: 0 0 10px rgba(255,200,70,0.5), inset 0 -4px 8px rgba(255,255,255,0.35);
+  will-change: transform, opacity;
+}
+.bubble::after {
+  content: ''; position: absolute; top: 16%; left: 22%;
+  width: 28%; height: 24%; border-radius: 50%;
+  background: rgba(255,255,255,0.85); filter: blur(0.5px);
+}
+.bubble.go { animation: bubbleFloat var(--dur, 2.4s) cubic-bezier(0.4,0,0.5,1) forwards; }
+@keyframes bubbleFloat {
+  0%   { transform: translate(0,0) scale(0.3); opacity: 0; }
+  14%  { opacity: 0.95; }
+  75%  { opacity: 0.9; }
+  100% { transform: translate(var(--dx,0), var(--dy,-320px)) scale(1.05); opacity: 0; }
+}
+
+/* Big feeling word when you answer correctly */
+#word-pop {
+  position: absolute; left: 50%; top: 38%; transform: translate(-50%,-50%);
+  font-size: clamp(30px, 10vmin, 72px); font-weight: 700;
+  color: var(--joy-deep); letter-spacing: 2px; pointer-events: none;
+  text-shadow: 0 3px 0 rgba(255,255,255,0.7); display: none; z-index: 5;
+  white-space: nowrap;
+}
+#word-pop.go { display: block; animation: wordPop 1.1s ease-out forwards; }
+@keyframes wordPop {
+  0% { transform: translate(-50%,-50%) scale(0.3); opacity: 0; }
+  25% { transform: translate(-50%,-50%) scale(1.1); opacity: 1; }
+  75% { transform: translate(-50%,-50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%,-50%) scale(1); opacity: 0; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ── MENU ── -->
+<div id="screen-menu" class="screen">
+  <img id="menu-bug" src="/bilder/gladjebacillen.png" alt="Joy Bug – tap to laugh!" onclick="menuTap()">
+  <h1>Spread the Joy!</h1>
+  <p id="menu-sub">Help Joy Bug recognize feelings and cheer up every friend 💛</p>
+  <button class="big-btn" onclick="startGame()">▶ Play</button>
+  <a href="/app/games.html" id="menu-more-games">🎮 More games</a>
+</div>
+
+<!-- ── GAME ── -->
+<div id="screen-game" class="screen">
+  <div id="hud">
+    <button id="hud-back" onclick="goMenu()" title="Back">←</button>
+    <div id="hud-center">Help your friends</div>
+    <div id="hud-right">⭐ 0</div>
+  </div>
+  <div id="arena">
+    <div id="word-pop"></div>
+    <div id="kompis-wrap"><div id="kompis-face"></div></div>
+    <div id="prompt"></div>
+    <div id="action-area">
+      <div id="choices"></div>
+      <button id="hero" onclick="helpTap()">
+        <span class="hero-hint">👇</span>
+        <img src="/bilder/gladjebacillen.png" alt="Joy Bug">
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Feelings ── */
+const EMOTIONS = [
+  { id:'glad',   label:'HAPPY' },
+  { id:'ledsen', label:'SAD' },
+  { id:'arg',    label:'ANGRY' },
+  { id:'radd',   label:'SCARED' },
+  { id:'sur',    label:'GRUMPY' },
+  { id:'kar',    label:'IN LOVE' },
+];
+const POSITIVE = ['glad','kar'];
+const LABEL = Object.fromEntries(EMOTIONS.map(e => [e.id, e.label]));
+
+const KOMPIS_COLORS = ['#8ECBFF','#FFA8C9','#B39DDB','#80DEEA','#FFCC80','#A5D6A7','#F48FB1','#90CAF9','#CE93D8'];
+
+/* ── SVG faces ── */
+const ST = 'fill="none" stroke="#4a3526" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"';
+const EYE = '#3a2b2b';
+
+function faceInner(em) {
+  switch (em) {
+    case 'glad': return `
+      <circle cx="37" cy="47" r="5" fill="${EYE}"/><circle cx="63" cy="47" r="5" fill="${EYE}"/>
+      <circle cx="38.5" cy="45.5" r="1.6" fill="#fff"/><circle cx="64.5" cy="45.5" r="1.6" fill="#fff"/>
+      <ellipse cx="28" cy="60" rx="7" ry="5" fill="rgba(255,120,120,0.45)"/>
+      <ellipse cx="72" cy="60" rx="7" ry="5" fill="rgba(255,120,120,0.45)"/>
+      <path d="M34 62 Q50 82 66 62" ${ST}/>`;
+    case 'ledsen': return `
+      <path d="M30 41 L43 36" ${ST}/><path d="M57 36 L70 41" ${ST}/>
+      <circle cx="37" cy="49" r="5" fill="${EYE}"/><circle cx="63" cy="49" r="5" fill="${EYE}"/>
+      <path d="M37 55 q-3.5 6 0 9 q3.5 -3 0 -9 Z" fill="#5BC0F0"/>
+      <path d="M34 75 Q50 62 66 75" ${ST}/>`;
+    case 'arg': return `
+      <path d="M28 38 L44 44" ${ST}/><path d="M56 44 L72 38" ${ST}/>
+      <circle cx="38" cy="50" r="4.2" fill="${EYE}"/><circle cx="62" cy="50" r="4.2" fill="${EYE}"/>
+      <ellipse cx="28" cy="62" rx="6.5" ry="4.5" fill="rgba(255,90,90,0.5)"/>
+      <ellipse cx="72" cy="62" rx="6.5" ry="4.5" fill="rgba(255,90,90,0.5)"/>
+      <path d="M36 76 Q50 66 64 76" ${ST}/>`;
+    case 'radd': return `
+      <path d="M30 36 Q37 31 44 36" ${ST}/><path d="M56 36 Q63 31 70 36" ${ST}/>
+      <circle cx="37" cy="49" r="8" fill="#fff" stroke="#4a3526" stroke-width="2.4"/>
+      <circle cx="63" cy="49" r="8" fill="#fff" stroke="#4a3526" stroke-width="2.4"/>
+      <circle cx="37" cy="50" r="3.2" fill="${EYE}"/><circle cx="63" cy="50" r="3.2" fill="${EYE}"/>
+      <path d="M70 32 q-3.5 6 0 9 q3.5 -3 0 -9 Z" fill="#5BC0F0"/>
+      <ellipse cx="50" cy="73" rx="7" ry="9" fill="#7a3b3b"/>`;
+    case 'sur': return `
+      <path d="M30 40 L43 42" ${ST}/><path d="M57 42 L70 40" ${ST}/>
+      <path d="M31 47 Q37 44 43 47" ${ST}/><path d="M57 47 Q63 44 69 47" ${ST}/>
+      <circle cx="35" cy="50" r="3" fill="${EYE}"/><circle cx="60" cy="50" r="3" fill="${EYE}"/>
+      <path d="M43 73 Q50 79 57 72 Q50 70 43 73 Z" fill="#7a3b3b"/>`;
+    case 'kar': return `
+      ${heart(37,47,7,'#FF5A7A')}${heart(63,47,7,'#FF5A7A')}
+      <ellipse cx="28" cy="61" rx="7.5" ry="5.5" fill="rgba(255,110,140,0.5)"/>
+      <ellipse cx="72" cy="61" rx="7.5" ry="5.5" fill="rgba(255,110,140,0.5)"/>
+      <path d="M37 66 Q50 79 63 66" ${ST}/>
+      ${heart(20,16,5,'#FF5A7A')}${heart(80,18,4,'#FF7A95')}${heart(50,7,4,'#FF7A95')}`;
+    default: return '';
+  }
+}
+function heart(cx, cy, s, fill) {
+  return `<path d="M${cx} ${cy+s*0.35} C ${cx-s} ${cy-s*0.55} ${cx-s*0.5} ${cy-s*1.1} ${cx} ${cy-s*0.35} C ${cx+s*0.5} ${cy-s*1.1} ${cx+s} ${cy-s*0.55} ${cx} ${cy+s*0.35} Z" fill="${fill}"/>`;
+}
+function faceSVG(em, color) {
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="52" r="40" fill="${color}" stroke="rgba(0,0,0,0.16)" stroke-width="3"/>
+    ${faceInner(em)}
+  </svg>`;
+}
+
+/* ── Sound ── */
+const SFX = {
+  skratt: new Audio('/ljud/Joy bug skratt.mp3'),
+  wow:    new Audio('/ljud/wow.mp3'),
+};
+function play(key) { const a = SFX[key]; if (!a) return; a.currentTime = 0; a.play().catch(()=>{}); }
+
+// Joy Bug's laugh – clone the element so it ALWAYS replays from the start on every tap
+function playLaugh() {
+  try {
+    const a = SFX.skratt.cloneNode();
+    a.volume = 1;
+    a.play().catch(() => {});
+  } catch (e) { play('skratt'); }
+}
+
+// Bubble sound – a happy "blop-blop" synthesized in the browser (no audio file needed)
+let audioCtx = null;
+function bubbleSound(count) {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const n = count || 7;
+    for (let i = 0; i < n; i++) {
+      const t = audioCtx.currentTime + i * 0.075 + Math.random() * 0.05;
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = 'sine';
+      const f0 = 280 + Math.random() * 260;
+      o.frequency.setValueAtTime(f0, t);
+      o.frequency.exponentialRampToValueAtTime(f0 * 2.3, t + 0.09); // upward sweep = "blop"
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.16, t + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.14);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(t); o.stop(t + 0.16);
+    }
+  } catch (e) {}
+}
+
+// Spoken feeling word – pick a clear, friendly English voice (avoids the robotic default)
+const VOICE_PREFS = ['Samantha', 'Karen', 'Moira', 'Tessa', 'Daniel', 'Shelley', 'Sandy'];
+let chosenVoice = null;
+function pickVoice() {
+  if (!('speechSynthesis' in window)) return null;
+  const vs = speechSynthesis.getVoices();
+  if (!vs.length) return null;
+  for (const name of VOICE_PREFS) {
+    const v = vs.find(v => v.name === name || v.name.startsWith(name + ' '));
+    if (v) return v;
+  }
+  return vs.find(v => /^en-US/i.test(v.lang)) || vs.find(v => /^en/i.test(v.lang)) || null;
+}
+if ('speechSynthesis' in window) {
+  chosenVoice = pickVoice();
+  speechSynthesis.onvoiceschanged = () => { chosenVoice = pickVoice(); };
+}
+function speakWord(word) {
+  try {
+    if (!('speechSynthesis' in window)) return;
+    if (!chosenVoice) chosenVoice = pickVoice();
+    const u = new SpeechSynthesisUtterance(word);
+    if (chosenVoice) u.voice = chosenVoice;
+    u.lang = (chosenVoice && chosenVoice.lang) || 'en-US';
+    u.rate = 0.85; u.pitch = 1.05;
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+/* ── Game logic ── */
+const $ = id => document.getElementById(id);
+let roundIndex = -1;
+let current = null;
+let happy = 0;
+let phase = 'identify';   // 'identify' | 'help' | 'busy'
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+function poolForRound(r) {
+  if (r < 3) return ['glad','ledsen'];
+  if (r < 6) return ['glad','ledsen','arg','radd'];
+  return EMOTIONS.map(e => e.id);
+}
+function choiceCount(r) { return r < 3 ? 2 : 3; }
+function shuffle(a) { for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function pick(a) { return a[Math.floor(Math.random()*a.length)]; }
+
+function startGame() {
+  roundIndex = -1; happy = 0;
+  $('hud-right').textContent = '⭐ 0';
+  show('screen-game');
+  nextRound();
+}
+
+function nextRound() {
+  roundIndex++;
+  phase = 'identify';
+  const pool = poolForRound(roundIndex);
+  const id = pick(pool);
+  current = { id, color: pick(KOMPIS_COLORS) };
+
+  // Friend
+  const kf = $('kompis-face');
+  kf.innerHTML = faceSVG(id, current.color);
+  kf.className = ''; void kf.offsetWidth; kf.className = 'pop-in';
+
+  // Prompt + buttons
+  $('prompt').textContent = 'How does it feel?';
+  $('hero').style.display = 'none';
+  $('hero').classList.remove('jump');
+
+  const opts = [id];
+  const rest = shuffle(pool.filter(x => x !== id));
+  while (opts.length < choiceCount(roundIndex) && rest.length) opts.push(rest.pop());
+  shuffle(opts);
+
+  const box = $('choices');
+  box.style.display = 'flex';
+  box.innerHTML = opts.map(o =>
+    `<button class="choice" onclick="choose('${o}', this)" aria-label="${LABEL[o]}">${faceSVG(o,'#FFE082')}</button>`
+  ).join('');
+}
+
+function choose(em, btn) {
+  if (phase !== 'identify') return;
+  if (em !== current.id) {
+    btn.classList.remove('wrong'); void btn.offsetWidth; btn.classList.add('wrong');
+    return;
+  }
+  // Correct!
+  phase = 'busy';
+  play('wow');
+  const wp = $('word-pop');
+  wp.textContent = LABEL[current.id];
+  wp.classList.remove('go'); void wp.offsetWidth; wp.classList.add('go');
+  setTimeout(() => speakWord(LABEL[current.id]), 650);
+
+  $('choices').style.display = 'none';
+  setTimeout(() => {
+    phase = 'help';
+    $('prompt').textContent = POSITIVE.includes(current.id)
+      ? 'Celebrate with Joy Bug!'
+      : 'Help it! Tap Joy Bug';
+    $('hero').style.display = 'block';
+  }, 750);
+}
+
+function helpTap() {
+  if (phase !== 'help') return;
+  phase = 'busy';
+
+  $('hero').classList.add('jump');
+  bubbleSound();
+  playLaugh();
+  emitBubbles();
+
+  // Friend becomes happy / celebrates
+  const kf = $('kompis-face');
+  if (!POSITIVE.includes(current.id)) {
+    kf.innerHTML = faceSVG('glad', current.color);
+  }
+  kf.className = ''; void kf.offsetWidth; kf.className = 'cheer';
+  $('prompt').textContent = 'HAHAHA! 🎉';
+
+  happy++;
+  $('hud-right').textContent = '⭐ ' + happy;
+
+  setTimeout(nextRound, 1500);
+}
+
+function emitBubbles() {
+  const arena = $('arena');
+  const ar = arena.getBoundingClientRect();
+  const hr = $('hero').getBoundingClientRect();
+  const cx = hr.left - ar.left + hr.width / 2;
+  const cy = hr.top  - ar.top  + hr.height / 2;
+  const tints = [
+    'rgba(255,200,60,0.45)', 'rgba(255,140,170,0.45)', 'rgba(130,200,255,0.45)',
+    'rgba(150,230,180,0.45)', 'rgba(200,160,240,0.45)', 'rgba(255,170,90,0.45)'
+  ];
+  const N = 34;
+  for (let i = 0; i < N; i++) {
+    const b = document.createElement('div');
+    b.className = 'bubble';
+    const size = 16 + Math.random() * 42;
+    b.style.width = b.style.height = size + 'px';
+    const jitterX = (Math.random() - 0.5) * hr.width * 1.6;
+    b.style.left = (cx + jitterX - size / 2) + 'px';
+    b.style.top  = (cy - size / 2) + 'px';
+    b.style.setProperty('--tint', tints[Math.floor(Math.random() * tints.length)]);
+    b.style.setProperty('--dx', ((Math.random() - 0.5) * 200).toFixed(0) + 'px');
+    b.style.setProperty('--dy', (-(cy * 0.7 + 120 + Math.random() * 180)).toFixed(0) + 'px');
+    b.style.setProperty('--dur', (1.8 + Math.random() * 1.8).toFixed(2) + 's');
+    arena.appendChild(b);
+    const delay = Math.random() * 280;
+    setTimeout(() => b.classList.add('go'), delay);
+    setTimeout(() => b.remove(), delay + 3800);
+  }
+}
+
+// Tap Joy Bug on the start screen – she laughs and bounces
+function menuTap() {
+  playLaugh();
+  const b = $('menu-bug');
+  b.classList.remove('laugh'); void b.offsetWidth; b.classList.add('laugh');
+}
+
+function goMenu() {
+  phase = 'busy';
+  try { speechSynthesis.cancel(); } catch(e) {}
+  show('screen-menu');
+}
+
+show('screen-menu');
+</script>
+<script src="bg-musik.js" data-track="ljud/emotions joy bug.mp3" data-volume="0.15" data-pos="bottom-left-up"></script>
+</body>
+</html>
