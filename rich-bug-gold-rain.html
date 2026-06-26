@@ -54,12 +54,12 @@ body {
 .screen.active { display: flex; }
 
 /* ── START SCREEN ── */
-#screen-menu {
+#screen-menu, #screen-done {
   justify-content: center;
   gap: clamp(12px, 3vmin, 24px);
   background: linear-gradient(160deg, #fffbea 0%, #fef3c7 60%, #fde68a 100%);
 }
-#menu-bug {
+#menu-bug, #done-bug {
   width: clamp(100px, 26vmin, 180px);
   animation: bob 2.2s ease-in-out infinite;
   filter: drop-shadow(0 8px 18px rgba(160,120,0,0.25));
@@ -68,13 +68,13 @@ body {
   0%,100% { transform: translateY(0) rotate(-2deg); }
   50%      { transform: translateY(-12px) rotate(2deg); }
 }
-#screen-menu h1 {
+#screen-menu h1, #screen-done h1 {
   font-size: clamp(20px, 5.5vmin, 40px);
   color: var(--gold-deep);
   text-align: center;
   line-height: 1.2;
 }
-#screen-menu p {
+#screen-menu p, #screen-done p {
   font-size: clamp(13px, 3.2vmin, 18px);
   color: #78350f;
   text-align: center;
@@ -435,6 +435,22 @@ body {
   </div>
 </div>
 
+<!-- ── DONE SCREEN ── -->
+<div id="screen-done" class="screen">
+  <img id="done-bug" src="bilder/rikedomsbacillen.png" alt="Rich Bug">
+  <h1>You finished all 10 levels! 🏆</h1>
+  <p>You collected <strong id="done-score">0</strong> ⭐</p>
+  <div class="mode-buttons">
+    <button class="mode-btn medium" onclick="restartGame()">
+      <span>🔁 Play again</span>
+    </button>
+    <button class="mode-btn easy" onclick="location.href='games.html'">
+      <span>🎮 More games</span>
+    </button>
+    <button class="back-btn" style="margin-top:6px;" onclick="location.href='watch.html'">🎬 Watch videos</button>
+  </div>
+</div>
+
 <script>
 'use strict';
 
@@ -483,6 +499,7 @@ let activeFallingCoins = [];
 const GOLD_PTS   = 5;
 const SILVER_PTS = 2;
 const BONUS_PTS  = 3;
+const MAX_LEVEL  = 10;   // the game ends after 10 levels
 
 /* ── DIFFICULTY: shorter fall time per level (one level per money rain) ── */
 const SPEED_DECAY = 0.84;  // 16% shorter time per level
@@ -867,6 +884,10 @@ function endBonusRound() {
 }
 
 function returnToGame() {
+  if (level >= MAX_LEVEL) {       // 10 levels played – the game is over
+    showGameComplete();
+    return;
+  }
   level++;                       // each money rain = one level faster
   gameActive = true;
   activeFallingCoins = [];
@@ -874,6 +895,23 @@ function returnToGame() {
   show('screen-game');
   showLevelFlash();
   startSpawning();
+}
+
+/* ── DONE: after 10 levels ── */
+function showGameComplete() {
+  gameActive = false;
+  clearInterval(spawnTimer);
+  clearInterval(collisionTimer);
+  stop('rain');
+  clearGameArea();
+  activeFallingCoins = [];
+  document.getElementById('done-score').textContent = score;
+  play('yay');
+  show('screen-done');
+}
+
+function restartGame() {
+  startGame(mode);
 }
 
 /* ── LEVEL FLASH: happy feedback, never a "game over" ── */
