@@ -105,4 +105,8 @@
   } else {
     init();
   }
+
+  // Exponera enkel paus/återuppta så spel kan tysta musiken (t.ex. under slut-video)
+  window.bacillernaMusicPause  = function () { try { audio.pause(); } catch (e) {} };
+  window.bacillernaMusicResume = function () { try { play(); } catch (e) {} };
 })();

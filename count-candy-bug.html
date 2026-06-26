@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="/back-to-app.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<link rel="manifest" href="/app/manifest.json">
+<meta name="theme-color" content="#7BC142">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="LuvBugs Collection">
+<link rel="apple-touch-icon" href="/icons/icon-180.png">
+<title>Count with Candy Bug – Learn to Count 1–10 | LuvBugs Collection</title>
+<meta name="description" content="Learn to count with Candy Bug! Feed him the right number of candies – count 1–5, 1–10 or simple sums. A free educational counting game for kids 2–6.">
+<link rel="canonical" href="https://luvbugscollection.com/count-candy-bug.html" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://luvbugscollection.com/count-candy-bug.html" />
+<meta property="og:title" content="Count with Candy Bug – Learn to Count | LuvBugs Collection" />
+<meta property="og:description" content="Feed Candy Bug the right number of candies and learn to count 1–10. Three levels: easy, medium and plus. Free kids game." />
+<meta property="og:image" content="https://luvbugscollection.com/bilder/godisbacillen-gapar.png" />
+<meta property="og:site_name" content="LuvBugs Collection" />
+<link rel="alternate" hreflang="sv" href="https://bacillerna.se/rakna-godisbacillen.html" />
+<link rel="alternate" hreflang="en" href="https://luvbugscollection.com/count-candy-bug.html" />
+<link rel="alternate" hreflang="x-default" href="https://luvbugscollection.com/count-candy-bug.html" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --safe-top:    env(safe-area-inset-top,    0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left:   env(safe-area-inset-left,   0px);
+  --safe-right:  env(safe-area-inset-right,  0px);
+  --green:   #7BC142;
+  --green-deep:#2D8659;
+  --candy:   #FF8FB1;
+  --ink:     #235c3d;
+}
+
+body {
+  font-family: 'Fredoka', sans-serif;
+  background: #F1FBEA;
+  height: 100dvh;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ── SHARED SCREEN CONTAINER ── */
+.screen {
+  position: fixed; inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
+}
+.screen.active { display: flex; }
+
+/* ── START ── */
+#screen-menu {
+  justify-content: center;
+  gap: clamp(10px, 2.6vmin, 20px);
+  background: linear-gradient(160deg, #F1FBEA 0%, #C7EDA9 100%);
+  text-align: center;
+  padding-left: max(18px, var(--safe-left));
+  padding-right: max(18px, var(--safe-right));
+}
+#menu-bug {
+  width: clamp(150px, 34vmin, 230px);
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  object-position: center 42%;
+  mix-blend-mode: multiply;
+  animation: bob 2s ease-in-out infinite;
+  cursor: pointer;
+}
+#menu-bug.chomp { animation: chompPop 0.45s ease-in-out; }
+@keyframes chompPop {
+  0%,100% { transform: scale(1) rotate(0); }
+  35%     { transform: scale(1.12) rotate(-5deg); }
+  65%     { transform: scale(1.07) rotate(5deg); }
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50%      { transform: translateY(-10px) rotate(3deg); }
+}
+#screen-menu h1 {
+  font-size: clamp(26px, 7vmin, 50px);
+  color: var(--green-deep);
+  line-height: 1.05;
+}
+#menu-sub {
+  font-size: clamp(15px, 4vmin, 22px);
+  color: var(--ink);
+  max-width: 380px;
+}
+.levels { display: flex; flex-direction: column; gap: clamp(10px,2.4vmin,16px); margin-top: 6px; width: min(86vw, 340px); }
+.big-btn {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(19px, 5vmin, 26px);
+  font-weight: 700;
+  border: none;
+  border-radius: 50px;
+  padding: clamp(13px,3vmin,18px) clamp(20px,6vmin,40px);
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+  box-shadow: 0 6px 0 rgba(0,0,0,0.15);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.big-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 rgba(0,0,0,0.15); }
+.lvl-1 { background: #7BC142; }
+.lvl-2 { background: #F2A93B; }
+.lvl-3 { background: #EF6F6F; }
+.lvl-tag { font-size: 0.72em; font-weight: 600; opacity: 0.9; }
+#menu-more-games {
+  margin-top: 2px;
+  font-size: clamp(14px, 3.5vmin, 18px);
+  color: var(--green-deep);
+  text-decoration: none;
+  opacity: 0.85;
+  padding: 8px 16px;
+}
+#menu-more-games:hover { opacity: 1; text-decoration: underline; }
+
+/* ── GAME ── */
+#screen-game {
+  background: linear-gradient(180deg, #F7FDF2 0%, #DCF1C8 100%);
+  justify-content: flex-start;
+}
+
+/* HUD */
+#hud {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(123,193,66,0.28);
+  backdrop-filter: blur(4px);
+  min-height: 52px;
+  flex-shrink: 0;
+}
+#hud-back {
+  font-size: clamp(18px, 4.5vmin, 26px);
+  background: none; border: none; cursor: pointer;
+  padding: 4px 8px; border-radius: 8px;
+  color: var(--green-deep);
+  font-family: 'Fredoka', sans-serif; font-weight: 600; line-height: 1;
+  min-width: 44px; min-height: 44px;
+  display: flex; align-items: center; justify-content: center;
+}
+#hud-back:active { background: rgba(0,0,0,0.08); }
+#hud-center {
+  text-align: center;
+  font-size: clamp(15px, 4vmin, 22px);
+  font-weight: 600; color: var(--green-deep);
+}
+#hud-right {
+  font-size: clamp(18px, 4.5vmin, 26px);
+  font-weight: 700; color: var(--green-deep);
+  text-align: right; min-width: 70px;
+}
+
+/* Arena */
+#arena {
+  flex: 1; width: 100%;
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  gap: clamp(6px,1.6vmin,14px);
+  padding: clamp(8px,2vmin,18px) clamp(12px,4vw,28px) clamp(10px,2vmin,22px);
+}
+
+/* Number display */
+#number {
+  font-size: clamp(54px, 16vmin, 120px);
+  font-weight: 700; color: var(--green-deep);
+  line-height: 1; text-shadow: 0 3px 0 rgba(255,255,255,0.7);
+  flex: 0 0 auto;
+}
+#number.pop { animation: numPop 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes numPop {
+  from { transform: scale(0.3); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* Dots (level 1) */
+#dots { display: flex; gap: clamp(6px,1.6vw,12px); flex-wrap: wrap; justify-content: center; min-height: 4px; flex: 0 0 auto; }
+.dot {
+  width: clamp(16px,4.4vmin,26px); height: clamp(16px,4.4vmin,26px);
+  border-radius: 50%; background: var(--green);
+  border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+  transition: opacity 0.2s, transform 0.2s;
+}
+.dot.eaten { opacity: 0.22; transform: scale(0.8); }
+
+/* Counter */
+#counter {
+  font-size: clamp(20px, 5.4vmin, 30px);
+  font-weight: 700; color: var(--green); flex: 0 0 auto;
+}
+#counter b { color: var(--green-deep); }
+
+/* Candies */
+#candies {
+  position: relative;
+  display: flex; flex-wrap: wrap; gap: clamp(6px,2vw,14px);
+  align-items: center; justify-content: center;
+  flex: 0 0 auto; min-height: clamp(70px, 18vmin, 130px);
+  max-width: 560px;
+}
+.candy {
+  font-size: clamp(40px, 11vmin, 72px);
+  line-height: 1; cursor: pointer; background: none; border: none; padding: 4px;
+  transition: transform 0.12s;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.16));
+}
+.candy:active { transform: scale(1.18); }
+
+/* Candy Bug */
+#bug-wrap {
+  flex: 1 1 auto; display: flex; align-items: flex-end; justify-content: center;
+  width: 100%; min-height: clamp(120px, 26vmin, 230px);
+}
+#bug {
+  width: clamp(160px, 42vmin, 290px);
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  object-position: center 42%;
+  display: block;
+  mix-blend-mode: multiply;
+}
+#bug.cheer { animation: bugCheer 0.7s ease-in-out; }
+#bug.chomp { animation: bugChomp 0.22s ease-in-out; }
+@keyframes bugChomp {
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(1.08); }
+}
+@keyframes bugCheer {
+  0%,100% { transform: translateY(0) scale(1) rotate(0); }
+  35%     { transform: translateY(-26px) scale(1.1) rotate(-7deg); }
+  65%     { transform: translateY(-8px) scale(1.06) rotate(7deg); }
+}
+
+/* Star pop on success */
+#star-pop {
+  position: absolute; left: 50%; top: 40%; transform: translate(-50%,-50%);
+  font-size: clamp(60px, 18vmin, 130px); pointer-events: none;
+  display: none; z-index: 6; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+}
+#star-pop.go { display: block; animation: starPop 1.2s ease-out forwards; }
+@keyframes starPop {
+  0%   { transform: translate(-50%,-50%) scale(0.2) rotate(-30deg); opacity: 0; }
+  25%  { transform: translate(-50%,-50%) scale(1.15) rotate(8deg); opacity: 1; }
+  70%  { transform: translate(-50%,-50%) scale(1) rotate(0); opacity: 1; }
+  100% { transform: translate(-50%,-50%) scale(1.05) rotate(0); opacity: 0; }
+}
+
+/* Confetti on success */
+.confetti {
+  position: absolute; width: 12px; height: 16px; border-radius: 2px;
+  pointer-events: none; opacity: 0; will-change: transform, opacity; z-index: 5;
+}
+.confetti.go { animation: confFall var(--dur,1.4s) ease-in forwards; }
+@keyframes confFall {
+  0%   { transform: translate(0,0) rotate(0); opacity: 1; }
+  100% { transform: translate(var(--dx,0), var(--dy,260px)) rotate(540deg); opacity: 0; }
+}
+
+/* ── END SCREEN: doctor animation plays in the scene (not black fullscreen) ── */
+#screen-end {
+  background: linear-gradient(180deg, #F7FDF2 0%, #DCF1C8 100%);
+  justify-content: center;
+  gap: clamp(14px, 3vmin, 26px);
+  padding: clamp(10px, 3vmin, 24px);
+}
+#end-video {
+  height: min(72vh, 132vw);   /* 9:16 → width always fits */
+  max-width: 94vw;
+  width: auto; display: block;
+  mix-blend-mode: multiply;   /* removes the video's white background → plays in the scene */
+}
+#end-buttons {
+  display: flex; gap: 14px; align-items: center; justify-content: center; flex-wrap: wrap;
+}
+#end-buttons.hidden { visibility: hidden; }
+#end-home {
+  font-size: clamp(20px, 5vmin, 28px);
+  background: rgba(255,255,255,0.9); color: var(--green-deep);
+  border: none; border-radius: 50%; width: 56px; height: 56px; cursor: pointer;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.12); line-height: 1;
+}
+#end-home:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.12); }
+</style>
+</head>
+<body>
+
+<!-- ── MENU ── -->
+<div id="screen-menu" class="screen">
+  <video id="menu-bug" autoplay loop muted playsinline webkit-playsinline onclick="menuTap()" poster="/bilder/godisbacillen-gapar.png" aria-label="Candy Bug – tap to chew!">
+    <source src="/bug_loop.mov"  type="video/quicktime">
+    <source src="/bug_loop.webm" type="video/webm">
+    <source src="/bug_loop.mp4"  type="video/mp4">
+  </video>
+  <h1>Count with Candy Bug</h1>
+  <p id="menu-sub">Feed Candy Bug the right number of candies and learn to count! 🍬</p>
+  <div class="levels">
+    <button class="big-btn lvl-1" onclick="startGame(1)">🟢 Easy <span class="lvl-tag">count 1–5</span></button>
+    <button class="big-btn lvl-2" onclick="startGame(2)">🟡 Medium <span class="lvl-tag">count 1–10</span></button>
+    <button class="big-btn lvl-3" onclick="startGame(3)">🔴 Plus <span class="lvl-tag">3 + 2 = ?</span></button>
+  </div>
+  <a href="/app/games.html" id="menu-more-games">🎮 More games</a>
+</div>
+
+<!-- ── GAME ── -->
+<div id="screen-game" class="screen">
+  <div id="hud">
+    <button id="hud-back" onclick="goMenu()" title="Back">←</button>
+    <div id="hud-center">Feed this many!</div>
+    <div id="hud-right">⭐ 0</div>
+  </div>
+  <div id="arena">
+    <div id="star-pop">⭐</div>
+    <div id="number"></div>
+    <div id="dots"></div>
+    <div id="counter"><b id="counter-eaten">0</b> / <span id="counter-target">0</span></div>
+    <div id="candies"></div>
+    <div id="bug-wrap">
+      <video id="bug" autoplay loop muted playsinline webkit-playsinline poster="/bilder/godisbacillen-gapar.png" aria-label="Candy Bug">
+        <source src="/bug_loop.mov"  type="video/quicktime">
+        <source src="/bug_loop.webm" type="video/webm">
+        <source src="/bug_loop.mp4"  type="video/mp4">
+      </video>
+    </div>
+  </div>
+</div>
+
+<!-- ── END: the doctor & Candy Bug (after 10 correct) ── -->
+<div id="screen-end" class="screen">
+  <video id="end-video" playsinline webkit-playsinline preload="auto">
+    <source src="/EN_The_doctor_and_candy_bug.mp4" type="video/mp4">
+  </video>
+  <div id="end-buttons" class="hidden">
+    <button class="big-btn lvl-1" onclick="playAgain()">▶ Play again!</button>
+    <button id="end-home" onclick="endToMenu()" aria-label="To menu">🏠</button>
+  </div>
+</div>
+
+<script>
+/* ── Constants ── */
+const ROUNDS_TO_END = 10;        // correct answers before the doctor animation
+const CANDY_EMOJI = ['🍬','🍭','🍫','🧁','🍩','🍪'];
+const NUM_EN = ['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen'];
+const PRAISE = ['Good job!', 'Great!', 'Yes!'];  // fallback text, matches the praise clips
+const CONF_COLORS = ['#7BC142','#FFCC4D','#FF8FB1','#5BC0F0','#C792EA','#FF8A65'];
+
+/* ── Helpers ── */
+const $ = id => document.getElementById(id);
+function randInt(min, max) { return min + Math.floor(Math.random() * (max - min + 1)); }
+function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+
+/* ── Sound ── */
+const SFX = {
+  wow:   new Audio('/ljud/wow.mp3'),
+};
+function playSfx(key, vol) {
+  try { const a = SFX[key].cloneNode(); a.volume = vol == null ? 1 : vol; a.play().catch(()=>{}); } catch(e) {}
+}
+
+let audioCtx = null;
+function ensureCtx() {
+  audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+// CHOMP – a short, soft "nom" synthesized in the browser (no sound file needed)
+function chompSound() {
+  try {
+    const ctx = ensureCtx();
+    const t = ctx.currentTime;
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'square';
+    o.frequency.setValueAtTime(190, t);
+    o.frequency.exponentialRampToValueAtTime(70, t + 0.13);   // downward sweep = "nom"
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.20, t + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(t); o.stop(t + 0.18);
+  } catch (e) {}
+}
+// Ding on reaching the number – a soft rising chime
+function dingSound() {
+  try {
+    const ctx = ensureCtx();
+    const t = ctx.currentTime;
+    [{ f: 784, d: 0 }, { f: 1047, d: 0.10 }, { f: 1319, d: 0.20 }].forEach(n => {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = 'sine'; o.frequency.value = n.f;
+      const s = t + n.d;
+      g.gain.setValueAtTime(0.0001, s);
+      g.gain.exponentialRampToValueAtTime(0.20, s + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, s + 0.40);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(s); o.stop(s + 0.45);
+    });
+  } catch (e) {}
+}
+// Count out loud in English (browser voice – used as fallback)
+function speak(text, pitch) {
+  try {
+    if (!('speechSynthesis' in window)) return;
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = 0.95; u.pitch = pitch == null ? 1.25 : pitch;
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+/* ── Recorded Candy Bug voice (ElevenLabs) with TTS fallback ──
+   Clips live in /ljud/rost/en/. If a clip is missing the browser voice is
+   used automatically – the game works without the clips. */
+const VOICE_DIR = '/ljud/rost/en/';
+// Key → Leila's ElevenLabs filename.
+const VOICE_FILES = {
+  '1': 'One.mp3', '2': 'two.mp3', '3': 'three.mp3', '4': 'four.mp3', '5': 'five.mp3',
+  '6': 'Six.mp3', '7': 'seven.mp3', '8': 'eight.mp3', '9': 'nine.mp3', '10': 'ten.mp3',
+  'plus': 'plus.mp3', 'lika': 'equals.mp3',
+  'berom1': 'Good_job_.mp3', 'berom2': 'Great_.mp3', 'berom3': 'Yes_.mp3'
+};
+const PRAISE_KEYS = ['berom1', 'berom2', 'berom3']; // same order as PRAISE
+const VOICE_KEYS = Object.keys(VOICE_FILES);
+const voiceEls = {};
+VOICE_KEYS.forEach(k => {
+  try { const a = new Audio(VOICE_DIR + VOICE_FILES[k]); a.preload = 'auto'; voiceEls[k] = a; } catch (e) {}
+});
+// A clip counts as ready only if the mp3 actually loaded and decoded
+// (a missing file gives readyState 0 / duration NaN → we fall back to TTS).
+function clipReady(k) {
+  const a = voiceEls[k];
+  return !!a && !a.error && a.readyState >= 2 && isFinite(a.duration) && a.duration > 0;
+}
+// Stop everything currently playing (clips + TTS) so nothing overlaps
+let voiceActive = [];
+function stopVoice() {
+  try { if ('speechSynthesis' in window) speechSynthesis.cancel(); } catch (e) {}
+  voiceActive.forEach(a => { try { a.pause(); } catch (e) {} });
+  voiceActive = [];
+}
+// Play a sequence of clips back-to-back; interrupts anything already playing.
+// Falls back to TTS if any clip is missing.
+function sayClips(keys, ttsFallback) {
+  stopVoice();
+  if (!keys.every(clipReady)) { speak(ttsFallback); return; }
+  let i = 0;
+  (function next() {
+    if (i >= keys.length) return;
+    let a;
+    try { a = voiceEls[keys[i]].cloneNode(); } catch (e) { return; }
+    i++;
+    voiceActive.push(a);
+    a.addEventListener('ended', next, { once: true });
+    a.addEventListener('error', next, { once: true });
+    const p = a.play(); if (p) p.catch(() => next());
+  })();
+}
+// Say a single number (1–10)
+function sayNumber(n) { sayClips([String(n)], NUM_EN[n] || String(n)); }
+
+/* ── Chew pulse on the loop video for every feed ── */
+function chompMouth() {
+  const bug = $('bug');
+  bug.classList.remove('chomp'); void bug.offsetWidth; bug.classList.add('chomp');
+}
+
+/* ── Game logic ── */
+let level = 1;
+let stars = 0;
+let target = 0;
+let eaten = 0;
+let locked = false;
+let addA = 0, addB = 0;          // the two numbers in the plus task (level 3)
+let endTimer = null;             // failsafe timer for the end-screen buttons
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+function startGame(lvl) {
+  level = lvl;
+  stars = 0;
+  $('hud-right').textContent = '⭐ 0';
+  $('hud-center').textContent = level === 3 ? 'Work it out and feed!' : 'Feed this many!';
+  show('screen-game');
+  nextRound();
+}
+
+function nextRound() {
+  locked = false;
+  eaten = 0;
+  $('bug').classList.remove('cheer', 'chomp');
+
+  // Decide the number
+  let display, extra;
+  if (level === 1) {
+    target = randInt(1, 5);
+    display = String(target);
+    extra = 0;                       // exact amount – crystal clear for the youngest
+  } else if (level === 2) {
+    target = randInt(1, 10);
+    display = String(target);
+    extra = randInt(2, 3);           // a few extra candies in the pile
+  } else {
+    let a = randInt(1, 5), b = randInt(1, 5);
+    while (a + b > 10) { a = randInt(1, 5); b = randInt(1, 5); }
+    target = a + b;
+    addA = a; addB = b;
+    display = a + ' + ' + b;
+    extra = randInt(2, 3);
+  }
+
+  // Number display
+  const num = $('number');
+  num.textContent = display;
+  num.classList.remove('pop'); void num.offsetWidth; num.classList.add('pop');
+
+  // Dots (level 1 only)
+  const dots = $('dots');
+  if (level === 1) {
+    dots.innerHTML = Array.from({ length: target }, () => '<div class="dot"></div>').join('');
+  } else {
+    dots.innerHTML = '';
+  }
+
+  // Counter
+  $('counter-target').textContent = target;
+  updateCounter();
+
+  // Candies
+  const total = target + extra;
+  const box = $('candies');
+  box.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const b = document.createElement('button');
+    b.className = 'candy';
+    b.textContent = pick(CANDY_EMOJI);
+    b.addEventListener('click', () => feed(b));
+    box.appendChild(b);
+  }
+
+}
+
+function updateCounter() {
+  $('counter-eaten').textContent = eaten;
+}
+
+function feed(el) {
+  if (locked) return;
+  eaten++;
+
+  // Fly into the mouth
+  flyToMouth(el);
+  chompMouth();
+  chompSound();
+  updateCounter();
+
+  // Dim a dot
+  if (level === 1) {
+    const d = $('dots').querySelectorAll('.dot:not(.eaten)')[0];
+    if (d) d.classList.add('eaten');
+  }
+
+  // Count out loud for each candy. On the plus level the count restarts after
+  // the first number: 2+3 → "one, two" (first number), then "one, two, three".
+  const spokenNum = (level === 3 && eaten > addA) ? (eaten - addA) : eaten;
+  sayNumber(spokenNum);
+
+  if (eaten >= target) {
+    locked = true;
+    setTimeout(win, 450);
+  }
+}
+
+function flyToMouth(el) {
+  const box = $('candies');
+  const br = $('bug').getBoundingClientRect();
+  const cr = el.getBoundingClientRect();
+  const pr = box.getBoundingClientRect();
+  // Freeze the candy in place so the others don't jump
+  el.style.position = 'absolute';
+  el.style.left = (cr.left - pr.left) + 'px';
+  el.style.top  = (cr.top  - pr.top)  + 'px';
+  el.style.margin = '0';
+  // Target: Candy Bug's mouth (a little above the image centre)
+  const dx = (br.left + br.width / 2) - (cr.left + cr.width / 2);
+  const dy = (br.top  + br.height * 0.40) - (cr.top + cr.height / 2);
+  void el.offsetWidth;
+  el.style.transition = 'transform 0.32s cubic-bezier(0.5,0,0.7,1), opacity 0.32s';
+  el.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(0.3)';
+  el.style.opacity = '0';
+  el.style.pointerEvents = 'none';
+  setTimeout(() => el.remove(), 340);
+}
+
+function win() {
+  // Celebrate!
+  const bug = $('bug');
+  bug.classList.remove('cheer'); void bug.offsetWidth; bug.classList.add('cheer');
+
+  stars++;
+  $('hud-right').textContent = '⭐ ' + stars;
+
+  dingSound();
+  starPop();
+  confettiBurst();
+
+  // Say the result + praise. The plus level says the whole sum ("a plus b equals the sum"),
+  // with a slightly longer delay so the last candy's count finishes first.
+  const pi = Math.floor(Math.random() * PRAISE.length);
+  if (level === 3) {
+    setTimeout(() => sayClips(
+      [String(addA), 'plus', String(addB), 'lika', String(target), PRAISE_KEYS[pi]],
+      NUM_EN[addA] + ' plus ' + NUM_EN[addB] + ' equals ' + NUM_EN[target] + '! ' + PRAISE[pi]
+    ), 650);
+  } else {
+    setTimeout(() => sayClips(
+      [String(target), PRAISE_KEYS[pi]],
+      NUM_EN[target] + '! ' + PRAISE[pi]
+    ), 250);
+  }
+
+  // Clear any remaining candies nicely
+  $('candies').querySelectorAll('.candy').forEach(c => {
+    c.style.transition = 'transform 0.3s, opacity 0.3s';
+    c.style.transform = 'scale(0.4)'; c.style.opacity = '0';
+  });
+
+  const reachedEnd = stars >= ROUNDS_TO_END;
+  setTimeout(() => { if (reachedEnd) showEnding(); else nextRound(); }, 1700);
+}
+
+/* ── Ending: doctor animation plays in the scene, then "Play again" ── */
+function showEnding() {
+  locked = true;
+  try { speechSynthesis.cancel(); } catch (e) {}
+  stopVoice();
+  if (window.bacillernaMusicPause) window.bacillernaMusicPause();
+  show('screen-end');
+  const v = $('end-video');
+  // Show "Play again" + home RIGHT AWAY (no need to wait out the whole clip)
+  $('end-buttons').classList.remove('hidden');
+  try { v.currentTime = 0; } catch (e) {}
+  v.muted = false;
+  const p = v.play();
+  if (p) p.catch(() => { v.muted = true; v.play().catch(() => {}); }); // silent fallback if audio blocked
+}
+function playAgain() {
+  clearTimeout(endTimer);
+  try { $('end-video').pause(); } catch (e) {}
+  if (window.bacillernaMusicResume) window.bacillernaMusicResume();
+  startGame(level);
+}
+function endToMenu() {
+  clearTimeout(endTimer);
+  try { $('end-video').pause(); } catch (e) {}
+  if (window.bacillernaMusicResume) window.bacillernaMusicResume();
+  show('screen-menu');
+}
+
+function starPop() {
+  const s = $('star-pop');
+  s.classList.remove('go'); void s.offsetWidth; s.classList.add('go');
+}
+
+function confettiBurst() {
+  const arena = $('arena');
+  const ar = arena.getBoundingClientRect();
+  const cx = ar.width / 2;
+  const cy = ar.height * 0.38;
+  for (let i = 0; i < 26; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.background = pick(CONF_COLORS);
+    c.style.left = (cx - 6) + 'px';
+    c.style.top  = (cy - 8) + 'px';
+    c.style.setProperty('--dx', ((Math.random() - 0.5) * 320).toFixed(0) + 'px');
+    c.style.setProperty('--dy', (120 + Math.random() * 220).toFixed(0) + 'px');
+    c.style.setProperty('--dur', (1.1 + Math.random() * 0.9).toFixed(2) + 's');
+    arena.appendChild(c);
+    setTimeout(() => c.classList.add('go'), Math.random() * 120);
+    setTimeout(() => c.remove(), 2300);
+  }
+}
+
+/* ── Menu ── */
+function menuTap() {
+  const b = $('menu-bug');
+  b.classList.remove('chomp'); void b.offsetWidth; b.classList.add('chomp');
+  chompSound();
+}
+
+function goMenu() {
+  locked = true;
+  try { speechSynthesis.cancel(); } catch (e) {}
+  show('screen-menu');
+}
+
+/* ── Make sure the loop video plays (autoplay policy on iOS/Android) ── */
+function playBugLoops() {
+  document.querySelectorAll('#menu-bug, #bug').forEach(v => {
+    try { v.muted = true; const p = v.play(); if (p) p.catch(() => {}); } catch (e) {}
+  });
+}
+playBugLoops();
+['pointerdown', 'touchstart', 'click'].forEach(ev =>
+  window.addEventListener(ev, playBugLoops, { passive: true }));
+document.addEventListener('visibilitychange', () => { if (!document.hidden) playBugLoops(); });
+
+show('screen-menu');
+</script>
+<script src="bg-musik.js" data-track="ljud/rakna med Godisbacillen.mp3" data-volume="0.15" data-pos="bottom-left-up"></script>
+</body>
+</html>
