@@ -127,6 +127,10 @@
   }
 
   // ── Ljud (Web Audio API — inga filer behövs) ──
+  // Den syntetiska "tut-melodin" är avstängd: spelet använder den riktiga
+  // mp3-bakgrundsmusiken (bg-musik.js). Sätt SYNTH_MUSIC_ON = true för att
+  // återaktivera den inbyggda melodin.
+  const SYNTH_MUSIC_ON = false;
   let audioCtx = null;
   function getCtx() {
     if (!audioCtx || audioCtx.state === 'closed') {
@@ -142,6 +146,7 @@
   const BG_MELODY = [523, 659, 784, 880, 784, 659, 523, 392]; // C5 E5 G5 A5 G5 E5 C5 G4
   let bgStep = 0;
   function startBgMusic() {
+    if (!SYNTH_MUSIC_ON) return; // av: spela bara den riktiga mp3-musiken (bg-musik.js)
     if (bgLoopId) return;
     const ctx = getCtx();
     bgMasterGain = ctx.createGain();
