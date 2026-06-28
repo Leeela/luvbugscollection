@@ -218,6 +218,21 @@ body {
   filter: drop-shadow(0 4px 6px rgba(0,0,0,0.16));
 }
 .candy:active { transform: scale(1.18); }
+/* Plus level: two visible groups matching the numbers (4+4 → group of 4 «+» group of 4) */
+.candy-group {
+  display: flex; flex-wrap: wrap; gap: clamp(6px,2vw,14px);
+  align-items: center; justify-content: center;
+  padding: clamp(6px,1.6vw,12px);
+  border-radius: 26px;
+  background: rgba(123,193,66,0.10);
+  box-shadow: inset 0 0 0 3px rgba(123,193,66,0.30);
+}
+.candy-plus {
+  font-weight: 700; color: var(--green-deep);
+  font-size: clamp(40px, 11vmin, 80px); line-height: 1;
+  padding: 0 2px; user-select: none; flex: 0 0 auto;
+  text-shadow: 0 3px 0 rgba(255,255,255,0.7);
+}
 
 /* Candy Bug */
 #bug-wrap {
@@ -400,12 +415,30 @@ function dingSound() {
     });
   } catch (e) {}
 }
-// Count out loud in English (browser voice – used as fallback)
+// Count out loud in English (browser voice – used as fallback). Pick a clear
+// English voice and avoid the robotic default; fall back to any en voice.
+const VOICE_PREFS = ['Samantha', 'Karen', 'Moira', 'Tessa', 'Daniel', 'Shelley', 'Sandy'];
+let _enVoice = null;
+function pickEnVoice() {
+  try {
+    if (!('speechSynthesis' in window)) return null;
+    const vs = speechSynthesis.getVoices() || [];
+    for (const name of VOICE_PREFS) {
+      const v = vs.find(v => v.name === name || v.name.startsWith(name + ' '));
+      if (v) return v;
+    }
+    return vs.find(v => /^en-US/i.test(v.lang)) || vs.find(v => /^en/i.test(v.lang)) || null;
+  } catch (e) { return null; }
+}
+try { if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = () => { _enVoice = pickEnVoice(); }; } catch (e) {}
 function speak(text, pitch) {
   try {
     if (!('speechSynthesis' in window)) return;
+    if (!_enVoice) _enVoice = pickEnVoice();
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'en-US'; u.rate = 0.95; u.pitch = pitch == null ? 1.25 : pitch;
+    if (_enVoice) u.voice = _enVoice;
+    u.lang = (_enVoice && _enVoice.lang) || 'en-US';
+    u.rate = 0.95; u.pitch = pitch == null ? 1.25 : pitch;
     speechSynthesis.cancel(); speechSynthesis.speak(u);
   } catch (e) {}
 }
@@ -516,7 +549,7 @@ function nextRound() {
     target = a + b;
     addA = a; addB = b;
     display = a + ' + ' + b;
-    extra = randInt(2, 3);
+    extra = 0;                       // exactly as many candies as the answer (4+4 → 8 candies)
   }
 
   // Number display
@@ -537,15 +570,27 @@ function nextRound() {
   updateCounter();
 
   // Candies
-  const total = target + extra;
   const box = $('candies');
   box.innerHTML = '';
-  for (let i = 0; i < total; i++) {
+  const makeCandy = () => {
     const b = document.createElement('button');
     b.className = 'candy';
     b.textContent = pick(CANDY_EMOJI);
     b.addEventListener('click', () => feed(b));
-    box.appendChild(b);
+    return b;
+  };
+  if (level === 3) {
+    // Two visible groups matching the numbers: addA candies «+» addB candies.
+    // The child SEES the addition (4+4) – not just the total.
+    const g1 = document.createElement('div'); g1.className = 'candy-group';
+    for (let i = 0; i < addA; i++) g1.appendChild(makeCandy());
+    const plus = document.createElement('div'); plus.className = 'candy-plus'; plus.textContent = '+';
+    const g2 = document.createElement('div'); g2.className = 'candy-group';
+    for (let i = 0; i < addB; i++) g2.appendChild(makeCandy());
+    box.appendChild(g1); box.appendChild(plus); box.appendChild(g2);
+  } else {
+    const total = target + extra;
+    for (let i = 0; i < total; i++) box.appendChild(makeCandy());
   }
 
 }
@@ -623,8 +668,8 @@ function win() {
   let advanced = false;
   const finish = () => { if (advanced) return; advanced = true; if (reachedEnd) showEnding(); else nextRound(); };
 
-  // Clear any remaining candies nicely
-  $('candies').querySelectorAll('.candy').forEach(c => {
+  // Clear remaining candies (and the plus level's empty groups/«+») nicely
+  Array.from($('candies').children).forEach(c => {
     c.style.transition = 'transform 0.3s, opacity 0.3s';
     c.style.transform = 'scale(0.4)'; c.style.opacity = '0';
   });
