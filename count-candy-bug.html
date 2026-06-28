@@ -629,16 +629,24 @@ function win() {
     c.style.transform = 'scale(0.4)'; c.style.opacity = '0';
   });
 
-  let keys, tts, speakDelay, gapAfter, failsafe;
+  let keys, tts, speakDelay, gapAfter;
   if (level === 3) {
     keys = [String(addA), 'plus', String(addB), 'lika', String(target), PRAISE_KEYS[pi]];
     tts  = NUM_EN[addA] + ' plus ' + NUM_EN[addB] + ' equals ' + NUM_EN[target] + '! ' + PRAISE[pi];
-    speakDelay = 650; gapAfter = 450; failsafe = 9000;
+    speakDelay = 650; gapAfter = 450;
   } else {
     keys = [String(target), PRAISE_KEYS[pi]];
     tts  = NUM_EN[target] + '! ' + PRAISE[pi];
-    speakDelay = 250; gapAfter = 400; failsafe = 4500;
+    speakDelay = 250; gapAfter = 400;
   }
+  // The failsafe timer must NEVER be shorter than the sentence itself, or the
+  // end ("…equals five! Good job!") gets cut off. Derive it from the clips'
+  // real durations + a wide margin – it should only fire if speech truly hangs.
+  const clipSecs = keys.reduce((s, k) => {
+    const d = voiceEls[k] && isFinite(voiceEls[k].duration) ? voiceEls[k].duration : 1.2;
+    return s + d;
+  }, 0);
+  const failsafe = speakDelay + Math.round(clipSecs * 1000) + gapAfter + 2000;
   setTimeout(() => sayClips(keys, tts, () => setTimeout(finish, gapAfter)), speakDelay);
   setTimeout(finish, failsafe); // safety if the speech never finishes
 }
