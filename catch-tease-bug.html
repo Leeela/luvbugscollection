@@ -293,6 +293,23 @@ function speak(key) {
   sfx.play().catch(() => {});
 }
 
+// Mobile (especially iOS) requires each sound to be played inside a user tap
+// at least once, otherwise playback from timers (e.g. the laugh) is blocked.
+// Unlock all sounds on the first tap by playing them silently.
+let audioUnlocked = false;
+function unlockAudio() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+  Object.values(SFX).forEach(sfx => {
+    sfx.muted = true;
+    sfx.play().then(() => {
+      sfx.pause();
+      sfx.currentTime = 0;
+      sfx.muted = false;
+    }).catch(() => { sfx.muted = false; });
+  });
+}
+
 const DISTRACTORS = [
   '/bilder/godisbacillen.png',
   '/bilder/karleksbacillen.png',
@@ -318,6 +335,7 @@ function updateHud() {
 }
 
 function startGame(lvlKey) {
+  unlockAudio();
   currentLevel = lvlKey;
   level  = LEVELS[lvlKey];
   score  = 0;
