@@ -70,9 +70,7 @@ body {
 #menu-bug {
   width: clamp(150px, 34vmin, 230px);
   aspect-ratio: 1 / 1;
-  object-fit: cover;
-  object-position: center 42%;
-  mix-blend-mode: multiply;
+  object-fit: contain;
   animation: bob 2s ease-in-out infinite;
   cursor: pointer;
 }
@@ -229,10 +227,8 @@ body {
 #bug {
   width: clamp(160px, 42vmin, 290px);
   aspect-ratio: 1 / 1;
-  object-fit: cover;
-  object-position: center 42%;
+  object-fit: contain;
   display: block;
-  mix-blend-mode: multiply;
 }
 #bug.cheer { animation: bugCheer 0.7s ease-in-out; }
 #bug.chomp { animation: bugChomp 0.22s ease-in-out; }
@@ -301,11 +297,7 @@ body {
 
 <!-- ── MENU ── -->
 <div id="screen-menu" class="screen">
-  <video id="menu-bug" autoplay loop muted playsinline webkit-playsinline onclick="menuTap()" poster="/bilder/godisbacillen-gapar.png" aria-label="Candy Bug – tap to chew!">
-    <source src="/bug_loop.mov"  type="video/quicktime">
-    <source src="/bug_loop.webm" type="video/webm">
-    <source src="/bug_loop.mp4"  type="video/mp4">
-  </video>
+  <img id="menu-bug" src="/bilder/godisbacillen-gapar.png" onclick="menuTap()" alt="Candy Bug – tap to chew!">
   <h1>Count with Candy Bug</h1>
   <p id="menu-sub">Feed Candy Bug the right number of candies and learn to count! 🍬</p>
   <div class="levels">
@@ -330,11 +322,7 @@ body {
     <div id="counter"><b id="counter-eaten">0</b> / <span id="counter-target">0</span></div>
     <div id="candies"></div>
     <div id="bug-wrap">
-      <video id="bug" autoplay loop muted playsinline webkit-playsinline poster="/bilder/godisbacillen-gapar.png" aria-label="Candy Bug">
-        <source src="/bug_loop.mov"  type="video/quicktime">
-        <source src="/bug_loop.webm" type="video/webm">
-        <source src="/bug_loop.mp4"  type="video/mp4">
-      </video>
+      <img id="bug" src="/bilder/godisbacillen-gapar.png" alt="Candy Bug">
     </div>
   </div>
 </div>
@@ -721,16 +709,33 @@ function goMenu() {
   show('screen-menu');
 }
 
-/* ── Make sure the loop video plays (autoplay policy on iOS/Android) ── */
-function playBugLoops() {
-  document.querySelectorAll('#menu-bug, #bug').forEach(v => {
-    try { v.muted = true; const p = v.play(); if (p) p.catch(() => {}); } catch (e) {}
+/* ── Unlock & preload the voice clips on first tap ──
+   iOS Safari won't preload/play <audio> without a user gesture. Without this
+   the clips never reach readyState ≥ 2, clipReady() is always false and the
+   counting gets stuck on the robot voice (TTS). A short silent play+pause in
+   a gesture unlocks audio and forces preloading → Candy Bug's own voice. */
+let voicesWarmed = false;
+function warmVoices() {
+  if (voicesWarmed) return;
+  voicesWarmed = true;
+  VOICE_KEYS.forEach(k => {
+    const a = voiceEls[k];
+    if (!a) return;
+    try {
+      a.muted = true;
+      const p = a.play();
+      if (p && p.then) {
+        p.then(() => { a.pause(); a.currentTime = 0; a.muted = false; })
+         .catch(() => { a.muted = false; });
+      } else {
+        try { a.pause(); } catch (e) {}
+        a.muted = false;
+      }
+    } catch (e) {}
   });
 }
-playBugLoops();
 ['pointerdown', 'touchstart', 'click'].forEach(ev =>
-  window.addEventListener(ev, playBugLoops, { passive: true }));
-document.addEventListener('visibilitychange', () => { if (!document.hidden) playBugLoops(); });
+  window.addEventListener(ev, warmVoices, { passive: true }));
 
 show('screen-menu');
 </script>
