@@ -30,15 +30,21 @@
     }
     canvas { display: block; }
 
-    /* ── Reaction video: small corner bubble, game keeps running behind it ── */
-    #video-overlay {
+    /* ── Reaction: TWO separate nodes (bubble + fullscreen). Each only toggles
+       display:none -> flex (exempt from CLS). No visible node changes geometry
+       between the modes, so the crash transition produces zero layout shift. ── */
+    #reaction-bubble, #reaction-fullscreen {
       display: none;
-      position: fixed; top: 12px; right: 12px; z-index: 10;
-      pointer-events: none;            /* taps pass through to the game */
-      justify-content: center;
-      align-items: center;
+      position: fixed; z-index: 10;
+      justify-content: center; align-items: center;
     }
-    #video-overlay.active { display: flex; }
+    #reaction-bubble.active, #reaction-fullscreen.active { display: flex; }
+
+    /* Bubble: small, top-right corner. Taps pass through to the game. */
+    #reaction-bubble {
+      top: 12px; right: 12px;
+      pointer-events: none;
+    }
     #reaction-video {
       aspect-ratio: 9 / 16;
       height: min(22vh, 168px);
@@ -46,14 +52,14 @@
       box-shadow: 0 6px 24px rgba(0,0,0,0.18);
       background: rgba(255,255,255,0.55);
     }
-    /* Fullscreen — only for the sugar-crash / win video (a deliberate pause) */
-    #video-overlay.fullscreen {
-      inset: 0; top: 0; right: 0;
+
+    /* Fullscreen — only for the sugar-crash / win video (a deliberate pause). */
+    #reaction-fullscreen {
+      inset: 0; z-index: 11;          /* above the bubble if they coexist */
       background: rgba(255,255,255,0.96);
       pointer-events: auto;
     }
-    #video-overlay.fullscreen #reaction-video {
-      height: auto;
+    #reaction-video-fs {
       width: min(50vh, 88vw);
       max-width: 92%; max-height: 92%;
       border-radius: 24px;
@@ -159,9 +165,13 @@
     <source src="bug_loop.mp4"  type="video/mp4">
   </video>
 
-  <!-- Reaction video -->
-  <div id="video-overlay">
+  <!-- Reaction: small corner bubble (own node, only fades in/out) -->
+  <div id="reaction-bubble">
     <video id="reaction-video" playsinline webkit-playsinline></video>
+  </div>
+  <!-- Reaction: fullscreen for crash/win (own node, only fades in/out) -->
+  <div id="reaction-fullscreen">
+    <video id="reaction-video-fs" playsinline webkit-playsinline></video>
   </div>
 
   <!-- Crash video (Falls asleep) -->

@@ -5,8 +5,10 @@
 
 const canvas = document.getElementById('gameCanvas');
 const ctx    = canvas.getContext('2d');
-const overlay = document.getElementById('video-overlay');
-const video   = document.getElementById('reaction-video');
+const bubble    = document.getElementById('reaction-bubble');     // small corner reaction
+const video     = document.getElementById('reaction-video');
+const fsOverlay = document.getElementById('reaction-fullscreen'); // fullscreen (crash/win)
+const videoFs   = document.getElementById('reaction-video-fs');
 const bugLoop    = document.getElementById('bug-loop');
 const crashVideo = document.getElementById('crash-video');
 const startScreen = document.getElementById('start-screen');
@@ -263,19 +265,17 @@ function handleStart() {
   // START button laggy (poor INP).
   if (!loopStarted) { loopStarted = true; requestAnimationFrame(loop); }
 
+  // Warm up BOTH reaction elements during the start gesture — otherwise the
+  // fullscreen video (sleep/win) stalls on iOS, which needs a user gesture.
+  const warm = (el) => {
+    const reset = () => { el.muted = false; el.removeAttribute('src'); el.load(); };
+    el.muted = true;
+    el.src = VIDEOS.chomp;
+    el.play().then(() => { el.pause(); reset(); }).catch(reset);
+  };
   requestAnimationFrame(() => {
-    video.muted = true;
-    video.src = VIDEOS.chomp;
-    video.play().then(() => {
-      video.pause();
-      video.muted = false;
-      video.removeAttribute('src');
-      video.load();
-    }).catch(() => {
-      video.muted = false;
-      video.removeAttribute('src');
-      video.load();
-    });
+    warm(video);
+    warm(videoFs);
 
     bugLoop.play().catch(() => {});
     // startMusic(); // Bakgrundsmusik borttagen på begäran
@@ -454,12 +454,12 @@ const crash = {
 };
 
 window.restartGame = function() {
-  video.oncanplay = null;
-  video.onerror   = null;
-  video.onended   = null;
-  video.removeAttribute('src');
-  video.load();
-  overlay.classList.remove('active');
+  [video, videoFs].forEach(v => {
+    v.oncanplay = null; v.onerror = null; v.onended = null;
+    v.removeAttribute('src'); v.load();
+  });
+  bubble.classList.remove('active');
+  fsOverlay.classList.remove('active');
   isShowingVideo = false;
   crash.phase = 'idle';
   candyEaten = 0;
@@ -821,16 +821,15 @@ function eatCandy(candy) {
 // Small corner reaction — does NOT stop the game (you can keep dragging candy)
 function playReaction(filename) {
   if (!filename) return;
-  overlay.classList.remove('fullscreen');
   video.onended = () => hideReaction();
   video.onerror = () => hideReaction();
   video.src = filename;
-  overlay.classList.add('active');
+  bubble.classList.add('active');
   const p = video.play();
   if (p) p.catch(() => { video.oncanplay = () => video.play().catch(hideReaction); });
 }
 function hideReaction() {
-  overlay.classList.remove('active');
+  bubble.classList.remove('active');
   video.onended = video.onerror = video.oncanplay = null;
   video.removeAttribute('src');
   video.load();
@@ -839,24 +838,23 @@ function hideReaction() {
 // Fullscreen video (sugar crash / win) — deliberately pauses the game before next level
 function playVideo(filename, onDone = null) {
   isShowingVideo = true;
-  overlay.classList.add('fullscreen');
-  video.onended = () => finishVideo(onDone);
-  video.onerror = () => finishVideo(onDone);
-  video.src = filename;
-  overlay.classList.add('active');
-  video.play().catch(() => {
-    video.oncanplay = () => { video.play().catch(() => finishVideo(onDone)); };
+  hideReaction();                 // hide any bubble so the fullscreen takes over cleanly
+  videoFs.onended = () => finishVideo(onDone);
+  videoFs.onerror = () => finishVideo(onDone);
+  videoFs.src = filename;
+  fsOverlay.classList.add('active');
+  videoFs.play().catch(() => {
+    videoFs.oncanplay = () => { videoFs.play().catch(() => finishVideo(onDone)); };
   });
 }
 function finishVideo(onDone = null) {
-  overlay.classList.remove('active');
-  overlay.classList.remove('fullscreen');
+  fsOverlay.classList.remove('active');
   // Reset handlers FIRST — otherwise onerror loops back into finishVideo
-  video.onended  = null;
-  video.onerror  = null;
-  video.oncanplay = null;
-  video.removeAttribute('src');
-  video.load();
+  videoFs.onended  = null;
+  videoFs.onerror  = null;
+  videoFs.oncanplay = null;
+  videoFs.removeAttribute('src');
+  videoFs.load();
   if (onDone) {
     onDone();
   } else if (!crash.isActive) {
