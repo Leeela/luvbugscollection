@@ -55,11 +55,16 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 20px;
+      justify-content: flex-start;
+      padding: 20px 20px 96px;
       z-index: 10;
       overflow-y: auto;
     }
+    /* Center the content when it fits, but keep it fully scrollable when it
+       doesn't — otherwise the back links get clipped on short screens.
+       The extra padding-bottom keeps them clear of the fixed music button. */
+    .overlay::before,
+    .overlay::after { content: ""; margin-block: auto; }
     .overlay.hidden { display: none; }
 
     .overlay h1 {
@@ -206,10 +211,13 @@
       display: none;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       z-index: 20;
-      padding: 20px;
+      padding: 20px 20px 96px;
+      overflow-y: auto;
     }
+    .gameover::before,
+    .gameover::after { content: ""; margin-block: auto; }
     .gameover.show { display: flex; }
 
     .gameover-card {
