@@ -465,6 +465,24 @@ if ('speechSynthesis' in window) {
   chosenVoice = pickVoice();
   speechSynthesis.onvoiceschanged = () => { chosenVoice = pickVoice(); };
 }
+
+// Android Chrome needs the FIRST speak() to happen inside a user gesture, or it
+// stays silent (iPhone is more forgiving). Warm it up quietly on first touch so
+// later reads (fired from setTimeout) are audible. Also helps populate voices.
+let _ttsWarmed = false;
+function warmTTS() {
+  if (_ttsWarmed || !('speechSynthesis' in window)) return;
+  _ttsWarmed = true;
+  try {
+    const u = new SpeechSynthesisUtterance(' ');
+    u.volume = 0; u.lang = 'en-US';
+    speechSynthesis.speak(u);
+    chosenVoice = chosenVoice || pickVoice();
+  } catch (e) {}
+}
+['pointerdown', 'touchstart', 'click'].forEach(ev =>
+  window.addEventListener(ev, warmTTS, { passive: true }));
+
 function speakWord(word) {
   try {
     if (!('speechSynthesis' in window)) return;
@@ -473,7 +491,9 @@ function speakWord(word) {
     if (chosenVoice) u.voice = chosenVoice;
     u.lang = (chosenVoice && chosenVoice.lang) || 'en-US';
     u.rate = 0.85; u.pitch = 1.05;
-    speechSynthesis.cancel(); speechSynthesis.speak(u);
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+    try { speechSynthesis.resume(); } catch (e) {}   // Chrome bug: speech stuck paused
   } catch (e) {}
 }
 
