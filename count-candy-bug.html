@@ -460,11 +460,12 @@ const voiceEls = {};
 VOICE_KEYS.forEach(k => {
   try { const a = new Audio(VOICE_DIR + VOICE_FILES[k]); a.preload = 'auto'; voiceEls[k] = a; } catch (e) {}
 });
-// A clip counts as ready only if the mp3 actually loaded and decoded
-// (a missing file gives readyState 0 / duration NaN → we fall back to TTS).
+// A clip counts as ready if metadata has loaded (readyState >= 1) and no 404 error.
+// iOS Safari only reaches readyState=1 after warmVoices; requiring >=2 caused iPad
+// to always fall back to TTS.
 function clipReady(k) {
   const a = voiceEls[k];
-  return !!a && !a.error && a.readyState >= 2 && isFinite(a.duration) && a.duration > 0;
+  return !!a && !a.error && a.readyState >= 1 && isFinite(a.duration) && a.duration > 0;
 }
 // Stop everything currently playing (clips + TTS) so nothing overlaps
 let voiceActive = [];
@@ -478,7 +479,14 @@ function stopVoice() {
 const CLIP_OVERLAP = 0.18;        // sec – start the next word before this one goes silent (tighter speech)
 function sayClips(keys, ttsFallback, onDone) {
   stopVoice();
-  if (!keys.every(clipReady)) { speak(ttsFallback); if (onDone) setTimeout(onDone, 1600); return; }
+  if (!keys.every(clipReady)) {
+    speak(ttsFallback);
+    // Calculate TTS duration — 70ms per character + 800ms margin.
+    // Prevents onDone firing mid-sentence (old 1600ms hardcode wasn't enough
+    // for "three plus two equals five! Great!" which takes ~3–4 sec).
+    if (onDone) setTimeout(onDone, Math.max(2500, ttsFallback.length * 70 + 800));
+    return;
+  }
   let i = 0;
   (function playNext() {
     if (i >= keys.length) { if (onDone) onDone(); return; }
@@ -774,6 +782,9 @@ function warmVoices() {
   VOICE_KEYS.forEach(k => {
     const a = voiceEls[k];
     if (!a) return;
+    // load() forces iOS to fetch metadata (readyState → 1) without needing play().
+    // play()+pause() then unlocks playback within the user gesture.
+    try { a.load(); } catch (e) {}
     try {
       a.muted = true;
       const p = a.play();
