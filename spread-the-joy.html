@@ -466,24 +466,28 @@ if ('speechSynthesis' in window) {
   speechSynthesis.onvoiceschanged = () => { chosenVoice = pickVoice(); };
 }
 
-// Android Chrome needs the FIRST speak() to happen inside a user gesture, or it
-// stays silent (iPhone is more forgiving). Warm it up quietly on first touch so
-// later reads (fired from setTimeout) are audible. Also helps populate voices.
-let _ttsWarmed = false;
-function warmTTS() {
-  if (_ttsWarmed || !('speechSynthesis' in window)) return;
-  _ttsWarmed = true;
-  try {
-    const u = new SpeechSynthesisUtterance(' ');
-    u.volume = 0; u.lang = 'en-US';
-    speechSynthesis.speak(u);
-    chosenVoice = chosenVoice || pickVoice();
-  } catch (e) {}
+/* ── Spoken feeling word ──
+   PRIMARY: recorded clips (ElevenLabs woman's voice) in /ljud/rost/en/ –
+   one per feeling. Clips play on ALL devices, including Samsung. If a clip is
+   missing we fall back to the browser voice (TTS, with the Android warm-up below).
+   NOTE: filenames are case-sensitive on GitHub Pages – match exactly. */
+const VOICE_DIR = '/ljud/rost/en/';
+const VOICE_FILES = {
+  glad: 'Happy.mp3', ledsen: 'Sad.mp3', arg: 'Angry.mp3',
+  radd: 'Scared.mp3', sur: 'Grumpy.mp3', kar: 'In_love.mp3'
+};
+const voiceEls = {};
+Object.keys(VOICE_FILES).forEach(k => {
+  try { const a = new Audio(VOICE_DIR + VOICE_FILES[k]); a.preload = 'auto'; voiceEls[k] = a; } catch (e) {}
+});
+// Ready only if the mp3 actually loaded; a missing file (404) → fall back to TTS.
+function clipReady(k) {
+  const a = voiceEls[k];
+  return !!a && !a.error && a.readyState >= 2 && isFinite(a.duration) && a.duration > 0;
 }
-['pointerdown', 'touchstart', 'click'].forEach(ev =>
-  window.addEventListener(ev, warmTTS, { passive: true }));
 
-function speakWord(word) {
+// ── TTS fallback (browser voice) – used only if a clip is missing ──
+function speakTTS(word) {
   try {
     if (!('speechSynthesis' in window)) return;
     if (!chosenVoice) chosenVoice = pickVoice();
@@ -496,6 +500,53 @@ function speakWord(word) {
     try { speechSynthesis.resume(); } catch (e) {}   // Chrome bug: speech stuck paused
   } catch (e) {}
 }
+
+// Say a feeling (id, e.g. 'glad'): play the clip if present, else TTS.
+let _voiceActive = [];
+function speakWord(id) {
+  try { if ('speechSynthesis' in window) speechSynthesis.cancel(); } catch (e) {}
+  _voiceActive.forEach(a => { try { a.pause(); } catch (e) {} });
+  _voiceActive = [];
+  if (clipReady(id)) {
+    try {
+      const a = voiceEls[id].cloneNode();
+      a.volume = 1;
+      _voiceActive.push(a);
+      const p = a.play();
+      if (p) p.catch(() => speakTTS(LABEL[id]));
+      return;
+    } catch (e) {}
+  }
+  speakTTS(LABEL[id]);
+}
+
+// Unlock audio on first touch (required on iOS/Android): warm up both the
+// recorded clips and the browser voice so the read-out (in setTimeout) is heard.
+let _voicesWarmed = false;
+function warmVoices() {
+  if (_voicesWarmed) return;
+  _voicesWarmed = true;
+  Object.keys(VOICE_FILES).forEach(k => {
+    const a = voiceEls[k];
+    if (!a) return;
+    try {
+      a.muted = true;
+      const p = a.play();
+      if (p && p.then) p.then(() => { a.pause(); a.currentTime = 0; a.muted = false; }).catch(() => { a.muted = false; });
+      else { try { a.pause(); } catch (e) {} a.muted = false; }
+    } catch (e) {}
+  });
+  try {
+    if ('speechSynthesis' in window) {
+      const u = new SpeechSynthesisUtterance(' ');
+      u.volume = 0; u.lang = 'en-US';
+      speechSynthesis.speak(u);
+      chosenVoice = chosenVoice || pickVoice();
+    }
+  } catch (e) {}
+}
+['pointerdown', 'touchstart', 'click'].forEach(ev =>
+  window.addEventListener(ev, warmVoices, { passive: true }));
 
 /* ── Game logic ── */
 const $ = id => document.getElementById(id);
@@ -566,7 +617,7 @@ function choose(em, btn) {
   const wp = $('word-pop');
   wp.textContent = LABEL[current.id];
   wp.classList.remove('go'); void wp.offsetWidth; wp.classList.add('go');
-  setTimeout(() => speakWord(LABEL[current.id]), 650);
+  setTimeout(() => speakWord(current.id), 650);
 
   $('choices').style.display = 'none';
   setTimeout(() => {
