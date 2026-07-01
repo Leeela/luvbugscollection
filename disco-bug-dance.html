@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="/back-to-app.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<link rel="manifest" href="/app/manifest.json">
+<meta name="theme-color" content="#2BA89F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LuvBugs Collection">
+<link rel="apple-touch-icon" href="/icons/icon-180.png">
+<title>Disco Bug's Dance Wave – Drum rhythm game for kids | LuvBugs Collection</title>
+<meta name="description" content="Tap the drum to the beat with Disco Bug. Copy the drum beats and collect notes. Slow start that speeds up. A rhythm game for kids 3 to 8, with no mistakes and no losing.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://luvbugscollection.com/disco-bug-dance.html" />
+<link rel="alternate" hreflang="sv" href="https://bacillerna.se/dansbacillen-spelet.html" />
+<link rel="alternate" hreflang="en" href="https://luvbugscollection.com/disco-bug-dance.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --safe-top:    env(safe-area-inset-top,    0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left:   env(safe-area-inset-left,   0px);
+  --safe-right:  env(safe-area-inset-right,  0px);
+  --dance:      #4ECDC4;
+  --dance-deep: #2BA89F;
+  --coral:      #FF6B6B;
+  --yellow:     #FFD93D;
+  --purple:     #B57EDC;
+  --font-heading: 'Fredoka', sans-serif;
+  --font-body: 'Nunito', sans-serif;
+}
+
+html, body { height: 100%; }
+body {
+  font-family: var(--font-body);
+  color: #fff;
+  height: 100dvh;
+  overflow: hidden;
+  user-select: none;
+  background: #FF9BA6;
+}
+
+.disco-bg {
+  position: fixed; inset: 0; z-index: 0;
+  background: linear-gradient(170deg, #FFBFC0 0%, #FF9EA8 52%, #F97D93 100%);
+}
+
+.screen {
+  position: fixed; inset: 0; z-index: 1;
+  display: none; flex-direction: column; align-items: center;
+  padding: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
+}
+.screen.active { display: flex; }
+
+/* ── MENU ── */
+#screen-menu {
+  justify-content: center; gap: clamp(10px, 2.6vmin, 20px);
+  text-align: center;
+  padding-left: max(18px, var(--safe-left));
+  padding-right: max(18px, var(--safe-right));
+}
+.spotlight {
+  position: relative; width: clamp(150px, 40vmin, 250px); aspect-ratio: 1;
+  display: flex; align-items: center; justify-content: center; border-radius: 50%;
+  background: radial-gradient(circle at 50% 46%, rgba(78,205,196,0.40) 0%, rgba(78,205,196,0.14) 44%, transparent 70%);
+}
+.spotlight img {
+  width: 96%; height: 96%; object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.35));
+}
+#menu-bug { animation: menuBob 2.1s ease-in-out infinite; cursor: pointer; }
+@keyframes menuBob { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-9px) rotate(2deg); } }
+#menu-bug.wave { animation: menuWave 0.6s ease-in-out; }
+@keyframes menuWave { 0%,100% { transform: scale(1) rotate(0); } 30% { transform: scale(1.1) rotate(-6deg); } 65% { transform: scale(1.06) rotate(6deg); } }
+#screen-menu h1 {
+  font-family: var(--font-heading); font-size: clamp(30px, 8vmin, 56px); font-weight: 700; line-height: 1.02;
+  color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,0.25), 0 0 22px rgba(78,205,196,0.6);
+}
+#menu-msg { font-size: clamp(14px, 3.7vmin, 19px); color: #fff; max-width: 340px; line-height: 1.5; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.28); }
+.diff-row { display: flex; gap: clamp(12px, 4vw, 22px); margin-top: 6px; flex-wrap: wrap; justify-content: center; }
+.diff-btn {
+  font-family: var(--font-heading); font-weight: 700; border: none; border-radius: 26px;
+  padding: clamp(14px,3vmin,20px) clamp(26px,7vw,42px); cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s; color: #10302d;
+  display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 128px;
+}
+.diff-btn .d-big { font-size: clamp(20px, 5.4vmin, 28px); }
+.diff-btn .d-sub { font-size: clamp(11px, 3vmin, 14px); font-weight: 600; opacity: 0.8; font-family: var(--font-body); }
+.diff-btn.easy { background: var(--dance); box-shadow: 0 6px 0 var(--dance-deep), 0 0 26px rgba(78,205,196,0.5); }
+.diff-btn.more { background: var(--yellow); box-shadow: 0 6px 0 #C9A400, 0 0 26px rgba(255,217,61,0.45); color: #4a3a00; }
+.diff-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.3); }
+.diff-btn:focus-visible { outline: 4px solid #fff; outline-offset: 3px; }
+#menu-more { margin-top: 4px; font-size: clamp(13px, 3.3vmin, 16px); color: #fff; opacity: 0.9; text-decoration: none; padding: 8px 16px; font-weight: 700; text-shadow: 0 1px 4px rgba(0,0,0,0.25); }
+#menu-more:hover { opacity: 1; text-decoration: underline; }
+#menu-more:focus-visible { outline: 3px solid #fff; outline-offset: 2px; border-radius: 10px; }
+
+/* ── GAME ── */
+#screen-game { justify-content: flex-start; }
+
+#hud {
+  width: 100%; display: grid; grid-template-columns: auto 1fr auto;
+  align-items: center; gap: 10px; padding: 8px 14px; min-height: 54px; flex-shrink: 0; z-index: 4;
+}
+.hud-btn {
+  font-size: 24px; background: rgba(0,0,0,0.16); border: none; cursor: pointer;
+  color: #fff; border-radius: 14px; min-width: 46px; min-height: 46px;
+  display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); line-height: 1;
+}
+.hud-btn:active { background: rgba(0,0,0,0.30); }
+.hud-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
+#notes-row { display: flex; align-items: center; justify-content: center; gap: clamp(3px,1vw,7px); flex-wrap: nowrap; }
+.slot {
+  width: clamp(18px, 4.8vw, 30px); height: clamp(18px, 4.8vw, 30px);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  font-size: clamp(11px, 2.8vw, 16px);
+  background: rgba(0,0,0,0.14); color: rgba(255,255,255,0.5);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.25); transition: transform 0.12s;
+}
+.slot.filled {
+  background: radial-gradient(circle at 50% 32%, #fff, var(--dance));
+  color: #10302d; box-shadow: 0 0 12px rgba(78,205,196,0.8);
+}
+.slot.pop { animation: slotPop 0.34s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes slotPop { 0% { transform: scale(0.4); } 60% { transform: scale(1.3); } 100% { transform: scale(1); } }
+
+#stage { flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: clamp(2px,1vmin,10px); }
+#hero-spot {
+  position: relative; width: clamp(96px, 22vmin, 160px); aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle at 50% 46%, rgba(78,205,196,0.38) 0%, rgba(78,205,196,0.12) 46%, transparent 70%);
+  display: flex; align-items: center; justify-content: center; will-change: transform;
+}
+#hero { width: 96%; height: 96%; object-fit: contain; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.3)); }
+#hero-spot.spin { animation: spin 0.9s cubic-bezier(0.34,1.2,0.64,1); }
+@keyframes spin { 0% { transform: rotate(0) scale(1); } 55% { transform: rotate(370deg) scale(1.14); } 100% { transform: rotate(360deg) scale(1); } }
+
+#play-area {
+  flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: clamp(8px, 2.4vmin, 20px); position: relative; padding: 0 16px calc(10px + var(--safe-bottom));
+}
+#instruction {
+  position: absolute; top: clamp(4px, 1.6vmin, 14px); left: 0; right: 0; z-index: 5;
+  text-align: center;
+  font-family: var(--font-heading); font-weight: 700; font-size: clamp(20px, 5.4vmin, 30px);
+  color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.45), 0 0 16px rgba(78,205,196,0.5); min-height: 1.2em;
+}
+
+#drum-wrap { position: relative; display: flex; align-items: center; justify-content: center; }
+#cue-ring {
+  position: absolute; width: clamp(184px, 62vmin, 310px); aspect-ratio: 1; border-radius: 50%;
+  border: 5px solid rgba(255,255,255,0.85); pointer-events: none; will-change: transform, opacity;
+}
+#drum {
+  width: clamp(170px, 58vmin, 290px); aspect-ratio: 1; border-radius: 50%; border: none; cursor: pointer;
+  position: relative; will-change: transform; padding: 0;
+  background:
+    radial-gradient(circle at 50% 34%, #fff2c4 0%, #ffd86b 34%, #f2ad3c 66%, #d98a24 100%);
+  box-shadow: 0 0 0 12px #8a4a16, 0 0 0 16px #6d3810, 0 14px 26px rgba(0,0,0,0.45);
+  display: flex; align-items: center; justify-content: center;
+}
+#drum::after { content: ''; position: absolute; inset: 14%; border-radius: 50%; border: 3px solid rgba(180,110,30,0.4); }
+#drum .drum-face { font-size: clamp(42px, 13vmin, 74px); filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); }
+#drum.glow { box-shadow: 0 0 0 12px #8a4a16, 0 0 0 16px #6d3810, 0 0 44px 10px rgba(255,217,61,0.9), 0 14px 26px rgba(0,0,0,0.45); }
+#drum:focus-visible { outline: 5px solid #fff; outline-offset: 10px; }
+#hand-hint {
+  position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+  font-size: clamp(30px, 8vmin, 46px); pointer-events: none; animation: handTap 0.9s ease-in-out infinite;
+}
+@keyframes handTap { 0%,100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 12px); } }
+
+#countnum {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  font-family: var(--font-heading); font-weight: 700;
+  font-size: clamp(72px, 28vmin, 170px); color: #fff;
+  text-shadow: 0 4px 0 rgba(0,0,0,0.25), 0 0 26px rgba(78,205,196,0.85);
+  pointer-events: none; z-index: 6;
+}
+#countnum.go { animation: countPop 0.45s ease-out; }
+@keyframes countPop {
+  0% { transform: translate(-50%,-50%) scale(0.4); }
+  55% { transform: translate(-50%,-50%) scale(1.18); }
+  100% { transform: translate(-50%,-50%) scale(1); }
+}
+
+.fly {
+  position: fixed; font-size: clamp(22px, 6vw, 34px); z-index: 6; pointer-events: none;
+  color: var(--dance-deep); will-change: transform, opacity; text-shadow: 0 0 10px rgba(78,205,196,0.8);
+}
+.fly.go { animation: flyUp 0.75s ease-out forwards; }
+@keyframes flyUp { 0% { transform: translateY(0) scale(0.6); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(-160px) scale(1.1); opacity: 0; } }
+
+.confetti { position: fixed; top: -20px; width: 12px; height: 16px; border-radius: 3px; z-index: 6; pointer-events: none; will-change: transform; }
+.confetti.go { animation: confFall var(--cd,2.6s) linear forwards; }
+@keyframes confFall { 0% { transform: translateY(0) rotate(0); opacity: 1; } 100% { transform: translateY(115vh) rotate(720deg); opacity: 0.9; } }
+#wave-pop {
+  position: fixed; left: 50%; top: 42%; transform: translate(-50%,-50%) scale(0.3);
+  font-family: var(--font-heading); font-weight: 700; font-size: clamp(38px, 12vmin, 92px);
+  color: #fff; text-shadow: 0 0 26px var(--dance), 0 3px 0 rgba(0,0,0,0.25);
+  letter-spacing: 2px; z-index: 7; pointer-events: none; opacity: 0; display: none; text-align: center;
+}
+#wave-pop.go { display: block; animation: wavePop 1.6s ease-out forwards; }
+@keyframes wavePop {
+  0% { transform: translate(-50%,-50%) scale(0.3); opacity: 0; }
+  22% { transform: translate(-50%,-50%) scale(1.12); opacity: 1; }
+  75% { transform: translate(-50%,-50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%,-50%) scale(1); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #menu-bug, #menu-bug.wave, #hero-spot.spin, #hand-hint { animation: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="disco-bg"></div>
+
+<!-- ── MENU ── -->
+<div id="screen-menu" class="screen active">
+  <div class="spotlight">
+    <img id="menu-bug" src="/bilder/dansbacillen.png" alt="Disco Bug with its boombox" onclick="menuTap()">
+  </div>
+  <h1>Disco Bug's Dance Wave</h1>
+  <p id="menu-msg">Tap the drum to the beat. You don't have to know how to dance, you just have to start moving.</p>
+  <div class="diff-row">
+    <button class="diff-btn easy" onclick="startGame('easy')">
+      <span class="d-big">🥁 Easy</span><span class="d-sub">Ages 3 to 5</span>
+    </button>
+    <button class="diff-btn more" onclick="startGame('more')">
+      <span class="d-big">🥁 More</span><span class="d-sub">Ages 6 to 8</span>
+    </button>
+  </div>
+  <a href="/app/games.html" id="menu-more">🎮 More games</a>
+</div>
+
+<!-- ── GAME ── -->
+<div id="screen-game" class="screen">
+  <div id="hud">
+    <button class="hud-btn" onclick="goMenu()" aria-label="Back to start">←</button>
+    <div id="notes-row" aria-label="Notes collected"></div>
+    <button class="hud-btn" id="mute-btn" onclick="toggleMute()" aria-label="Sound on or off">🔊</button>
+  </div>
+
+  <div id="stage">
+    <div id="hero-spot"><img id="hero" src="/bilder/dansbacillen.png" alt="Disco Bug dancing"></div>
+  </div>
+
+  <div id="play-area">
+    <div id="instruction">Tap to the beat!</div>
+    <div id="drum-wrap">
+      <div id="cue-ring"></div>
+      <button id="drum" aria-label="Tap the drum to the beat">
+        <span class="drum-face">🥁</span>
+      </button>
+      <div id="countnum"></div>
+      <span id="hand-hint">👇</span>
+    </div>
+  </div>
+</div>
+
+<div id="wave-pop">DANCE WAVE!</div>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const NOTE = { C4:261.63, E4:329.63, G4:392.00, A4:440.00, C5:523.25, D5:587.33, E5:659.25, G5:784.00 };
+
+/* Copy-the-beat patterns (More) on a quarter-note grid: 0,1,2,3 = the four beats.
+   The level grows with the number of cleared rounds. */
+const CALL_LEVELS = [
+  [[0, 2], [0, 1], [2, 3]],
+  [[0, 1, 2], [0, 2, 3], [0, 1, 3]],
+  [[0, 1, 2, 3], [1, 2, 3], [0, 1, 3]]
+];
+
+const DIFF = {
+  easy: { bpm: 72, win: 0.26, goal: 6 },   // Easy: steady tempo, follow every beat
+  more: { bpm: 63, win: 0.22, goal: 10 }   // More: copy the beat, tempo grows with rounds
+};
+function bpmForRound(r) { return Math.min(cfg.bpm + Math.floor(r / 2) * 9, 120); }
+
+/* ── Web Audio ── drum sounds are synthesized; voice clips play at key moments ── */
+let audioCtx = null, masterGain = null, fgBus = null, noiseBuf = null;
+let muted = false;
+
+/* Voice clips: "Let's dance" at the Dance Wave, "Great!" on a cleared pattern,
+   "Try again" every third miss. Unlocked on first tap (mobile needs a gesture),
+   and they follow the sound on/off button. */
+function mkClip(src) { const a = new Audio(src); a.preload = 'auto'; return a; }
+const danceSound = mkClip('/ljud/Let_s_dance_.mp3');
+const greatSound = mkClip('/ljud/Great_.mp3');
+const tryAgainSound = mkClip('/ljud/Try_again_.mp3');
+const myTurnSound = mkClip('/ljud/My_turn_.mp3');       // Disco Bug: "My turn!"
+const yourTurnSound = mkClip('/ljud/Your_turn_.mp3');   // child: "Your turn!"
+const CLIPS = [danceSound, greatSound, tryAgainSound, myTurnSound, yourTurnSound];
+let clipsWarmed = false;
+function warmClips() {
+  if (clipsWarmed) return;
+  clipsWarmed = true;
+  CLIPS.forEach(a => {
+    try {
+      a.muted = true;
+      const p = a.play();
+      if (p && p.then) p.then(() => { a.pause(); a.currentTime = 0; a.muted = muted; }).catch(() => { a.muted = muted; });
+      else { try { a.pause(); } catch (e) {} a.muted = muted; }
+    } catch (e) {}
+  });
+}
+function playClip(a) {
+  if (muted) return;
+  try { a.currentTime = 0; const p = a.play(); if (p) p.catch(() => {}); } catch (e) {}
+}
+
+function initAudio() {
+  if (audioCtx) { if (audioCtx.state === 'suspended') audioCtx.resume(); return; }
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = audioCtx.createGain(); masterGain.gain.value = muted ? 0 : 1; masterGain.connect(audioCtx.destination);
+  fgBus = audioCtx.createGain(); fgBus.gain.value = 1.0; fgBus.connect(masterGain);
+  const len = audioCtx.sampleRate * 0.5;
+  noiseBuf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+  const d = noiseBuf.getChannelData(0);
+  for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function tone(freq, t, dur, peak, type, glide) {
+  const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+  o.type = type || 'sine'; o.frequency.setValueAtTime(freq, t);
+  if (glide) o.frequency.exponentialRampToValueAtTime(glide, t + dur * 0.9);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(peak, t + 0.008);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(fgBus); o.start(t); o.stop(t + dur + 0.02);
+}
+/* Full, clear drum hit — the pattern beats and the child's own taps */
+function boom(t) {
+  const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+  o.type = 'sine'; o.frequency.setValueAtTime(210, t); o.frequency.exponentialRampToValueAtTime(80, t + 0.18);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(0.95, t + 0.006);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+  o.connect(g); g.connect(fgBus); o.start(t); o.stop(t + 0.24);
+  // bright attack click so the hit is audible on phone speakers
+  const n = audioCtx.createBufferSource(); n.buffer = noiseBuf;
+  const bp = audioCtx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1400; bp.Q.value = 0.9;
+  const gn = audioCtx.createGain(); gn.gain.setValueAtTime(0.28, t); gn.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+  n.connect(bp); bp.connect(gn); gn.connect(fgBus); n.start(t); n.stop(t + 0.06);
+}
+/* Happy ding when you hit the beat (reward, not music) */
+function playDing() {
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  tone(NOTE.G5, t, 0.32, 0.22, 'sine');
+  tone(NOTE.E5, t + 0.02, 0.32, 0.14, 'triangle');
+}
+
+/* ── Background music (Easy only) ── light groove + pentatonic melody, low volume.
+   The child's drum hits sit clearly on top. */
+const BG_MELODY = [NOTE.C5, NOTE.E5, NOTE.G4, NOTE.A4, NOTE.G4, NOTE.E5, NOTE.D5, NOTE.C5];
+const BG_BASS = [NOTE.C4, NOTE.C4, NOTE.G4, NOTE.A4];
+function bgKick(t) {
+  const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+  o.type = 'sine'; o.frequency.setValueAtTime(120, t); o.frequency.exponentialRampToValueAtTime(45, t + 0.14);
+  g.gain.setValueAtTime(0.35, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
+  o.connect(g); g.connect(fgBus); o.start(t); o.stop(t + 0.18);
+}
+function bgHat(t) {
+  const n = audioCtx.createBufferSource(); n.buffer = noiseBuf;
+  const hp = audioCtx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 8000;
+  const g = audioCtx.createGain(); g.gain.setValueAtTime(0.06, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.03);
+  n.connect(hp); hp.connect(g); g.connect(fgBus); n.start(t); n.stop(t + 0.05);
+}
+function bgSnare(t) {
+  const n = audioCtx.createBufferSource(); n.buffer = noiseBuf;
+  const bp = audioCtx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1800; bp.Q.value = 0.8;
+  const g = audioCtx.createGain(); g.gain.setValueAtTime(0.14, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.14);
+  n.connect(bp); bp.connect(g); g.connect(fgBus); n.start(t); n.stop(t + 0.16);
+}
+function bgStep(i, t) {
+  if (i % 4 === 0) bgKick(t);
+  if (i % 2 === 0) bgHat(t);
+  if (i === 4 || i === 12) bgSnare(t);
+  if (i % 4 === 0) { const b = BG_BASS[(i / 4) % BG_BASS.length]; tone(b / 2, t, 0.34, 0.10, 'triangle'); }
+  if (i % 2 === 0) { tone(BG_MELODY[melodyIdx % BG_MELODY.length], t, 0.22, 0.08, 'sine'); melodyIdx++; }
+}
+
+/* ── Game state ── */
+let cfg = null, playing = false;
+let beatDur = 0.7, hitWin = 0.24, goal = 6;
+let startTime = 0, nextStepTime = 0, step16 = 0, melodyIdx = 0, barRef = 0, lastScoredBeat = -1;
+let collected = 0, tapImpulse = 0, firstHitDone = false;
+let schedTimer = null, rafId = 0;
+let mode = 'free', callActive = false, callPhase = 'listen';
+let pattern = [], respondHits = new Set(), respondBarStart = 0, phaseEndTime = 0, roundsCleared = 0, missCount = 0;
+
+function setInstruction(t) { $('instruction').textContent = t; }
+function nextPattern() {
+  const lvl = Math.min(Math.floor(roundsCleared / 2), CALL_LEVELS.length - 1);
+  const pool = CALL_LEVELS[lvl];
+  return pool[Math.floor(Math.random() * pool.length)].slice();
+}
+
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); $(id).classList.add('active'); }
+function buildSlots() { const row = $('notes-row'); row.innerHTML = ''; for (let i = 0; i < goal; i++) { const s = document.createElement('div'); s.className = 'slot'; s.textContent = '♪'; row.appendChild(s); } }
+function fillSlot(n) { const s = $('notes-row').children[n - 1]; if (s) { s.classList.add('filled', 'pop'); setTimeout(() => s.classList.remove('pop'), 340); } }
+function resetSlots() { [...$('notes-row').children].forEach(s => s.classList.remove('filled')); }
+
+function startGame(key) {
+  cfg = DIFF[key]; hitWin = cfg.win; goal = cfg.goal;
+  mode = (key === 'more') ? 'call' : 'free';
+  initAudio();
+  collected = 0; lastScoredBeat = -1; firstHitDone = false; tapImpulse = 0; missCount = 0;
+  buildSlots(); resetSlots();
+  show('screen-game');
+  playing = true;
+  startTime = audioCtx.currentTime + 0.2;
+  callActive = false;
+  if (mode === 'call') {
+    callActive = true; roundsCleared = 0; callPhase = 'listen';
+    pattern = nextPattern();
+    beatDur = 60 / bpmForRound(0);
+    barRef = startTime;
+    phaseEndTime = startTime + 4 * beatDur;
+    readyCue();                               // small intro cue
+    scheduleBar(startTime, pattern);          // Disco Bug plays the first pattern
+    setInstruction('Listen to the drums 👂');
+    hideCount();
+    $('hand-hint').style.display = 'none';
+  } else {
+    beatDur = 60 / cfg.bpm;
+    barRef = startTime;
+    nextStepTime = startTime; step16 = 0; melodyIdx = 0;
+    setInstruction('Tap to the beat!');
+    $('hand-hint').style.display = '';
+  }
+  schedTimer = setInterval(scheduler, 25);
+  rafId = requestAnimationFrame(loop);
+}
+
+function goMenu() {
+  playing = false; callActive = false; clearInterval(schedTimer); schedTimer = null; cancelAnimationFrame(rafId);
+  hideCount();
+  show('screen-menu');
+}
+
+/* ── Scheduler ── */
+function scheduler() {
+  if (!playing || !audioCtx) return;
+  const now = audioCtx.currentTime;
+  if (mode === 'free') {
+    while (nextStepTime < now + 0.12) {   // background music in Easy
+      bgStep(step16, nextStepTime);
+      nextStepTime += beatDur / 4;
+      step16 = (step16 + 1) % 16;
+    }
+  } else {
+    callTick(now);
+  }
+}
+
+/* Schedule a bar's pattern beats as full drum hits. Nothing in between —
+   only the drum hits are heard. */
+function scheduleBar(barStart, pat) {
+  if (!pat) return;
+  for (const b of pat) {
+    const tb = barStart + b * beatDur;
+    boom(tb);
+    const dl = (tb - audioCtx.currentTime) * 1000;
+    setTimeout(() => { if (playing) drumFlashOnce(); }, Math.max(0, dl));
+  }
+}
+
+/* Count-in (2, 1) so the child knows exactly when to start */
+function showCount(n) { const el = $('countnum'); el.textContent = n; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
+function hideCount() { const el = $('countnum'); el.classList.remove('go'); el.textContent = ''; }
+function scheduleCountin(barStart) {
+  for (let b = 0; b < 2; b++) {
+    const tb = barStart + b * beatDur;
+    tone(b === 1 ? 990 : 720, tb, 0.14, 0.3, 'square');   // click, last one a bit brighter
+    const dl = (tb - audioCtx.currentTime) * 1000;
+    const label = String(2 - b);   // 2, 1
+    setTimeout(() => { if (playing && callPhase === 'countin') showCount(label); }, Math.max(0, dl));
+  }
+}
+
+/* "Here comes the next one" — a happy rising cue before a new demo */
+function readyCue() {
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  tone(NOTE.C5, t + 0.02, 0.16, 0.2, 'sine');
+  tone(NOTE.G5, t + 0.15, 0.22, 0.22, 'sine');
+}
+
+/* ── Copy-the-beat game (More): Listen -> Your turn -> silent pause -> new demo ── */
+function callTick(now) {
+  if (!callActive || now < phaseEndTime) return;
+  if (callPhase === 'listen') {
+    // Disco Bug done -> child's turn: "Your turn!" + count-in (2, 1)
+    callPhase = 'countin';
+    const barStart = phaseEndTime;
+    barRef = barStart;
+    phaseEndTime = barStart + 2 * beatDur;
+    setInstruction('Your turn!');
+    playClip(yourTurnSound);
+    scheduleCountin(barStart);
+  } else if (callPhase === 'countin') {
+    // Count-in done -> child's turn. Silent (only the child's taps + visual pulse).
+    callPhase = 'respond';
+    respondBarStart = phaseEndTime;
+    respondHits = new Set();
+    barRef = respondBarStart;
+    phaseEndTime = respondBarStart + 4 * beatDur;
+    hideCount();
+    setInstruction('Your turn! Play the same 🥁');
+  } else if (callPhase === 'respond') {
+    // The attempt is over. Judge now (never in the middle of a pattern).
+    const cleared = respondHits.size >= pattern.length;
+    if (cleared) { roundsCleared++; missCount = 0; }
+    callPhase = 'rest';
+    const full = collected >= goal;
+    if (full) {
+      collected = 0;
+      dansvag();                         // Dance Wave only fires now, after the attempt
+      resetSlots();
+    } else if (cleared) {
+      setInstruction('Great! 🎉'); playClip(greatSound);
+    } else {
+      missCount++;
+      setInstruction('Good try!');
+      if (missCount % 3 === 0) playClip(tryAgainSound);   // voice only every third miss in a row
+    }
+    // Pause: praise, then a clear countdown (2, 1) before Disco Bug plays the next
+    // pattern. Gives calm time between your attempt and the new beats to copy.
+    beatDur = 60 / bpmForRound(roundsCleared);   // next tempo (countdown + demo)
+    barRef = phaseEndTime;
+    const feedbackBeats = full ? Math.max(4, Math.ceil(3.4 / beatDur)) : 2;
+    const restStart = phaseEndTime;
+    for (let k = 0; k < 2; k++) {
+      const tb = restStart + (feedbackBeats + k) * beatDur;
+      const label = String(2 - k);               // 2, 1
+      tone(720, tb, 0.14, 0.3, 'square');
+      const dl = (tb - audioCtx.currentTime) * 1000;
+      setTimeout(() => {
+        if (!(playing && callPhase === 'rest')) return;
+        showCount(label);
+        setInstruction('My turn!');
+        if (label === '2') playClip(myTurnSound);   // Disco Bug: "My turn!"
+      }, Math.max(0, dl));
+    }
+    phaseEndTime = restStart + (feedbackBeats + 2) * beatDur;
+  } else {
+    // pause done -> new demo (new attempt)
+    hideCount();
+    pattern = nextPattern();
+    callPhase = 'listen';
+    const barStart = phaseEndTime;
+    barRef = barStart;
+    phaseEndTime = barStart + 4 * beatDur;
+    setInstruction('Listen to the drums 👂');
+    scheduleBar(barStart, pattern);
+  }
+}
+
+/* ── Animation loop (visual, synced to audio) ── */
+function loop() {
+  if (!playing) return;
+  const now = audioCtx.currentTime;
+  const phase = ((now - barRef) % beatDur + beatDur) % beatDur / beatDur;
+
+  const ring = $('cue-ring');
+  ring.style.transform = 'scale(' + (1 + (1 - phase) * 0.9).toFixed(3) + ')';
+  ring.style.opacity = (0.25 + 0.55 * phase).toFixed(2);
+
+  const pulse = Math.max(0, 1 - phase * 3.2);
+  tapImpulse *= 0.86;
+  $('drum').style.transform = 'scale(' + (1 + (reduce ? 0.02 : 0.06) * pulse + tapImpulse).toFixed(3) + ')';
+
+  const bobT = ((now - barRef) % (beatDur * 2) + beatDur * 2) % (beatDur * 2) / (beatDur * 2);
+  const bob = Math.sin(bobT * Math.PI * 2);
+  const amp = reduce ? 3 : 11;
+  const spot = $('hero-spot');
+  if (!spot.classList.contains('spin')) {
+    spot.style.transform = 'translateY(' + (-amp * bob).toFixed(1) + 'px) rotate(' + (bob * 3).toFixed(1) + 'deg) scale(' + (1 + 0.05 * pulse).toFixed(3) + ')';
+  }
+  rafId = requestAnimationFrame(loop);
+}
+
+/* ── Tap the drum ── */
+function tapDrum() {
+  if (!playing) return;
+  initAudio();
+  boom(audioCtx.currentTime);       // the child's own drum hit
+  tapImpulse = 0.16;
+  const now = audioCtx.currentTime;
+  if (mode === 'call') {
+    if (callPhase !== 'respond') return;        // during Listen: only drum sound, no note
+    let best = -1, bestDiff = Infinity;
+    for (const q of pattern) {
+      const tq = respondBarStart + q * beatDur;
+      const diff = Math.abs(now - tq);
+      if (diff < bestDiff) { bestDiff = diff; best = q; }
+    }
+    if (best >= 0 && bestDiff <= hitWin && !respondHits.has(best)) { respondHits.add(best); onBeatHit(); }
+    return;
+  }
+  // Easy (free): tap on every beat
+  const nearest = Math.round((now - startTime) / beatDur);
+  const nearestTime = startTime + nearest * beatDur;
+  if (nearest >= 0 && Math.abs(now - nearestTime) <= hitWin && nearest !== lastScoredBeat) {
+    lastScoredBeat = nearest;
+    onBeatHit();
+  }
+}
+function onBeatHit() {
+  playDing();
+  const d = $('drum'); d.classList.remove('glow'); void d.offsetWidth; d.classList.add('glow');
+  setTimeout(() => d.classList.remove('glow'), 260);
+  if (!firstHitDone) { firstHitDone = true; $('hand-hint').style.display = 'none'; if (mode === 'free') setInstruction('Great! Keep going!'); }
+  collected++;
+  fillSlot(collected);
+  flyNote();
+  // Easy celebrates right away; More waits until the attempt is done (see callTick) so the
+  // Dance Wave never interrupts in the middle of a pattern.
+  if (mode === 'free' && collected >= goal) { collected = 0; setTimeout(() => { dansvag(); resetSlots(); }, 260); }
+}
+function drumFlashOnce() {
+  const d = $('drum'); d.classList.remove('glow'); void d.offsetWidth; d.classList.add('glow');
+  setTimeout(() => d.classList.remove('glow'), 200);
+  tapImpulse = 0.2;
+}
+function flyNote() {
+  const r = $('drum').getBoundingClientRect();
+  const f = document.createElement('div');
+  f.className = 'fly'; f.textContent = '♪';
+  f.style.left = (r.left + r.width / 2 - 16) + 'px';
+  f.style.top = (r.top + r.height * 0.2) + 'px';
+  document.body.appendChild(f);
+  requestAnimationFrame(() => f.classList.add('go'));
+  setTimeout(() => f.remove(), 800);
+}
+
+/* ── Dance Wave ── */
+function dansvag() {
+  playClip(danceSound);                       // the "Let's dance" clip
+  const spot = $('hero-spot');
+  spot.classList.remove('spin'); void spot.offsetWidth;
+  if (!reduce) { spot.style.transform = ''; spot.classList.add('spin'); }
+  setTimeout(() => spot.classList.remove('spin'), 950);
+  setInstruction('DANCE WAVE!');
+  setTimeout(() => {
+    if (!playing) return;
+    if (mode === 'free') setInstruction('Tap to the beat!');
+    else setInstruction(callPhase === 'respond' ? 'Your turn! Play the same 🥁' : 'Listen to the drums 👂');
+  }, 1800);
+  confettiBurst();
+  arpeggio();
+  const wp = $('wave-pop'); wp.classList.remove('go'); void wp.offsetWidth; wp.classList.add('go');
+}
+function arpeggio() {
+  if (!audioCtx) return;
+  const seq = [NOTE.C4, NOTE.E4, NOTE.G4, NOTE.C5, NOTE.E5, NOTE.G5];
+  seq.forEach((f, i) => setTimeout(() => tone(f, audioCtx.currentTime, 0.4, 0.22, 'sine'), i * 90));
+}
+function confettiBurst() {
+  const cols = ['#4ECDC4', '#FF6B6B', '#FFD93D', '#B57EDC', '#7BC142', '#FF8AC4'];
+  const n = reduce ? 16 : 48;
+  for (let i = 0; i < n; i++) {
+    const c = document.createElement('div'); c.className = 'confetti';
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.background = cols[i % cols.length];
+    c.style.setProperty('--cd', (2.1 + Math.random() * 1.6).toFixed(2) + 's');
+    if (Math.random() < 0.5) c.style.borderRadius = '50%';
+    document.body.appendChild(c);
+    requestAnimationFrame(() => c.classList.add('go'));
+    setTimeout(() => c.remove(), 4200);
+  }
+}
+
+/* ── Sound on/off (in memory only) ── */
+function toggleMute() {
+  muted = !muted;
+  if (masterGain) masterGain.gain.setTargetAtTime(muted ? 0 : 1, audioCtx.currentTime, 0.02);
+  CLIPS.forEach(a => { a.muted = muted; if (muted) { try { a.pause(); } catch (e) {} } });
+  $('mute-btn').textContent = muted ? '🔇' : '🔊';
+}
+
+function menuTap() {
+  const b = $('menu-bug'); b.classList.remove('wave'); void b.offsetWidth; b.classList.add('wave');
+  initAudio(); boom(audioCtx.currentTime + 0.02);
+}
+
+['pointerdown', 'touchstart', 'click'].forEach(ev => window.addEventListener(ev, warmClips, { passive: true }));
+$('drum').addEventListener('pointerdown', e => { e.preventDefault(); tapDrum(); });
+window.addEventListener('keydown', e => {
+  if (!playing) return;
+  if (e.code === 'Space' || e.key === ' ' || e.key === 'Enter') { if (e.repeat) return; e.preventDefault(); tapDrum(); }
+});
+document.addEventListener('visibilitychange', () => { if (!document.hidden && playing && audioCtx) audioCtx.resume(); });
+</script>
+</body>
+</html>
