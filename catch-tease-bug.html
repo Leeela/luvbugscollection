@@ -292,6 +292,11 @@ function speak(key) {
   sfx.currentTime = 0;
   sfx.play().catch(() => {});
 }
+function stopSfx(key) {
+  const sfx = SFX[key];
+  if (!sfx) return;
+  try { sfx.pause(); sfx.currentTime = 0; } catch (e) {}
+}
 
 // Mobile (especially iOS) requires each sound to be played inside a user tap
 // at least once, otherwise playback from timers (e.g. the laugh) is blocked.
@@ -363,6 +368,7 @@ function scheduleBug() {
 
 function showBug() {
   if (!active) return;
+  stopSfx('nanana');   // cut any leftover nanana so it isn't heard on the next figure
   const bug   = $('bug');
   const arena = $('arena');
   const bw = bug.offsetWidth  || 120;
@@ -391,6 +397,7 @@ function catchBug() {
   clearTimeout(bugTimer);
   if (isRealBug) {
     score++;
+    stopSfx('nanana');
     speak('aj');
     showHitText('Got ya! 😤', '#E55A40');
     updateHud();
@@ -404,6 +411,7 @@ function catchBug() {
 function missedBug() {
   if (!active) return;
   if (isRealBug) {
+    stopSfx('nanana');
     speak('skratt');
     hideBug(() => {
       if (lives !== Infinity) {
