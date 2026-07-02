@@ -285,7 +285,7 @@ const DIFF = {
   easy: { bpm: 72, win: 0.26, goal: 6 },   // Easy: steady tempo, follow every beat
   more: { bpm: 63, win: 0.22, goal: 10 }   // More: copy the beat, tempo grows with rounds
 };
-function bpmForRound(r) { return Math.min(cfg.bpm + Math.floor(r / 2) * 9, 120); }
+function bpmForRound(r) { return Math.min(cfg.bpm + Math.floor(r / 2) * 9, 96); }
 
 /* ── Web Audio ── drum sounds are synthesized; voice clips play at key moments ── */
 let audioCtx = null, masterGain = null, fgBus = null, noiseBuf = null;
@@ -427,6 +427,7 @@ function startGame(key) {
     callActive = true; roundsCleared = 0; callPhase = 'listen';
     pattern = nextPattern();
     beatDur = 60 / bpmForRound(0);
+    startTime += 2;                           // 2 s calm moment so the child can catch on before the ticking
     barRef = startTime;
     phaseEndTime = startTime + 4 * beatDur;
     readyCue();                               // small intro cue
@@ -466,10 +467,27 @@ function scheduler() {
   }
 }
 
-/* Schedule a bar's pattern beats as full drum hits. Nothing in between —
-   only the drum hits are heard. */
+/* Light beat pulse (metronome) so the child feels the four-four time and finds
+   the beats. Accent on beat one, quieter clicks on 2-3-4. */
+function tickClick(t, accent) {
+  const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+  o.type = 'square';
+  o.frequency.setValueAtTime(accent ? 1500 : 1050, t);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(accent ? 0.16 : 0.09, t + 0.004);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+  o.connect(g); g.connect(fgBus); o.start(t); o.stop(t + 0.06);
+}
+/* A click on all four beats of the bar — the steady pulse that makes the pattern followable. */
+function scheduleBeatTicks(barStart) {
+  for (let b = 0; b < 4; b++) tickClick(barStart + b * beatDur, b === 0);
+}
+
+/* Schedule a bar's pattern beats as full drum hits, over a steady beat pulse
+   so the child feels where the beats fall. */
 function scheduleBar(barStart, pat) {
   if (!pat) return;
+  scheduleBeatTicks(barStart);
   for (const b of pat) {
     const tb = barStart + b * beatDur;
     boom(tb);
@@ -478,15 +496,15 @@ function scheduleBar(barStart, pat) {
   }
 }
 
-/* Count-in (2, 1) so the child knows exactly when to start */
+/* Count-in a full bar (4, 3, 2, 1) so the child feels the four-four time before playing */
 function showCount(n) { const el = $('countnum'); el.textContent = n; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
 function hideCount() { const el = $('countnum'); el.classList.remove('go'); el.textContent = ''; }
 function scheduleCountin(barStart) {
-  for (let b = 0; b < 2; b++) {
+  for (let b = 0; b < 4; b++) {
     const tb = barStart + b * beatDur;
-    tone(b === 1 ? 990 : 720, tb, 0.14, 0.3, 'square');   // click, last one a bit brighter
+    tickClick(tb, b === 0);        // same beat click as the pulse, beat one accented
     const dl = (tb - audioCtx.currentTime) * 1000;
-    const label = String(2 - b);   // 2, 1
+    const label = String(4 - b);   // 4, 3, 2, 1
     setTimeout(() => { if (playing && callPhase === 'countin') showCount(label); }, Math.max(0, dl));
   }
 }
@@ -507,7 +525,7 @@ function callTick(now) {
     callPhase = 'countin';
     const barStart = phaseEndTime;
     barRef = barStart;
-    phaseEndTime = barStart + 2 * beatDur;
+    phaseEndTime = barStart + 4 * beatDur;
     setInstruction('Your turn!');
     playClip(yourTurnSound);
     scheduleCountin(barStart);
@@ -518,6 +536,7 @@ function callTick(now) {
     respondHits = new Set();
     barRef = respondBarStart;
     phaseEndTime = respondBarStart + 4 * beatDur;
+    scheduleBeatTicks(respondBarStart);   // steady pulse during the child's turn too
     hideCount();
     setInstruction('Your turn! Play the same 🥁');
   } else if (callPhase === 'respond') {
@@ -543,19 +562,19 @@ function callTick(now) {
     barRef = phaseEndTime;
     const feedbackBeats = full ? Math.max(4, Math.ceil(3.4 / beatDur)) : 2;
     const restStart = phaseEndTime;
-    for (let k = 0; k < 2; k++) {
+    for (let k = 0; k < 4; k++) {
       const tb = restStart + (feedbackBeats + k) * beatDur;
-      const label = String(2 - k);               // 2, 1
-      tone(720, tb, 0.14, 0.3, 'square');
+      const label = String(4 - k);               // 4, 3, 2, 1
+      tickClick(tb, k === 0);
       const dl = (tb - audioCtx.currentTime) * 1000;
       setTimeout(() => {
         if (!(playing && callPhase === 'rest')) return;
         showCount(label);
         setInstruction('My turn!');
-        if (label === '2') playClip(myTurnSound);   // Disco Bug: "My turn!"
+        if (label === '4') playClip(myTurnSound);   // Disco Bug: "My turn!"
       }, Math.max(0, dl));
     }
-    phaseEndTime = restStart + (feedbackBeats + 2) * beatDur;
+    phaseEndTime = restStart + (feedbackBeats + 4) * beatDur;
   } else {
     // pause done -> new demo (new attempt)
     hideCount();
@@ -608,7 +627,10 @@ function tapDrum() {
       const diff = Math.abs(now - tq);
       if (diff < bestDiff) { bestDiff = diff; best = q; }
     }
-    if (best >= 0 && bestDiff <= hitWin && !respondHits.has(best)) { respondHits.add(best); onBeatHit(); }
+    // The window scales with tempo (65% of a beat) so adjacent beats' windows
+    // overlap generously — two beats in a row are easy to hit, no dead zone between them.
+    const win = 0.65 * beatDur;
+    if (best >= 0 && bestDiff <= win && !respondHits.has(best)) { respondHits.add(best); onBeatHit(); }
     return;
   }
   // Easy (free): tap on every beat
