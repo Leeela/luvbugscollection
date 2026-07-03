@@ -449,7 +449,7 @@ function kick(t) {
 function hat(t) {
   const n = audioCtx.createBufferSource(); n.buffer = noiseBuf;
   const hp = audioCtx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 8000;
-  const g = audioCtx.createGain(); g.gain.setValueAtTime(0.05, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.03);
+  const g = audioCtx.createGain(); g.gain.setValueAtTime(0.08, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.03);
   n.connect(hp); hp.connect(g); g.connect(musicGain); n.start(t); n.stop(t + 0.05);
 }
 
@@ -474,7 +474,7 @@ function startMusic() {
   const danceLen = 15 + Math.random() * 15;
   stopAtCtxTime = nextNoteTime + danceLen;
   musicGain.gain.cancelScheduledValues(audioCtx.currentTime);
-  musicGain.gain.setValueAtTime(0.55, audioCtx.currentTime);
+  musicGain.gain.setValueAtTime(0.9, audioCtx.currentTime);   // raised so music is audible on small tablet speakers
   musicOn = true;
   clearInterval(schedTimer);
   schedTimer = setInterval(musicScheduler, 25);
@@ -495,12 +495,12 @@ function scheduleStep(i, t) {
   if (cfg.busy) {
     if (i % 2 === 0) kick(t);                                   // beat on every quarter
     hat(t);                                                     // hihat on every eighth
-    tone(MELODY_STD[i % MELODY_STD.length], t, 0.20, 0.11, 'triangle');
-    if (i % 4 === 0) tone(BASS[(i / 4) % BASS.length] / 2, t, 0.34, 0.10, 'sine');
+    tone(MELODY_STD[i % MELODY_STD.length], t, 0.20, 0.18, 'triangle');
+    if (i % 4 === 0) tone(BASS[(i / 4) % BASS.length] / 2, t, 0.34, 0.13, 'sine');
   } else {
     if (i % 4 === 0) kick(t);                                   // sparser, calmer
-    if (i % 2 === 0) { tone(MELODY_CALM[melIdx % MELODY_CALM.length], t, 0.5, 0.09, 'sine'); melIdx++; }
-    if (i % 8 === 0) tone(BASS[(i / 8) % BASS.length] / 2, t, 0.7, 0.08, 'sine');
+    if (i % 2 === 0) { tone(MELODY_CALM[melIdx % MELODY_CALM.length], t, 0.5, 0.16, 'sine'); melIdx++; }
+    if (i % 8 === 0) tone(BASS[(i / 8) % BASS.length] / 2, t, 0.7, 0.11, 'sine');
   }
 }
 
