@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<link rel="manifest" href="/app/manifest.json">
+<meta name="theme-color" content="#2BA89F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LuvBugs">
+<link rel="apple-touch-icon" href="/app/icons/icon-180.png">
+<title>Dance with Disco Bug – Dance challenge for kids | LuvBugs Collection</title>
+<meta name="description" content="Spin the wheel, get a fun dance and dance along with Disco Bug. When the music stops, you freeze! No score, no losing. Dance challenge for kids aged 3 to 8.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://luvbugscollection.com/dance-with-disco-bug.html" />
+<link rel="alternate" hreflang="sv" href="https://bacillerna.se/dansa-med-dansbacillen.html" />
+<link rel="alternate" hreflang="en" href="https://luvbugscollection.com/dance-with-disco-bug.html" />
+<style>
+/* Fredoka (headings) + Nunito (body) self-hosted locally — no external calls. */
+@font-face {
+  font-family: 'Fredoka';
+  src: url('/fonts/Fredoka-VariableFont.ttf') format('truetype');
+  font-weight: 300 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Nunito';
+  src: url('/fonts/Nunito-VariableFont.ttf') format('truetype');
+  font-weight: 400 800;
+  font-display: swap;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --safe-top:    env(safe-area-inset-top,    0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left:   env(safe-area-inset-left,   0px);
+  --safe-right:  env(safe-area-inset-right,  0px);
+
+  /* Character colour: turquoise (Disco Bug) */
+  --char-color:      #4ECDC4;
+  --char-color-deep: #2BA89F;
+  --char-color-dark: #1F7A73;
+  --coral:  #FF6B6B;
+  --yellow: #FFD93D;
+  --purple: #B57EDC;
+
+  --font-heading: 'Fredoka', 'Nunito', -apple-system, 'Segoe UI', system-ui, sans-serif;
+  --font-body:    'Nunito', -apple-system, 'Segoe UI', system-ui, sans-serif;
+}
+
+html, body { height: 100%; }
+body {
+  font-family: var(--font-body);
+  color: #fff;
+  height: 100dvh;
+  overflow: hidden;
+  user-select: none;
+  background: #1F7A73;
+}
+
+.bg {
+  position: fixed; inset: 0; z-index: 0;
+  background: linear-gradient(165deg, #6FE3D8 0%, #3FC2B7 46%, #1F8C83 100%);
+}
+.bg::after {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 30%, rgba(255,255,255,0.22) 0%, transparent 55%);
+}
+
+.screen {
+  position: fixed; inset: 0; z-index: 1;
+  display: none; flex-direction: column; align-items: center;
+  padding: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
+}
+.screen.active { display: flex; }
+
+/* ── START SCREEN ── */
+#screen-menu {
+  justify-content: center; gap: clamp(10px, 2.4vmin, 20px);
+  text-align: center;
+  padding-left: max(18px, var(--safe-left));
+  padding-right: max(18px, var(--safe-right));
+}
+.spotlight {
+  position: relative; width: clamp(150px, 40vmin, 250px); aspect-ratio: 1;
+  display: flex; align-items: center; justify-content: center; border-radius: 50%;
+  background: radial-gradient(circle at 50% 46%, rgba(255,255,255,0.34) 0%, rgba(255,255,255,0.10) 46%, transparent 70%);
+}
+.spotlight img {
+  width: 96%; height: 96%; object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.30));
+}
+#menu-bug { animation: menuBob 2.1s ease-in-out infinite; cursor: pointer; }
+@keyframes menuBob { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-9px) rotate(2deg); } }
+#menu-bug.wave { animation: menuWave 0.6s ease-in-out; }
+@keyframes menuWave { 0%,100% { transform: scale(1) rotate(0); } 30% { transform: scale(1.1) rotate(-6deg); } 65% { transform: scale(1.06) rotate(6deg); } }
+
+#screen-menu h1 {
+  font-family: var(--font-heading); font-size: clamp(30px, 8vmin, 54px); font-weight: 700; line-height: 1.03;
+  color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,0.18), 0 0 22px rgba(255,255,255,0.4);
+}
+#menu-msg { font-size: clamp(14px, 3.6vmin, 19px); color: #fff; max-width: 340px; line-height: 1.5; font-weight: 500; text-shadow: 0 1px 4px rgba(0,0,0,0.22); }
+
+/* Mode selection */
+.mode-row { display: flex; gap: clamp(10px, 3vw, 16px); margin-top: 4px; flex-wrap: wrap; justify-content: center; }
+.mode-btn {
+  font-family: var(--font-heading); font-weight: 600; border: 3px solid rgba(255,255,255,0.55);
+  border-radius: 22px; padding: clamp(10px,2.4vmin,14px) clamp(18px,5vw,26px); cursor: pointer;
+  background: rgba(255,255,255,0.14); color: #fff; font-size: clamp(15px, 4vmin, 19px);
+  display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 132px;
+  transition: transform 0.1s, background 0.15s, border-color 0.15s;
+}
+.mode-btn .m-sub { font-size: clamp(11px, 2.8vmin, 13px); font-weight: 500; opacity: 0.85; }
+.mode-btn.sel { background: #fff; color: var(--char-color-dark); border-color: #fff; box-shadow: 0 6px 0 var(--char-color-deep); }
+.mode-btn:active { transform: translateY(2px); }
+.mode-btn:focus-visible { outline: 4px solid var(--yellow); outline-offset: 3px; }
+
+.start-btn {
+  font-family: var(--font-heading); font-weight: 700; border: none; border-radius: 28px;
+  padding: clamp(16px,3.4vmin,22px) clamp(34px,9vw,52px); cursor: pointer; margin-top: 8px;
+  font-size: clamp(20px, 5.6vmin, 30px); color: #10302d;
+  background: var(--yellow); box-shadow: 0 7px 0 #C9A400, 0 0 28px rgba(255,217,61,0.5);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.start-btn:active { transform: translateY(5px); box-shadow: 0 2px 0 #C9A400; }
+.start-btn:focus-visible { outline: 4px solid #fff; outline-offset: 4px; }
+
+#menu-more { margin-top: 2px; font-size: clamp(13px, 3.3vmin, 16px); color: #fff; opacity: 0.9; text-decoration: none; padding: 8px 16px; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+#menu-more:hover { opacity: 1; text-decoration: underline; }
+#menu-more:focus-visible { outline: 3px solid #fff; outline-offset: 2px; border-radius: 10px; }
+
+/* ── GAME SCREEN ── */
+#screen-game { justify-content: flex-start; }
+
+#hud {
+  width: 100%; display: grid; grid-template-columns: auto 1fr auto;
+  align-items: center; gap: 10px; padding: 8px 12px; min-height: 54px; flex-shrink: 0; z-index: 4;
+}
+.hud-btn {
+  font-size: 22px; background: rgba(0,0,0,0.16); border: none; cursor: pointer;
+  color: #fff; border-radius: 14px; min-width: 46px; min-height: 46px;
+  display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); line-height: 1;
+}
+.hud-btn:active { background: rgba(0,0,0,0.30); }
+.hud-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
+/* Dance meter */
+#meter { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+#meter-label { font-family: var(--font-heading); font-weight: 600; font-size: clamp(11px, 2.8vmin, 14px); color: #fff; opacity: 0.92; letter-spacing: 0.3px; }
+#dots { display: flex; gap: clamp(4px, 1.4vw, 8px); }
+.dot {
+  width: clamp(14px, 3.6vw, 20px); height: clamp(14px, 3.6vw, 20px); border-radius: 50%;
+  background: rgba(0,0,0,0.16); box-shadow: inset 0 1px 3px rgba(0,0,0,0.25); transition: transform 0.15s;
+}
+.dot.filled { background: radial-gradient(circle at 50% 32%, #fff, var(--yellow)); box-shadow: 0 0 12px rgba(255,217,61,0.85); }
+.dot.pop { animation: dotPop 0.36s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes dotPop { 0% { transform: scale(0.4); } 60% { transform: scale(1.35); } 100% { transform: scale(1); } }
+#stars { display: flex; gap: 2px; min-height: 1.1em; font-size: clamp(13px, 3.2vw, 18px); }
+.star.pop { animation: dotPop 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+
+/* Stage with Disco Bug */
+#stage { flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: clamp(4px,1.4vmin,12px); }
+#hero-spot {
+  position: relative; width: clamp(120px, 30vmin, 210px); aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle at 50% 46%, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.08) 48%, transparent 72%);
+  display: flex; align-items: center; justify-content: center; will-change: transform;
+}
+#hero { width: 96%; height: 96%; object-fit: contain; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.28)); }
+#hero-spot.dancing { animation: heroDance 0.62s ease-in-out infinite; }
+@keyframes heroDance {
+  0%   { transform: translateY(0) rotate(-5deg) scale(1); }
+  25%  { transform: translateY(-10px) rotate(4deg) scale(1.04); }
+  50%  { transform: translateY(0) rotate(5deg) scale(1); }
+  75%  { transform: translateY(-8px) rotate(-4deg) scale(1.03); }
+  100% { transform: translateY(0) rotate(-5deg) scale(1); }
+}
+#hero-spot.dancing.calm { animation: heroDanceCalm 1.5s ease-in-out infinite; }
+@keyframes heroDanceCalm {
+  0%,100% { transform: translateY(0) rotate(-2deg) scale(1); }
+  50%     { transform: translateY(-5px) rotate(2deg) scale(1.02); }
+}
+#hero-spot.frozen { animation: none !important; transform: rotate(-2deg) scale(1); filter: none; }
+#hero-spot.frozen #hero { filter: drop-shadow(0 6px 12px rgba(0,0,0,0.28)) brightness(1.04); }
+
+/* Wheel + move card */
+#play-area {
+  flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: clamp(10px, 2.6vmin, 22px); position: relative; padding: 0 16px calc(78px + var(--safe-bottom));
+}
+#wheel-wrap { position: relative; display: flex; align-items: center; justify-content: center; }
+.wheel-ring {
+  position: absolute; width: clamp(210px, 74vmin, 340px); aspect-ratio: 1; border-radius: 50%;
+  border: 7px dashed rgba(255,255,255,0.55); pointer-events: none;
+}
+.wheel-ring.spin { animation: ringSpin 0.5s linear infinite; }
+@keyframes ringSpin { to { transform: rotate(360deg); } }
+.wheel-ring.r2 { width: clamp(168px, 60vmin, 280px); border-style: dotted; border-color: rgba(255,255,255,0.35); }
+.wheel-ring.r2.spin { animation: ringSpinRev 0.7s linear infinite; }
+@keyframes ringSpinRev { to { transform: rotate(-360deg); } }
+
+#wheel-card {
+  position: relative; z-index: 2; width: clamp(150px, 52vmin, 230px); aspect-ratio: 1; border-radius: 32px;
+  background: rgba(255,255,255,0.96); color: var(--char-color-dark);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.28); padding: 12px; text-align: center;
+  transition: opacity 0.28s, transform 0.28s;
+}
+#wheel-card.fade { opacity: 0; transform: scale(0.9); }
+#wheel-card.land { animation: cardLand 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes cardLand { 0% { transform: scale(0.7); } 60% { transform: scale(1.12); } 100% { transform: scale(1); } }
+#card-emoji { font-size: clamp(52px, 17vmin, 104px); line-height: 1; }
+#card-name { font-family: var(--font-heading); font-weight: 700; font-size: clamp(16px, 4.4vmin, 24px); }
+
+#instruction {
+  text-align: center; font-family: var(--font-heading); font-weight: 600;
+  font-size: clamp(17px, 4.6vmin, 26px); color: #fff;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.35); min-height: 2.6em; line-height: 1.25;
+  max-width: 460px; display: flex; align-items: center; justify-content: center;
+}
+
+/* FREEZE overlay */
+#freeze {
+  position: fixed; inset: 0; z-index: 8; display: none; flex-direction: column;
+  align-items: center; justify-content: center; gap: 10px; pointer-events: none;
+  background: rgba(31,122,115,0.34);
+}
+#freeze.show { display: flex; }
+#freeze.pop #freeze-txt { animation: freezePop 0.5s cubic-bezier(0.34,1.7,0.5,1); }
+#freeze.soft { background: rgba(31,122,115,0.5); }
+#freeze.soft #freeze-txt { animation: freezeSoft 0.9s ease-out; }
+#freeze-txt {
+  font-family: var(--font-heading); font-weight: 700; font-size: clamp(52px, 18vmin, 140px);
+  color: #fff; text-shadow: 0 5px 0 rgba(0,0,0,0.2), 0 0 34px rgba(255,255,255,0.7); letter-spacing: 3px;
+}
+#freeze-flake { font-size: clamp(40px, 12vmin, 90px); }
+@keyframes freezePop { 0% { transform: scale(0.2) rotate(-12deg); } 60% { transform: scale(1.14) rotate(4deg); } 100% { transform: scale(1) rotate(0); } }
+@keyframes freezeSoft { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
+
+/* Done button */
+#done-btn {
+  position: fixed; z-index: 5; right: 16px; bottom: calc(16px + var(--safe-bottom));
+  font-family: var(--font-heading); font-weight: 700; border: none; border-radius: 24px;
+  padding: 14px 26px; font-size: clamp(16px, 4.4vmin, 20px); cursor: pointer;
+  color: #10302d; background: var(--yellow); box-shadow: 0 5px 0 #C9A400, 0 4px 14px rgba(0,0,0,0.25);
+}
+#done-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #C9A400; }
+#done-btn:focus-visible { outline: 4px solid #fff; outline-offset: 3px; }
+
+/* ── END SCREEN ── */
+#screen-end { justify-content: center; gap: clamp(12px, 3vmin, 22px); text-align: center; padding-left: max(18px, var(--safe-left)); padding-right: max(18px, var(--safe-right)); }
+#screen-end h2 { font-family: var(--font-heading); font-weight: 700; font-size: clamp(30px, 8.4vmin, 56px); color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,0.18), 0 0 22px rgba(255,255,255,0.45); }
+#end-stars { font-size: clamp(34px, 10vmin, 68px); line-height: 1.1; min-height: 1.1em; }
+#end-msg { font-size: clamp(16px, 4.2vmin, 22px); color: #fff; max-width: 380px; line-height: 1.5; font-weight: 500; text-shadow: 0 1px 4px rgba(0,0,0,0.22); }
+#end-msg strong { color: var(--yellow); }
+.end-row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 6px; }
+.end-btn { font-family: var(--font-heading); font-weight: 700; border: none; border-radius: 24px; padding: 14px 26px; font-size: clamp(16px, 4.4vmin, 20px); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
+.end-btn.again { color: #10302d; background: var(--yellow); box-shadow: 0 5px 0 #C9A400; }
+.end-btn.more { color: #fff; background: rgba(255,255,255,0.16); border: 2px solid rgba(255,255,255,0.5); }
+.end-btn:active { transform: translateY(3px); }
+.end-btn:focus-visible { outline: 4px solid #fff; outline-offset: 3px; }
+
+/* Confetti (shared by freeze celebration + end) */
+.confetti { position: fixed; top: -20px; width: 12px; height: 16px; border-radius: 3px; z-index: 7; pointer-events: none; will-change: transform; }
+.confetti.go { animation: confFall var(--cd,2.6s) linear forwards; }
+@keyframes confFall { 0% { transform: translateY(0) rotate(0); opacity: 1; } 100% { transform: translateY(115vh) rotate(720deg); opacity: 0.9; } }
+
+@media (prefers-reduced-motion: reduce) {
+  #menu-bug, #menu-bug.wave, .wheel-ring.spin, .wheel-ring.r2.spin,
+  #hero-spot.dancing, #hero-spot.dancing.calm { animation: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+
+<!-- ── MENU ── -->
+<div id="screen-menu" class="screen active">
+  <div class="spotlight">
+    <img id="menu-bug" src="/bilder/dansbacillen.png" alt="Disco Bug ready to dance" onclick="menuTap()">
+  </div>
+  <h1>Dance with Disco Bug</h1>
+  <p id="menu-msg">Spin the wheel, get a fun dance and dance along. When the music stops, you freeze. Everyone can join in!</p>
+  <div class="mode-row" role="group" aria-label="Choose mode">
+    <button class="mode-btn" id="mode-standard" onclick="pickMode('standard')" aria-pressed="true">
+      Standard<span class="m-sub">Fast and moving</span>
+    </button>
+    <button class="mode-btn" id="mode-lugnt" onclick="pickMode('lugnt')" aria-pressed="false">
+      Calm mode<span class="m-sub">Soft and gentle</span>
+    </button>
+  </div>
+  <button class="start-btn" onclick="startGame()">Start dancing ▶</button>
+  <a href="/games.html" id="menu-more">🎮 More games</a>
+</div>
+
+<!-- ── GAME ── -->
+<div id="screen-game" class="screen">
+  <div id="hud">
+    <button class="hud-btn" onclick="goMenu()" aria-label="Back to start">←</button>
+    <div id="meter">
+      <div id="meter-label">Dance meter</div>
+      <div id="dots" aria-hidden="true"></div>
+      <div id="stars" aria-label="Dance stars"></div>
+    </div>
+    <button class="hud-btn" id="mute-btn" onclick="toggleMute()" aria-label="Sound on or off">🔊</button>
+  </div>
+
+  <div id="stage">
+    <div id="hero-spot"><img id="hero" src="/bilder/dansbacillen.png" alt="Disco Bug dancing"></div>
+  </div>
+
+  <div id="play-area">
+    <div id="wheel-wrap">
+      <div class="wheel-ring"></div>
+      <div class="wheel-ring r2"></div>
+      <div id="wheel-card">
+        <div id="card-emoji">💃</div>
+        <div id="card-name">Ready?</div>
+      </div>
+    </div>
+    <div id="instruction">Spinning the wheel…</div>
+  </div>
+
+  <button id="done-btn" onclick="finishGame()">Done ✓</button>
+</div>
+
+<!-- FREEZE overlay -->
+<div id="freeze">
+  <div id="freeze-flake">❄️</div>
+  <div id="freeze-txt">FREEZE!</div>
+</div>
+
+<!-- ── END SCREEN ── -->
+<div id="screen-end" class="screen">
+  <div id="end-stars">🎉</div>
+  <h2>What a dance!</h2>
+  <p id="end-msg">You danced great!</p>
+  <div class="end-row">
+    <button class="end-btn again" onclick="goMenu()">Dance again ▶</button>
+    <a class="end-btn more" href="/games.html">🎮 More games</a>
+  </div>
+</div>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ══════════════ MOVES ══════════════ */
+const STANDARD = [
+  { key:'spaghetti',      emoji:'🍝',  name:'Spaghetti Dance', text:'Dance like cooked spaghetti! Wobbly all over!' },
+  { key:'robot',          emoji:'🤖',  name:'Robot Dance',     text:'Dance like a robot! Stiff arms, jerky moves!' },
+  { key:'snail',          emoji:'🐌',  name:'Snail Dance',     text:'Dance super slowly like a snail!' },
+  { key:'lightning',      emoji:'⚡',  name:'Lightning Dance', text:'Dance super fast! Faster than lightning!' },
+  { key:'onearm',         emoji:'💪',  name:'One Arm Dance',   text:'Dance with just one arm! The rest of you stays still!' },
+  { key:'frog',           emoji:'🐸',  name:'Frog Hop',        text:'Hop and dance like a frog!' },
+  { key:'spin',           emoji:'🌀',  name:'Spin Dance',      text:'Spin around and around and around!' },
+  { key:'statue',         emoji:'🗿',  name:'Statue Dance',    text:'Dance like a statue that just came to life!' },
+  { key:'giant',          emoji:'🦖',  name:'Giant Dance',     text:'Dance like a giant dinosaur! Big heavy stomps!' },
+  { key:'mouse',          emoji:'🐭',  name:'Mouse Dance',     text:'Dance teeny tiny like a mouse! Small, small moves!' },
+  { key:'washingmachine', emoji:'🌪️', name:'Washing Machine', text:'Dance like a washing machine on spin!' },
+  { key:'balloon',        emoji:'🎈',  name:'Balloon Dance',   text:'Dance like a balloon floating up to the ceiling!' }
+];
+const LUGNT = [
+  { key:'finger',    emoji:'🖐️', name:'Finger Dance',    text:'Let just your fingers dance!' },
+  { key:'face',      emoji:'😜',  name:'Face Dance',      text:'Dance with your face! Eyebrows, mouth and nose!' },
+  { key:'shoulder',  emoji:'🤷',  name:'Shoulder Dance',  text:'Let your shoulders dance up and down!' },
+  { key:'head',      emoji:'🎵',  name:'Head Sway',       text:'Sway your head softly to the beat!' },
+  { key:'toe',       emoji:'🦶',  name:'Toe Dance',       text:'Sit still and let just your toes dance!' },
+  { key:'breathing', emoji:'🌬️', name:'Breathing Dance', text:'Breathe in, stretch up slowly, breathe out and sink down!' }
+];
+const CHEERS = ['cheer-1','cheer-2','cheer-3','cheer-4'];
+
+/* ══════════════ VOICE CLIPS (mp3, own ElevenLabs recordings) ══════════════
+   Preloaded at game start. Fallback: a missing or unloaded clip -> the text
+   still shows and the game continues without error. Mute kept in memory only. */
+const VOICE = {};
+let voiceLoaded = false, clipsWarmed = false;
+function mkClip(src) { const a = new Audio(src); a.preload = 'auto'; return a; }
+function loadVoices() {
+  if (voiceLoaded) return;
+  voiceLoaded = true;
+  STANDARD.concat(LUGNT).forEach(m => { VOICE[m.key] = mkClip('/ljud/dance/' + m.key + '.mp3'); });
+  CHEERS.forEach(c => { VOICE[c] = mkClip('/ljud/dance/' + c + '.mp3'); });
+  VOICE.welcome = mkClip('/ljud/dance/welcome.mp3');
+  VOICE.finale  = mkClip('/ljud/dance/finale.mp3');
+}
+function warmClips() {
+  if (clipsWarmed || !voiceLoaded) return;
+  clipsWarmed = true;
+  Object.values(VOICE).forEach(a => {
+    try {
+      a.muted = true;
+      const p = a.play();
+      if (p && p.then) p.then(() => { a.pause(); a.currentTime = 0; a.muted = muted; }).catch(() => { a.muted = muted; });
+      else { try { a.pause(); } catch (e) {} a.muted = muted; }
+    } catch (e) {}
+  });
+}
+function playClip(key) {
+  if (muted) return;
+  const a = VOICE[key];
+  if (!a) return;                       // missing -> silent, game continues
+  try { a.currentTime = 0; const p = a.play(); if (p) p.catch(() => {}); } catch (e) {}
+}
+function randomCheer() { return CHEERS[Math.floor(Math.random() * CHEERS.length)]; }
+
+/* ══════════════ WEB AUDIO — generated music (no audio files for music) ══════════════ */
+let audioCtx = null, masterGain = null, musicGain = null, noiseBuf = null;
+let muted = false;
+
+function initAudio() {
+  if (audioCtx) { if (audioCtx.state === 'suspended') audioCtx.resume(); return; }
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = audioCtx.createGain(); masterGain.gain.value = muted ? 0 : 1; masterGain.connect(audioCtx.destination);
+  musicGain = audioCtx.createGain(); musicGain.gain.value = 0; musicGain.connect(masterGain);
+  const len = audioCtx.sampleRate * 0.5;
+  noiseBuf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+  const d = noiseBuf.getChannelData(0);
+  for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+const NOTE = { C4:261.63, D4:293.66, E4:329.63, G4:392.00, A4:440.00, C5:523.25, D5:587.33, E5:659.25, G5:784.00, A5:880.00 };
+const MELODY_STD  = [NOTE.C5, NOTE.E5, NOTE.G5, NOTE.E5, NOTE.A5, NOTE.G5, NOTE.E5, NOTE.D5, NOTE.C5, NOTE.E5, NOTE.D5, NOTE.G4];
+const MELODY_CALM = [NOTE.C5, NOTE.E5, NOTE.G4, NOTE.A4, NOTE.G4, NOTE.E5, NOTE.D5, NOTE.C5];
+const BASS = [NOTE.C4, NOTE.G4, NOTE.A4, NOTE.G4];
+
+function tone(freq, t, dur, peak, type) {
+  const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+  o.type = type || 'sine'; o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(peak, t + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(musicGain); o.start(t); o.stop(t + dur + 0.02);
+}
+function kick(t) {
+  const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+  o.type = 'sine'; o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(48, t + 0.14);
+  g.gain.setValueAtTime(0.42, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
+  o.connect(g); g.connect(musicGain); o.start(t); o.stop(t + 0.18);
+}
+function hat(t) {
+  const n = audioCtx.createBufferSource(); n.buffer = noiseBuf;
+  const hp = audioCtx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 8000;
+  const g = audioCtx.createGain(); g.gain.setValueAtTime(0.05, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.03);
+  n.connect(hp); hp.connect(g); g.connect(musicGain); n.start(t); n.stop(t + 0.05);
+}
+
+/* ── Music state + scheduler ──
+   Two tempos: Standard faster, Calm slower. The random stop (15–30 s) is
+   implemented HERE in the scheduler (stopAtCtxTime). */
+let cfg = null;                          // { busy:bool, bpm:int }
+let musicOn = false, stepDur = 0.25, nextNoteTime = 0, noteIdx = 0, melIdx = 0;
+let stopAtCtxTime = 0, schedTimer = null;
+
+const MODE = {
+  standard: { busy: true,  bpm: 116 },
+  lugnt:    { busy: false, bpm: 80  }
+};
+
+function startMusic() {
+  cfg = MODE[mode];
+  stepDur = (60 / cfg.bpm) / 2;          // eighth notes
+  noteIdx = 0; melIdx = 0;
+  nextNoteTime = audioCtx.currentTime + 0.08;
+  // random dance length 15–30 s -> stop is placed in the scheduler
+  const danceLen = 15 + Math.random() * 15;
+  stopAtCtxTime = nextNoteTime + danceLen;
+  musicGain.gain.cancelScheduledValues(audioCtx.currentTime);
+  musicGain.gain.setValueAtTime(0.55, audioCtx.currentTime);
+  musicOn = true;
+  clearInterval(schedTimer);
+  schedTimer = setInterval(musicScheduler, 25);
+}
+
+function musicScheduler() {
+  if (!musicOn || !audioCtx) return;
+  const now = audioCtx.currentTime;
+  if (now >= stopAtCtxTime) { stopMusicIntoFreeze(); return; }   // the sudden stop
+  while (nextNoteTime < now + 0.15 && nextNoteTime < stopAtCtxTime) {
+    scheduleStep(noteIdx, nextNoteTime);
+    noteIdx++;
+    nextNoteTime += stepDur;
+  }
+}
+
+function scheduleStep(i, t) {
+  if (cfg.busy) {
+    if (i % 2 === 0) kick(t);                                   // beat on every quarter
+    hat(t);                                                     // hihat on every eighth
+    tone(MELODY_STD[i % MELODY_STD.length], t, 0.20, 0.11, 'triangle');
+    if (i % 4 === 0) tone(BASS[(i / 4) % BASS.length] / 2, t, 0.34, 0.10, 'sine');
+  } else {
+    if (i % 4 === 0) kick(t);                                   // sparser, calmer
+    if (i % 2 === 0) { tone(MELODY_CALM[melIdx % MELODY_CALM.length], t, 0.5, 0.09, 'sine'); melIdx++; }
+    if (i % 8 === 0) tone(BASS[(i / 8) % BASS.length] / 2, t, 0.7, 0.08, 'sine');
+  }
+}
+
+function stopMusicIntoFreeze() {
+  musicOn = false;
+  clearInterval(schedTimer); schedTimer = null;
+  const now = audioCtx.currentTime;
+  if (mode === 'lugnt') {
+    // softer freeze: fade out instead of a hard stop
+    musicGain.gain.cancelScheduledValues(now);
+    musicGain.gain.setValueAtTime(musicGain.gain.value, now);
+    musicGain.gain.linearRampToValueAtTime(0.0001, now + 1.2);
+    freeze(true);
+  } else {
+    // Standard: sudden stop
+    musicGain.gain.cancelScheduledValues(now);
+    musicGain.gain.setTargetAtTime(0.0001, now, 0.02);
+    freeze(false);
+  }
+}
+
+/* FREEZE sound (Web Audio, no file). Routed via masterGain (mute-aware), NOT via
+   musicGain which fades out at the freeze. Standard: snappy downward zap plus ice
+   crack. Calm: soft chiming shimmer that matches the softer stop. */
+function freezeSound(soft) {
+  if (!audioCtx || !masterGain) return;
+  const t = audioCtx.currentTime;
+  if (soft) {
+    [NOTE.G5, NOTE.E5, NOTE.C5].forEach((f, i) => {
+      const dt = t + i * 0.07;
+      const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+      o.type = 'sine'; o.frequency.setValueAtTime(f, dt);
+      g.gain.setValueAtTime(0.0001, dt);
+      g.gain.exponentialRampToValueAtTime(0.16, dt + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001, dt + 0.95);
+      o.connect(g); g.connect(masterGain); o.start(dt); o.stop(dt + 1.0);
+    });
+  } else {
+    const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+    o.type = 'sawtooth'; o.frequency.setValueAtTime(900, t);
+    o.frequency.exponentialRampToValueAtTime(90, t + 0.28);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.22, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
+    o.connect(g); g.connect(masterGain); o.start(t); o.stop(t + 0.32);
+    const n = audioCtx.createBufferSource(); n.buffer = noiseBuf;
+    const bp = audioCtx.createBiquadFilter(); bp.type = 'highpass'; bp.frequency.value = 5000;
+    const gn = audioCtx.createGain(); gn.gain.setValueAtTime(0.2, t); gn.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+    n.connect(bp); bp.connect(gn); gn.connect(masterGain); n.start(t); n.stop(t + 0.14);
+    const s = audioCtx.createOscillator(); const sg = audioCtx.createGain();
+    s.type = 'sine'; s.frequency.setValueAtTime(NOTE.C5, t + 0.27);
+    sg.gain.setValueAtTime(0.0001, t + 0.27);
+    sg.gain.exponentialRampToValueAtTime(0.13, t + 0.30);
+    sg.gain.exponentialRampToValueAtTime(0.0001, t + 0.62);
+    s.connect(sg); sg.connect(masterGain); s.start(t + 0.27); s.stop(t + 0.64);
+  }
+}
+
+/* ══════════════ GAME FLOW ══════════════ */
+let mode = reduce ? 'lugnt' : 'standard';   // prefers-reduced-motion -> Calm as default
+let pool = STANDARD, currentMove = null, lastKey = null;
+let state = 'idle';                          // idle | wheel | dancing | freeze | end
+let freezeTimer = null, danceTurns = 0;
+
+/* Dance meter */
+const METER = 6;
+let dotsFilled = 0, stars = 0, totalDances = 0;
+
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); $(id).classList.add('active'); }
+function setInstruction(t) { $('instruction').textContent = t; }
+function setCard(m) { $('card-emoji').textContent = m.emoji; $('card-name').textContent = m.name; }
+
+function pickMode(m) {
+  mode = m;
+  $('mode-standard').classList.toggle('sel', m === 'standard');
+  $('mode-lugnt').classList.toggle('sel', m === 'lugnt');
+  $('mode-standard').setAttribute('aria-pressed', m === 'standard');
+  $('mode-lugnt').setAttribute('aria-pressed', m === 'lugnt');
+}
+
+function buildMeter() {
+  const d = $('dots'); d.innerHTML = '';
+  for (let i = 0; i < METER; i++) { const el = document.createElement('div'); el.className = 'dot'; d.appendChild(el); }
+  $('stars').innerHTML = '';
+  dotsFilled = 0; stars = 0; totalDances = 0;
+}
+function meterStep() {
+  totalDances++;
+  const dot = $('dots').children[dotsFilled];
+  if (dot) { dot.classList.add('filled', 'pop'); setTimeout(() => dot.classList.remove('pop'), 360); }
+  dotsFilled++;
+  if (dotsFilled >= METER) {
+    stars++;
+    const st = document.createElement('span'); st.className = 'star pop'; st.textContent = '⭐';
+    $('stars').appendChild(st);
+    confettiBurst(reduce ? 12 : 30);
+    // reset the dot row for the next lap (the meter never runs out)
+    setTimeout(() => { [...$('dots').children].forEach(x => x.classList.remove('filled')); dotsFilled = 0; }, 500);
+  }
+}
+
+function startGame() {
+  initAudio();
+  loadVoices();
+  warmClips();
+  pool = (mode === 'lugnt') ? LUGNT : STANDARD;
+  lastKey = null; danceTurns = 0; state = 'idle';
+  buildMeter();
+  show('screen-game');
+  $('mute-btn').textContent = muted ? '🔇' : '🔊';
+  playClip('welcome');
+  setTimeout(spinWheel, 900);            // small beat after the welcome greeting
+}
+
+/* Pick a move — never the same one twice in a row */
+function pickMove() {
+  let m;
+  do { m = pool[Math.floor(Math.random() * pool.length)]; }
+  while (pool.length > 1 && m.key === lastKey);
+  lastKey = m.key;
+  return m;
+}
+
+/* The wheel spins and stops on a random move.
+   prefers-reduced-motion: the spin is replaced by a short crossfade (functionally equivalent). */
+function spinWheel() {
+  if (state === 'end') return;
+  state = 'wheel';
+  hideFreeze();
+  setHero('idle');
+  const move = pickMove();
+  currentMove = move;
+  setInstruction('Spinning the wheel…');
+
+  if (reduce) {
+    const card = $('wheel-card');
+    card.classList.add('fade');
+    setTimeout(() => {
+      setCard(move); card.classList.remove('fade'); card.classList.add('land');
+      setTimeout(() => card.classList.remove('land'), 500);
+      afterWheel(move);
+    }, 480);
+    return;
+  }
+
+  document.querySelectorAll('.wheel-ring').forEach(r => r.classList.add('spin'));
+  let ticks = 0; const total = 15;
+  (function cycle() {
+    if (state !== 'wheel') return;
+    if (ticks >= total) {
+      document.querySelectorAll('.wheel-ring').forEach(r => r.classList.remove('spin'));
+      setCard(move);
+      const card = $('wheel-card'); card.classList.add('land');
+      setTimeout(() => card.classList.remove('land'), 500);
+      afterWheel(move);
+      return;
+    }
+    setCard(pool[Math.floor(Math.random() * pool.length)]);   // flickers past different dances
+    ticks++;
+    setTimeout(cycle, 60 + ticks * ticks * 1.4);              // slows down
+  })();
+}
+
+/* The move is shown as text + emoji, the voice clip plays, then the music starts. */
+function afterWheel(move) {
+  setCard(move);
+  setInstruction(move.emoji + ' ' + move.text);
+  playClip(move.key);
+  setTimeout(() => { if (state === 'wheel') startDance(); }, 1300);
+}
+
+function startDance() {
+  state = 'dancing';
+  setHero('dancing');
+  startMusic();                          // the stop (15–30 s) is handled in the scheduler
+}
+
+function setHero(s) {
+  const spot = $('hero-spot');
+  spot.classList.remove('dancing', 'calm', 'frozen');
+  if (s === 'dancing') { spot.classList.add('dancing'); if (mode === 'lugnt') spot.classList.add('calm'); }
+  else if (s === 'frozen') { spot.classList.add('frozen'); }
+}
+
+/* FREEZE moment: 3 seconds, Disco Bug stands still. */
+function freeze(soft) {
+  state = 'freeze';
+  setHero('frozen');
+  freezeSound(soft);                     // FREEZE sound exactly when the text appears
+  const f = $('freeze');
+  f.className = 'show ' + (soft ? 'soft' : 'pop');
+  setInstruction('');
+  clearTimeout(freezeTimer);
+  freezeTimer = setTimeout(freezeEnd, 3000);
+}
+function hideFreeze() { $('freeze').className = ''; }
+
+/* After the freeze: a cheer + the dance meter fills one step, then back to the wheel. */
+function freezeEnd() {
+  if (state !== 'freeze') return;
+  hideFreeze();
+  playClip(randomCheer());
+  meterStep();
+  danceTurns++;
+  setInstruction('Great dancing! 🎉');
+  setTimeout(() => { if (state === 'freeze' || state === 'wheel' || state === 'dancing') spinWheel(); }, 900);
+  state = 'wheel';                       // guards against a double run until spinWheel takes over
+}
+
+/* ══════════════ FINISH / NAVIGATE ══════════════ */
+function stopAll() {
+  musicOn = false;
+  clearInterval(schedTimer); schedTimer = null;
+  clearTimeout(freezeTimer); freezeTimer = null;
+  if (audioCtx && musicGain) { musicGain.gain.cancelScheduledValues(audioCtx.currentTime); musicGain.gain.setTargetAtTime(0.0001, audioCtx.currentTime, 0.02); }
+  document.querySelectorAll('.wheel-ring').forEach(r => r.classList.remove('spin'));
+  hideFreeze();
+  setHero('idle');
+}
+
+/* "Done" -> end screen. The dance meter is celebrated no matter how many rounds. */
+function finishGame() {
+  stopAll();
+  state = 'end';
+  const s = $('end-stars');
+  s.textContent = stars > 0 ? '⭐'.repeat(Math.min(stars, 8)) : '🎉';
+  let msg;
+  if (totalDances === 0)      msg = "You're ready to dance! Come back anytime.";
+  else if (totalDances === 1) msg = 'You danced <strong>1</strong> dance. What a star!';
+  else                        msg = 'You danced <strong>' + totalDances + '</strong> dances. What a dancer you are!';
+  $('end-msg').innerHTML = msg;
+  show('screen-end');
+  playClip('finale');
+  confettiBurst(reduce ? 16 : 46);
+}
+
+function goMenu() {
+  stopAll();
+  state = 'idle';
+  show('screen-menu');
+}
+
+/* ══════════════ SOUND ON/OFF (memory only, no storage) ══════════════ */
+function toggleMute() {
+  muted = !muted;
+  if (masterGain && audioCtx) masterGain.gain.setTargetAtTime(muted ? 0 : 1, audioCtx.currentTime, 0.02);
+  Object.values(VOICE).forEach(a => { a.muted = muted; if (muted) { try { a.pause(); } catch (e) {} } });
+  $('mute-btn').textContent = muted ? '🔇' : '🔊';
+}
+
+/* ══════════════ MISC ══════════════ */
+function confettiBurst(n) {
+  const cols = ['#4ECDC4', '#FF6B6B', '#FFD93D', '#B57EDC', '#7BC142', '#FF8AC4', '#ffffff'];
+  for (let i = 0; i < n; i++) {
+    const c = document.createElement('div'); c.className = 'confetti';
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.background = cols[i % cols.length];
+    c.style.setProperty('--cd', (2.1 + Math.random() * 1.6).toFixed(2) + 's');
+    if (Math.random() < 0.5) c.style.borderRadius = '50%';
+    document.body.appendChild(c);
+    requestAnimationFrame(() => c.classList.add('go'));
+    setTimeout(() => c.remove(), 4200);
+  }
+}
+
+function menuTap() {
+  const b = $('menu-bug'); b.classList.remove('wave'); void b.offsetWidth; b.classList.add('wave');
+  initAudio(); loadVoices(); warmClips();
+}
+
+pickMode(mode);   // highlight the default mode (Calm if reduced-motion)
+['pointerdown', 'touchstart', 'click'].forEach(ev => window.addEventListener(ev, warmClips, { passive: true }));
+document.addEventListener('visibilitychange', () => { if (!document.hidden && audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); });
+</script>
+</body>
+</html>
