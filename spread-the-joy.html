@@ -480,6 +480,30 @@ const voiceEls = {};
 Object.keys(VOICE_FILES).forEach(k => {
   try { const a = new Audio(VOICE_DIR + VOICE_FILES[k]); a.preload = 'auto'; voiceEls[k] = a; } catch (e) {}
 });
+// Joy Bug's sentences (recorded in /ljud/rost/en/). A missing file is skipped silently.
+const PHRASE_FILES = {
+  ask: 'Feel.mp3',            // "How does it feel?"
+  celebrate: 'Celebrate.mp3', // "Celebrate with Joy Bug!"
+  help: 'Help.mp3'            // "Help it! Tap Joy Bug"
+};
+const phraseEls = {};
+Object.keys(PHRASE_FILES).forEach(k => {
+  try { const a = new Audio(VOICE_DIR + PHRASE_FILES[k]); a.preload = 'auto'; phraseEls[k] = a; } catch (e) {}
+});
+// Play a sentence (interrupts the emotion word / previous sentence so nothing overlaps).
+function speakPhrase(key) {
+  const a = phraseEls[key];
+  if (!a || a.error) return;
+  _voiceActive.forEach(x => { try { x.pause(); } catch (e) {} });
+  _voiceActive = [];
+  try {
+    const c = a.cloneNode();
+    c.volume = 1;
+    _voiceActive.push(c);
+    const p = c.play();
+    if (p) p.catch(() => {});
+  } catch (e) {}
+}
 // Ready only if the mp3 actually loaded; a missing file (404) → fall back to TTS.
 function clipReady(k) {
   const a = voiceEls[k];
@@ -526,8 +550,7 @@ let _voicesWarmed = false;
 function warmVoices() {
   if (_voicesWarmed) return;
   _voicesWarmed = true;
-  Object.keys(VOICE_FILES).forEach(k => {
-    const a = voiceEls[k];
+  [...Object.values(voiceEls), ...Object.values(phraseEls)].forEach(a => {
     if (!a) return;
     try {
       a.muted = true;
@@ -590,6 +613,7 @@ function nextRound() {
 
   // Prompt + buttons
   $('prompt').textContent = 'How does it feel?';
+  speakPhrase('ask');
   $('hero').style.display = 'none';
   $('hero').classList.remove('jump');
 
@@ -622,10 +646,13 @@ function choose(em, btn) {
   $('choices').style.display = 'none';
   setTimeout(() => {
     phase = 'help';
-    $('prompt').textContent = POSITIVE.includes(current.id)
+    const pos = POSITIVE.includes(current.id);
+    $('prompt').textContent = pos
       ? 'Celebrate with Joy Bug!'
       : 'Help it! Tap Joy Bug';
     $('hero').style.display = 'block';
+    // Say the sentence after the emotion word has finished, if the child hasn't tapped yet.
+    setTimeout(() => { if (phase === 'help') speakPhrase(pos ? 'celebrate' : 'help'); }, 900);
   }, 750);
 }
 
