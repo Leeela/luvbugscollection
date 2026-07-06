@@ -96,6 +96,11 @@ body{
   border:2px solid var(--rik-mid); border-radius:16px; padding:4px 10px; font-size:clamp(0.75rem,2.2vmin,0.92rem);
   font-weight:700; color:var(--rik-dark); }
 .goal-chip .gc-price{ color:var(--gold-deep); }
+.back-btn{ position:absolute; top:calc(var(--safe-top) + 8px); right:calc(var(--safe-right) + 10px); z-index:30;
+  width:clamp(34px,8.5vmin,42px); height:clamp(34px,8.5vmin,42px); border-radius:50%; border:2px solid var(--rik-mid);
+  background:#fff; color:var(--rik-deep); font-size:clamp(1.1rem,3.4vmin,1.4rem); font-weight:800; line-height:1;
+  cursor:pointer; box-shadow:0 3px 10px rgba(83,74,183,0.22); font-family:'Fredoka',sans-serif; }
+.back-btn:active{ transform:scale(0.92); }
 
 /* Progress track */
 .track{ width:100%; max-width:560px; padding:0 clamp(14px,3.5vmin,24px); flex-shrink:0; }
@@ -213,6 +218,7 @@ body{
 
 <!-- GAME -->
 <div class="screen" id="screen-game">
+  <button class="back-btn" onclick="show('screen-menu')" aria-label="Back">←</button>
   <div class="game-top">
     <div class="pig-wrap" id="pigWrap"></div>
     <div class="money-side">
