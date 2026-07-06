@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="/app-mode.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#7F77DD">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Luv Bugs">
+<link rel="apple-touch-icon" href="/icons/icon-180.png">
+<title>Save with Rich Bug – Kids Game | Luv Bugs Collection</title>
+<meta name="description" content="Learn to save money with Rich Bug! Pick your dream, save your allowance and don't get tempted by everything along the way. Fun learning game for kids.">
+<link rel="canonical" href="https://luvbugscollection.com/save-with-rich-bug.html" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+
+:root{
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-left:env(safe-area-inset-left,0px);
+  --safe-right:env(safe-area-inset-right,0px);
+  --rik:#7F77DD; --rik-deep:#534AB7; --rik-dark:#3C3489;
+  --rik-light:#EEEDFE; --rik-mid:#CECBF6;
+  --gold:#EAB308; --gold-deep:#B8860B; --gold-light:#FDE68A;
+  --save:#16a34a; --save-deep:#0f7a35;
+  --buy:#E0592C; --buy-deep:#B8461F;
+}
+
+body{
+  font-family:'Fredoka',sans-serif;
+  background:var(--rik-light);
+  height:100dvh; overflow:hidden; user-select:none;
+}
+
+.screen{
+  position:fixed; inset:0; display:none; flex-direction:column; align-items:center;
+  padding-top:var(--safe-top); padding-bottom:var(--safe-bottom);
+  padding-left:var(--safe-left); padding-right:var(--safe-right);
+}
+.screen.active{ display:flex; }
+
+/* ── MENU / LEVEL ── */
+#screen-menu{ justify-content:center; gap:clamp(10px,2.5vmin,20px);
+  background:linear-gradient(160deg,#f7f6ff 0%,#eeedfe 60%,#cecbf6 100%); }
+#menu-bug{ width:clamp(110px,26vmin,190px); animation:bob 2.2s ease-in-out infinite;
+  filter:drop-shadow(0 8px 18px rgba(83,74,183,0.25)); }
+@keyframes bob{ 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-12px) rotate(2deg)} }
+#screen-menu h1{ font-size:clamp(22px,5.5vmin,40px); color:var(--rik-dark); text-align:center; line-height:1.2; }
+#screen-menu p{ font-size:clamp(14px,3.4vmin,20px); color:var(--rik-deep); text-align:center; max-width:340px; }
+.level-row{ display:flex; gap:clamp(8px,2.5vmin,16px); flex-wrap:wrap; justify-content:center; }
+.level-btn{ font-family:'Fredoka',sans-serif; font-weight:700; border:none; cursor:pointer;
+  border-radius:22px; padding:clamp(12px,2.5vmin,18px) clamp(20px,5vmin,32px);
+  font-size:clamp(16px,4vmin,24px); color:#fff; transition:transform .1s;
+  box-shadow:0 6px 18px rgba(83,74,183,0.3); }
+.level-btn:active{ transform:scale(0.94); }
+.lvl-latt{ background:linear-gradient(135deg,#22c55e,#16a34a); }
+.lvl-medel{ background:linear-gradient(135deg,var(--rik),var(--rik-deep)); }
+.lvl-svar{ background:linear-gradient(135deg,#E0592C,#B8461F); }
+.link-more{ display:inline-block; margin-top:10px; font-family:'Fredoka',sans-serif;
+  font-size:clamp(14px,3vmin,18px); color:var(--rik-deep); text-decoration:none; font-weight:600; }
+
+/* ── PICK DREAM ── */
+#screen-goal{ justify-content:center; gap:clamp(10px,2.5vmin,18px);
+  background:linear-gradient(160deg,#f7f6ff 0%,#eeedfe 70%,#cecbf6 100%);
+  padding-left:clamp(14px,4vmin,28px); padding-right:clamp(14px,4vmin,28px); }
+#screen-goal h2{ font-size:clamp(20px,5vmin,34px); color:var(--rik-dark); text-align:center; }
+#screen-goal p{ font-size:clamp(13px,3vmin,18px); color:var(--rik-deep); text-align:center; }
+.goal-grid{ display:flex; flex-wrap:wrap; gap:clamp(8px,2.2vmin,14px); justify-content:center; max-width:520px; }
+.goal-card{ background:#fff; border:3px solid var(--rik-mid); border-radius:20px; cursor:pointer;
+  padding:clamp(10px,2.4vmin,16px) clamp(8px,2vmin,14px); text-align:center; width:clamp(96px,26vmin,140px);
+  transition:transform .12s,border-color .12s; font-family:'Fredoka',sans-serif; }
+.goal-card:active{ transform:scale(0.94); }
+.goal-card:hover{ border-color:var(--rik); }
+.goal-card .g-emoji{ font-size:clamp(2.4rem,8vmin,3.6rem); display:block; }
+.goal-card .g-name{ font-size:clamp(0.82rem,2.4vmin,1rem); font-weight:700; color:var(--rik-dark); margin:4px 0; }
+.goal-card .g-price{ display:inline-block; background:linear-gradient(135deg,var(--gold-deep),var(--gold));
+  color:#3d2b00; font-weight:800; border-radius:16px; padding:3px 12px; font-size:clamp(0.8rem,2.4vmin,0.95rem); }
+
+/* ── GAME ── */
+#screen-game{ background:linear-gradient(180deg,#f7f6ff 0%,var(--rik-light) 100%); justify-content:flex-start; }
+
+.game-top{ width:100%; max-width:560px; display:flex; align-items:center; gap:clamp(8px,2vmin,16px);
+  padding:clamp(8px,1.6vmin,12px) clamp(12px,3vmin,20px); flex-shrink:0; }
+.pig-wrap{ width:clamp(120px,32vmin,170px); flex-shrink:0; position:relative; }
+.pig-wrap svg{ width:100%; height:auto; overflow:visible; }
+.pig-wrap svg.shake{ animation:pigShake .5s ease; }
+@keyframes pigShake{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px) rotate(-2deg)} 75%{transform:translateX(4px) rotate(2deg)} }
+.pig-wrap svg.glow{ filter:drop-shadow(0 0 10px rgba(234,179,8,0.9)); }
+.money-side{ flex:1; }
+.money-num{ font-size:clamp(1.4rem,6vmin,2.4rem); font-weight:800; color:var(--rik-dark); line-height:1; }
+.money-lbl{ font-size:clamp(0.75rem,2.2vmin,0.95rem); color:var(--rik-deep); font-weight:600; }
+.goal-chip{ margin-top:6px; display:inline-flex; align-items:center; gap:6px; background:#fff;
+  border:2px solid var(--rik-mid); border-radius:16px; padding:4px 10px; font-size:clamp(0.75rem,2.2vmin,0.92rem);
+  font-weight:700; color:var(--rik-dark); }
+.goal-chip .gc-price{ color:var(--gold-deep); }
+
+/* Progress track */
+.track{ width:100%; max-width:560px; padding:0 clamp(14px,3.5vmin,24px); flex-shrink:0; }
+.track-line{ position:relative; height:14px; background:var(--rik-mid); border-radius:10px; overflow:visible; }
+.track-fill{ position:absolute; left:0; top:0; bottom:0; background:linear-gradient(90deg,var(--rik),var(--rik-deep));
+  border-radius:10px; width:0; transition:width .5s ease; }
+.track-runner{ position:absolute; top:50%; transform:translate(-50%,-50%); width:clamp(30px,8vmin,44px); height:auto;
+  left:0; transition:left .5s ease; filter:drop-shadow(0 2px 3px rgba(0,0,0,0.25)); }
+.track-goal{ position:absolute; right:-6px; top:50%; transform:translateY(-50%); font-size:clamp(1.3rem,4vmin,1.8rem); }
+
+/* Character + bubble */
+.char-row{ display:flex; align-items:flex-end; gap:clamp(8px,2vmin,14px);
+  padding:clamp(6px,1.6vmin,12px) clamp(12px,3vmin,20px) clamp(4px,1vmin,8px); width:100%; max-width:560px; flex-shrink:0; }
+.char-img{ width:clamp(56px,15vmin,92px); height:clamp(56px,15vmin,92px); object-fit:contain; flex-shrink:0;
+  filter:drop-shadow(0 4px 10px rgba(83,74,183,0.3)); }
+.char-img.run{ animation:run .45s ease-in-out infinite; }
+@keyframes run{ 0%,100%{transform:translateY(0) rotate(-3deg)} 50%{transform:translateY(-8px) rotate(3deg)} }
+.char-img.cheer{ animation:cheer .5s ease; }
+@keyframes cheer{ 0%,100%{transform:translateY(0)} 40%{transform:translateY(-16px) scale(1.08)} }
+.bubble{ flex:1; background:#fff; border:2.5px solid var(--rik); border-radius:18px 18px 18px 4px;
+  padding:clamp(8px,2vmin,12px) clamp(11px,2.5vmin,15px); font-size:clamp(0.82rem,2.4vmin,1rem);
+  color:var(--rik-dark); font-weight:600; line-height:1.4; min-height:clamp(48px,11vmin,66px);
+  display:flex; align-items:center; box-shadow:0 2px 8px rgba(83,74,183,0.12); }
+
+/* Temptation stage */
+.stage{ flex:1; display:flex; align-items:center; justify-content:center; width:100%; position:relative; overflow:hidden; }
+.tempt{ background:#fffdf7; border:3px solid var(--gold); border-radius:24px; text-align:center;
+  padding:clamp(14px,3vmin,24px) clamp(18px,4vmin,30px); min-width:clamp(140px,38vmin,200px);
+  box-shadow:0 6px 22px rgba(184,134,11,0.25); position:relative; }
+.tempt.in{ animation:flyIn .6s cubic-bezier(.2,.8,.3,1.2); }
+@keyframes flyIn{ 0%{transform:translateX(360px) rotate(-320deg) scale(.5); opacity:0} 100%{transform:translateX(0) rotate(0) scale(1); opacity:1} }
+.tempt.active .t-emoji{ animation:wobble 1.6s ease-in-out infinite; }
+@keyframes wobble{ 0%,100%{transform:rotate(-11deg)} 50%{transform:rotate(11deg)} }
+.tempt.save-out{ animation:saveOut .5s ease forwards; }
+@keyframes saveOut{ 0%{transform:translateX(0) rotate(0); opacity:1} 100%{transform:translateX(-380px) rotate(-220deg) scale(.5); opacity:0} }
+.tempt.buy-out{ animation:buyOut .55s ease forwards; }
+@keyframes buyOut{ 0%{transform:translate(0,0) rotate(0) scale(1); opacity:1} 100%{transform:translate(-90px,120px) rotate(180deg) scale(.2); opacity:0} }
+.tempt.drop{ animation:dropPulse .45s ease; }
+@keyframes dropPulse{ 0%,100%{transform:scale(1)} 40%{transform:scale(1.13) rotate(5deg)} }
+.t-emoji{ font-size:clamp(3rem,11vmin,5rem); display:block; }
+.t-name{ font-size:clamp(0.9rem,2.6vmin,1.15rem); font-weight:700; color:var(--rik-dark); margin:6px 0 8px; }
+.t-price{ display:inline-flex; align-items:center; gap:5px; background:linear-gradient(135deg,var(--gold-deep),var(--gold));
+  border-radius:18px; padding:5px 16px; }
+.t-price span{ font-size:clamp(0.9rem,2.6vmin,1.1rem); font-weight:800; color:#3d2b00; }
+.sale-badge{ position:absolute; top:-14px; right:-10px; background:#E0592C; color:#fff; font-weight:800;
+  font-size:clamp(0.75rem,2.4vmin,0.95rem); padding:4px 12px; border-radius:14px; transform:rotate(9deg);
+  box-shadow:0 3px 8px rgba(184,70,31,0.4); animation:pulseB 1s ease-in-out infinite; }
+@keyframes pulseB{ 0%,100%{transform:rotate(9deg) scale(1)} 50%{transform:rotate(9deg) scale(1.1)} }
+.t-oldprice{ text-decoration:line-through; opacity:.6; margin-right:6px; font-size:0.85em; }
+
+/* Buttons */
+.btn-row{ display:flex; gap:clamp(10px,2.5vmin,16px); padding:clamp(6px,1.5vmin,10px) clamp(12px,3vmin,20px);
+  width:100%; max-width:560px; flex-shrink:0; }
+.action-btn{ flex:1; border:none; border-radius:20px; padding:clamp(14px,3.5vmin,22px);
+  font-size:clamp(1.05rem,3.4vmin,1.5rem); font-weight:800; cursor:pointer; font-family:'Fredoka',sans-serif;
+  transition:transform .1s; color:#fff; letter-spacing:.5px; display:flex; align-items:center; justify-content:center; gap:6px; }
+.action-btn:active{ transform:scale(0.93); }
+.btn-save{ background:linear-gradient(135deg,#22c55e,var(--save)); box-shadow:0 5px 16px rgba(22,163,74,0.4); }
+.btn-buy{ background:linear-gradient(135deg,#E0592C,var(--buy-deep)); box-shadow:0 5px 16px rgba(184,70,31,0.35); }
+.action-btn:disabled{ opacity:.5; }
+
+/* Feedback */
+.feedback{ width:100%; padding:clamp(8px,2vmin,12px) clamp(14px,3vmin,20px); text-align:center;
+  font-size:clamp(0.8rem,2.3vmin,0.95rem); font-weight:700; flex-shrink:0; min-height:clamp(38px,9vmin,50px);
+  display:flex; align-items:center; justify-content:center; border-top:2px solid var(--rik-mid); transition:background .3s; }
+.feedback.good{ background:linear-gradient(135deg,#d1fae5,#a7f3d0); color:#065f46; }
+.feedback.bad{ background:linear-gradient(135deg,#ffe9df,#ffd4c2); color:#9a3412; }
+.feedback.neutral{ background:var(--rik-light); color:var(--rik-deep); }
+
+/* Flying coins / particles */
+.fly-coin{ position:absolute; font-weight:800; pointer-events:none; z-index:20; font-size:clamp(1rem,3vmin,1.4rem);
+  text-shadow:0 1px 2px rgba(255,255,255,0.8); }
+.spark{ position:absolute; pointer-events:none; z-index:19; font-size:clamp(0.8rem,2.4vmin,1.1rem);
+  animation:sparkle 1s ease-out forwards; }
+@keyframes sparkle{ 0%{opacity:0; transform:scale(.4)} 25%{opacity:1} 100%{opacity:0; transform:scale(1.3) translateY(-24px)} }
+
+/* ── END SCREEN ── */
+#screen-end{ justify-content:center; gap:clamp(10px,2.5vmin,18px); text-align:center;
+  padding-left:clamp(16px,4vmin,32px); padding-right:clamp(16px,4vmin,32px);
+  background:linear-gradient(160deg,#f7f6ff 0%,#eeedfe 60%,#cecbf6 100%); }
+#end-emoji{ font-size:clamp(3.6rem,12vmin,6.5rem); }
+#end-title{ font-size:clamp(1.5rem,5vmin,2.8rem); color:var(--rik-dark); }
+#end-msg{ font-size:clamp(1rem,3vmin,1.35rem); color:var(--rik-deep); max-width:400px; }
+#end-bug{ width:clamp(76px,19vmin,130px); filter:drop-shadow(0 6px 14px rgba(83,74,183,0.22)); }
+.confetti{ position:fixed; top:-20px; font-size:1.4rem; pointer-events:none; z-index:50; animation:fall linear forwards; }
+@keyframes fall{ 0%{transform:translateY(0) rotate(0); opacity:1} 100%{transform:translateY(105vh) rotate(540deg); opacity:.9} }
+.play-btn{ font-family:'Fredoka',sans-serif; font-size:clamp(18px,4.5vmin,26px); font-weight:700; border:none;
+  border-radius:50px; padding:clamp(12px,2.5vmin,18px) clamp(34px,8vmin,56px);
+  background:linear-gradient(135deg,var(--rik-deep),var(--rik)); color:#fff; cursor:pointer;
+  box-shadow:0 6px 20px rgba(83,74,183,0.4); transition:transform .1s; }
+.play-btn:active{ transform:scale(0.95); }
+</style>
+</head>
+<body>
+
+<!-- MENU / PICK LEVEL -->
+<div class="screen active" id="screen-menu">
+  <img src="/bilder/rikedomsbacillen.png" id="menu-bug" alt="Rich Bug">
+  <h1>Save with<br>Rich Bug 🐷</h1>
+  <p>Pick your dream and save your allowance — don't get tempted by everything along the way!</p>
+  <div class="level-row">
+    <button class="level-btn lvl-latt"  onclick="chooseLevel('latt')">😊 Easy</button>
+    <button class="level-btn lvl-medel" onclick="chooseLevel('medel')">💪 Medium</button>
+    <button class="level-btn lvl-svar"  onclick="chooseLevel('svar')">🔥 Hard</button>
+  </div>
+  <a href="/app/games.html" class="link-more">🎮 More games</a>
+</div>
+
+<!-- PICK DREAM -->
+<div class="screen" id="screen-goal">
+  <h2>What do you want to save for?</h2>
+  <p id="goal-sub">You got your allowance. Pick a dream!</p>
+  <div class="goal-grid" id="goalGrid"></div>
+</div>
+
+<!-- GAME -->
+<div class="screen" id="screen-game">
+  <div class="game-top">
+    <div class="pig-wrap" id="pigWrap"></div>
+    <div class="money-side">
+      <div class="money-num"><span id="moneyNum">0</span> coins</div>
+      <div class="money-lbl">in your piggy bank</div>
+      <div class="goal-chip"><span id="goalEmoji">🎮</span> goal: <span class="gc-price" id="goalPrice">0</span> coins</div>
+    </div>
+  </div>
+
+  <div class="track">
+    <div class="track-line">
+      <div class="track-fill" id="trackFill"></div>
+      <img src="/bilder/rikedomsbacillen.png" class="track-runner" id="trackRunner" alt="Rich Bug">
+      <div class="track-goal" id="trackGoal">🎮</div>
+    </div>
+  </div>
+
+  <div class="char-row">
+    <img src="/bilder/rikedomsbacillen.png" class="char-img run" id="charImg" alt="Rich Bug">
+    <div class="bubble" id="bubble">Let's save! 💜</div>
+  </div>
+
+  <div class="stage" id="stage"></div>
+
+  <div class="btn-row" id="btnRow">
+    <button class="action-btn btn-save" id="btnSave" onclick="resolve(false)">💰 SAVE</button>
+    <button class="action-btn btn-buy"  id="btnBuy"  onclick="resolve(true)">🛒 BUY</button>
+  </div>
+
+  <div class="feedback neutral" id="feedback">Save or buy?</div>
+</div>
+
+<!-- END -->
+<div class="screen" id="screen-end">
+  <div id="end-emoji">🎉</div>
+  <h1 id="end-title">Nice!</h1>
+  <p id="end-msg">You saved enough!</p>
+  <img src="/bilder/rikedomsbacillen.png" id="end-bug" alt="Rich Bug">
+  <button class="play-btn" onclick="show('screen-menu')">🔄 Play again</button>
+  <a href="/app/games.html" class="link-more">← Back to games</a>
+</div>
+
+<script>
+/* ── DATA ── */
+const DREAMS = [
+  { emoji:'🧸', name:'Big teddy bear', price:30,  a:'a ' },
+  { emoji:'🛼', name:'Roller skates',  price:45,  a:''   },
+  { emoji:'🎮', name:'Video game',     price:60,  a:'a ' },
+  { emoji:'🚲', name:'Bike',           price:75,  a:'a ' },
+  { emoji:'💻', name:'Computer',       price:100, a:'a ' },
+];
+
+const TEMPTATIONS = [
+  { emoji:'🍬', name:'Candy',      price:5  },
+  { emoji:'🍦', name:'Ice cream',  price:8  },
+  { emoji:'🎈', name:'Balloon',    price:6  },
+  { emoji:'🍭', name:'Lollipop',   price:4  },
+  { emoji:'🧁', name:'Muffin',     price:7  },
+  { emoji:'🍫', name:'Chocolate',  price:6  },
+  { emoji:'🪀', name:'Yo-yo',      price:9  },
+  { emoji:'🚗', name:'Toy car',    price:12 },
+  { emoji:'🎨', name:'Crayons',    price:10 },
+  { emoji:'🦖', name:'Dinosaur',   price:14 },
+  { emoji:'⚽', name:'Ball',       price:11 },
+  { emoji:'🪁', name:'Kite',       price:13 },
+  { emoji:'🍿', name:'Popcorn',    price:7  },
+  { emoji:'🧃', name:'Juice',      price:5  },
+];
+
+const LEVELS = {
+  latt:  { count:6,  buffer:16, sale:false, reoffer:false },
+  medel: { count:9,  buffer:9,  sale:false, reoffer:false },
+  svar:  { count:12, buffer:4,  sale:true,  reoffer:true  },
+};
+
+const B_SAVE = ['Nice saving! 💪','Smart! The coins stay put. 👏','Yes! Saving up for your dream! 🎯','Great choice — keep saving! ✨'];
+const B_BUY  = ['Oops, there go some coins… 💸','Hmm, less left now. 😅','That cost you a bit. 🪙','Tempting — but the piggy is emptier now. 😬'];
+const B_STREAK = ['Wow, what a saver! 🌟','You save like a pro! ⭐','So disciplined! The piggy sparkles! ✨'];
+const B_SALE = ["Oh, it's cheap! But do you need it? 🤔","Cheap — but it's still money out! 💡"];
+
+/* ── STATE ── */
+const MAX_DROPS=2;
+let level, cfg, dream, startMoney, money, idx, order, streak, drops=0, curPrice=0, busy=false, autoTimer=null;
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+function shuffle(a){ a=[...a]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+/* ── SOUND ── */
+function tone(freqs, dur=0.45, vol=0.25){
+  try{
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    freqs.forEach((f,i)=>{
+      const o=ctx.createOscillator(), g=ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.type='sine'; o.frequency.value=f;
+      const t=ctx.currentTime+i*0.08;
+      g.gain.setValueAtTime(vol,t);
+      g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+      o.start(t); o.stop(t+dur);
+    });
+  }catch(e){}
+}
+const sndSave  = ()=>tone([880,1180],0.3,0.2);
+const sndBuy   = ()=>tone([520,300],0.35,0.25);          /* falling = money out */
+const sndKaching = ()=>tone([1046,1318,1568],0.45,0.25);
+const sndWin   = ()=>tone([784,988,1319,1568],0.5,0.28);
+const sndStar  = ()=>tone([1319,1760,2093],0.3,0.2);
+
+function playVoice(name){
+  try{ new Audio('/ljud/rost/rikedomsbacillen/EN/'+name+'.mp3').play().catch(()=>{}); }catch(e){}
+}
+
+/* ── FLOW ── */
+function chooseLevel(lv){
+  level=lv; cfg=LEVELS[lv];
+  buildGoals();
+  show('screen-goal');
+  playVoice('rik-valj');
+}
+
+function buildGoals(){
+  const grid=document.getElementById('goalGrid');
+  grid.innerHTML='';
+  DREAMS.forEach((d,i)=>{
+    const c=document.createElement('div');
+    c.className='goal-card';
+    c.onclick=()=>chooseDream(i);
+    c.innerHTML=`<span class="g-emoji">${d.emoji}</span><div class="g-name">${d.name}</div><span class="g-price">${d.price} coins</span>`;
+    grid.appendChild(c);
+  });
+}
+
+function chooseDream(i){
+  dream=DREAMS[i];
+  startMoney=dream.price+cfg.buffer;
+  money=startMoney;
+  idx=0; streak=0; busy=false;
+  order=shuffle(TEMPTATIONS).slice(0,cfg.count);
+  if(cfg.sale && order.length){
+    order[Math.floor(Math.random()*order.length)].sale=true;
+  }
+  document.getElementById('goalEmoji').textContent=dream.emoji;
+  document.getElementById('goalPrice').textContent=dream.price;
+  document.getElementById('trackGoal').textContent=dream.emoji;
+  document.getElementById('moneyNum').textContent=money;
+  document.getElementById('charImg').classList.add('run');
+  renderPig();
+  updateTrack();
+  document.getElementById('bubble').textContent="Here's your allowance! Let's save! 💜";
+  show('screen-game');
+  playVoice('rik-start');
+  setTimeout(spawn, 700);
+}
+
+/* Piggy bank with visible coin level + goal line */
+function pigSVG(){
+  const cx=100, cy=104, R=76;
+  const ratio=Math.max(0,Math.min(1,money/startMoney));
+  const goalRatio=Math.max(0,Math.min(1,dream.price/startMoney));
+  const yBase=160, yTop=94;
+  const fillTop=yBase-ratio*(yBase-yTop);
+  const goalY=yBase-goalRatio*(yBase-yTop);
+  const reached=money>=dream.price;
+  // Build a pile of coin circles filling the belly from the bottom up
+  const coinR=8, rowH=11.5, gap=3;
+  let coins='';
+  for(let y=yBase-coinR; y>fillTop; y-=rowH){
+    const dy=Math.abs(y-cy);
+    if(dy>=R-6) continue;
+    const halfW=Math.sqrt((R-7)*(R-7)-dy*dy);
+    const n=Math.max(1,Math.floor((halfW*2)/(coinR*2+gap)));
+    const startX=cx-((n-1)*(coinR*2+gap))/2;
+    for(let i=0;i<n;i++){
+      const x=startX+i*(coinR*2+gap);
+      const shade=(Math.round(y)+i)%2===0?'#F5C518':'#E0A80C';
+      coins+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${coinR}" fill="${shade}" stroke="#B8860B" stroke-width="1.4"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.6" fill="none" stroke="#B8860B" stroke-width="1" opacity="0.55"/>`;
+    }
+  }
+  return `
+  <svg style="width:100%;height:auto;display:block" viewBox="0 0 200 196" role="img" aria-label="Piggy bank with ${money} coins">
+    <defs><clipPath id="pigBody"><circle cx="${cx}" cy="${cy}" r="${R}"/></clipPath></defs>
+    <ellipse cx="100" cy="184" rx="58" ry="8" fill="#534AB7" opacity="0.13"/>
+    <!-- ears -->
+    <path d="M50 54 Q39 23 75 41 Z" fill="#CBB4EC" stroke="#7F77DD" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M150 54 Q161 23 125 41 Z" fill="#CBB4EC" stroke="#7F77DD" stroke-width="3" stroke-linejoin="round"/>
+    <!-- legs -->
+    <rect x="58" y="164" width="20" height="24" rx="9" fill="#CBB4EC" stroke="#7F77DD" stroke-width="3"/>
+    <rect x="122" y="164" width="20" height="24" rx="9" fill="#CBB4EC" stroke="#7F77DD" stroke-width="3"/>
+    <!-- body (light so coins show) -->
+    <circle cx="${cx}" cy="${cy}" r="${R}" fill="#F1ECFC"/>
+    <!-- coin layer -->
+    <g clip-path="url(#pigBody)">${coins}</g>
+    <!-- goal line -->
+    <line x1="${cx-R+10}" y1="${goalY.toFixed(1)}" x2="${cx+R-10}" y2="${goalY.toFixed(1)}" stroke="${reached?'#16a34a':'#E0592C'}" stroke-width="3" stroke-dasharray="7 5"/>
+    <text x="${cx+R-8}" y="${(goalY+5).toFixed(1)}" font-size="16">${dream.emoji}</text>
+    <!-- outline -->
+    <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#7F77DD" stroke-width="4"/>
+    <!-- coin slot -->
+    <rect x="86" y="42" width="28" height="7" rx="3.5" fill="#3C3489"/>
+    <!-- eyes (front view) -->
+    <circle cx="76" cy="90" r="9.5" fill="#fff" stroke="#7F77DD" stroke-width="2.5"/>
+    <circle cx="124" cy="90" r="9.5" fill="#fff" stroke="#7F77DD" stroke-width="2.5"/>
+    <circle cx="78" cy="92" r="4.6" fill="#3C3489"/>
+    <circle cx="126" cy="92" r="4.6" fill="#3C3489"/>
+    <!-- snout in the middle -->
+    <ellipse cx="100" cy="122" rx="27" ry="20" fill="#CBB4EC" stroke="#7F77DD" stroke-width="3"/>
+    <ellipse cx="91" cy="122" rx="4" ry="6.5" fill="#3C3489"/>
+    <ellipse cx="109" cy="122" rx="4" ry="6.5" fill="#3C3489"/>
+  </svg>`;
+}
+function renderPig(){ document.getElementById('pigWrap').innerHTML=pigSVG(); }
+
+function pigPulse(spend){
+  const svg=document.querySelector('#pigWrap svg');
+  if(!svg) return;
+  svg.classList.remove('shake','glow'); void svg.offsetWidth;
+  svg.classList.add(spend?'shake':'glow');
+  setTimeout(()=>svg.classList.remove('glow'),600);
+}
+
+function updateTrack(){
+  const p=cfg.count? idx/cfg.count : 0;
+  document.getElementById('trackFill').style.width=(p*100)+'%';
+  document.getElementById('trackRunner').style.left=(p*100)+'%';
+}
+
+function spawn(){
+  if(idx>=cfg.count){ finish(); return; }
+  busy=false;
+  const it=order[idx];
+  drops=0; curPrice=it.price;
+  const stage=document.getElementById('stage');
+  const priceHtml = it.sale
+    ? `<span class="t-oldprice">${it.price+6} coins</span> ${it.price} coins`
+    : `${it.price} coins`;
+  stage.innerHTML=`
+    <div class="tempt in active" id="tempt">
+      ${it.sale?'<div class="sale-badge">SALE!</div>':''}
+      <span class="t-emoji">${it.emoji}</span>
+      <div class="t-name">${it.name}</div>
+      <div class="t-price"><span id="temptPrice">🪙 ${priceHtml}</span></div>
+    </div>`;
+  document.getElementById('feedback').className='feedback neutral';
+  document.getElementById('feedback').textContent='Save or buy?';
+  document.getElementById('bubble').textContent = it.sale ? pick(B_SALE) : (idx===0?"Don't be fooled — save! 😉":'Buy, or save? 🤔');
+  if(it.sale) playVoice('rik-rea');
+  setBtns(true);
+  // No auto-skip: the game always waits for the child's choice (save/buy).
+}
+
+function setBtns(on){
+  document.getElementById('btnSave').disabled=!on;
+  document.getElementById('btnBuy').disabled=!on;
+}
+
+function resolve(bought){
+  if(busy) return;
+  const it=order[idx];
+
+  // Hard: saving drops the price — the temptation comes back cheaper (but you still don't need it!)
+  if(!bought && cfg.reoffer && drops<MAX_DROPS){
+    drops++;
+    const prev=curPrice;
+    curPrice=Math.max(2, curPrice-Math.max(2,Math.round(curPrice*0.35)));
+    const pr=document.getElementById('temptPrice');
+    if(pr) pr.innerHTML=`🪙 <span class="t-oldprice">${prev} coins</span> ${curPrice} coins`;
+    const tp=document.getElementById('tempt');
+    if(tp){ tp.classList.remove('drop'); void tp.offsetWidth; tp.classList.add('drop'); }
+    const fb0=document.getElementById('feedback');
+    fb0.className='feedback neutral';
+    fb0.textContent=`💡 The price dropped to ${curPrice} coins — but do you need it?`;
+    document.getElementById('bubble').textContent=`Wait! Now it's even cheaper — only ${curPrice} coins! Buy now? 🤑`;
+    sndSave(); playVoice('rik-rea');
+    return; // the child chooses again, the track does not advance
+  }
+
+  busy=true;
+  if(autoTimer){ clearTimeout(autoTimer); autoTimer=null; }
+  setBtns(false);
+  const fb=document.getElementById('feedback');
+  const tempt=document.getElementById('tempt');
+  tempt.classList.remove('active');
+
+  if(bought){
+    money-=curPrice;
+    streak=0;
+    tempt.classList.add('buy-out');
+    fb.className='feedback bad';
+    fb.textContent=`🛒 You bought ${it.name} for ${curPrice} coins. Now you have ${money} coins left.`;
+    document.getElementById('bubble').textContent=pick(B_BUY);
+    flyCoins(curPrice);
+    renderPig(); pigPulse(true);
+    sndBuy(); sndKaching();
+    playVoice('rik-kop');
+    countTo(money);
+  } else {
+    streak++;
+    tempt.classList.add('save-out');
+    fb.className='feedback good';
+    fb.textContent = (drops>0)
+      ? `💪 Strong! You held out to the end and kept your money! ${money} coins left.`
+      : `💰 Nice saving! You kept your ${curPrice} coins. ${money} coins left.`;
+    sndSave(); sparkPig();
+    if(streak>0 && streak%3===0){
+      document.getElementById('bubble').textContent=pick(B_STREAK);
+      pigPulse(false); sndStar(); starBurst();
+      playVoice('rik-streak');
+    } else {
+      document.getElementById('bubble').textContent=pick(B_SAVE);
+      playVoice('rik-spara');
+    }
+  }
+
+  idx++;
+  updateTrack();
+  setTimeout(spawn, 1600);
+}
+
+/* Coins jump OUT of the piggy bank when buying */
+function flyCoins(amount){
+  const pig=document.getElementById('pigWrap');
+  const r=pig.getBoundingClientRect();
+  const n=Math.min(6, Math.max(3, Math.round(amount/2)));
+  for(let i=0;i<n;i++){
+    const el=document.createElement('div');
+    el.className='fly-coin'; el.textContent='🪙';
+    el.style.left=(r.left+r.width*0.5)+'px';
+    el.style.top=(r.top+r.height*0.4)+'px';
+    document.body.appendChild(el);
+    const dx=(Math.random()*120-20), dy=(60+Math.random()*80);
+    el.animate([
+      {transform:'translate(0,0) scale(1)',opacity:1},
+      {transform:`translate(${dx}px,${dy}px) scale(.5) rotate(${Math.random()*360}deg)`,opacity:0}
+    ],{duration:900,easing:'cubic-bezier(.4,.1,.7,1)'});
+    setTimeout(()=>el.remove(),900);
+  }
+}
+
+function sparkPig(){
+  const pig=document.getElementById('pigWrap');
+  const r=pig.getBoundingClientRect();
+  for(let i=0;i<3;i++){
+    const el=document.createElement('div');
+    el.className='spark'; el.textContent='✨';
+    el.style.left=(r.left+Math.random()*r.width)+'px';
+    el.style.top=(r.top+Math.random()*r.height*0.6)+'px';
+    el.style.animationDelay=(i*0.1)+'s';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),1100);
+  }
+}
+function starBurst(){
+  const pig=document.getElementById('pigWrap');
+  const r=pig.getBoundingClientRect();
+  for(let i=0;i<6;i++){
+    const el=document.createElement('div');
+    el.className='spark'; el.textContent='⭐';
+    el.style.left=(r.left+r.width*0.5)+'px';
+    el.style.top=(r.top+r.height*0.3)+'px';
+    el.style.animationDelay=(i*0.06)+'s';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),1100);
+  }
+}
+
+/* Count the number down smoothly */
+function countTo(target){
+  const el=document.getElementById('moneyNum');
+  let cur=parseInt(el.textContent,10)||0;
+  const step=cur>target?-1:1;
+  const timer=setInterval(()=>{
+    if(cur===target){ clearInterval(timer); return; }
+    cur+=step; el.textContent=cur;
+  },40);
+}
+
+function finish(){
+  document.getElementById('charImg').classList.remove('run');
+  document.getElementById('charImg').classList.add('cheer');
+  const won=money>=dream.price;
+  const endEmoji=document.getElementById('end-emoji');
+  const endTitle=document.getElementById('end-title');
+  const endMsg=document.getElementById('end-msg');
+  if(won){
+    endEmoji.textContent=dream.emoji;
+    endTitle.textContent='You could afford it! 🎉';
+    endMsg.textContent=`You saved enough and bought ${dream.a}${dream.name.toLowerCase()}! You had ${money} coins. What a saver! 💜`;
+    sndWin(); confetti();
+    playVoice('rik-vinst');
+  } else {
+    const miss=dream.price-money;
+    endEmoji.innerHTML='<div style="width:clamp(120px,32vmin,180px);margin:0 auto">'+pigSVG()+'</div>';
+    endTitle.textContent='Out of money!';
+    endMsg.textContent=`You had ${money} coins, but ${dream.a}${dream.name.toLowerCase()} cost ${dream.price} coins. You were ${miss} coins short. Next time we'll save more! 💜`;
+    playVoice('rik-forlite');
+  }
+  show('screen-end');
+}
+
+function confetti(){
+  const em=['🎉','⭐','💜','🪙','✨','🎊'];
+  for(let i=0;i<32;i++){
+    const el=document.createElement('div');
+    el.className='confetti'; el.textContent=em[Math.floor(Math.random()*em.length)];
+    el.style.left=Math.random()*100+'vw';
+    el.style.animationDuration=(2+Math.random()*2)+'s';
+    el.style.animationDelay=(Math.random()*0.6)+'s';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),4200);
+  }
+}
+</script>
+<script src="bg-musik.js" data-track="ljud/musik-marknad.mp3" data-volume="0.15" data-pos="bottom-left-up" data-label="Music on or off"></script>
+</body>
+</html>
