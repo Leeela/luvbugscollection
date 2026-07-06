@@ -485,11 +485,16 @@ function resolve(bought){
     if(pr) pr.innerHTML=`🪙 <span class="t-oldprice">${prev} coins</span> ${curPrice} coins`;
     const tp=document.getElementById('tempt');
     if(tp){ tp.classList.remove('drop'); void tp.offsetWidth; tp.classList.add('drop'); }
+    const last = drops===MAX_DROPS; // final (lowest) price drop
     const fb0=document.getElementById('feedback');
     fb0.className='feedback neutral';
-    fb0.textContent=`💡 The price dropped to ${curPrice} coins — but do you need it?`;
-    document.getElementById('bubble').textContent=`Wait! Now it's even cheaper — only ${curPrice} coins! Buy now? 🤑`;
-    sndSave(); playVoice('rik-rea');
+    fb0.textContent = last
+      ? `🔥 Nice price! Lowest price — ${curPrice} coins. But do you need it?`
+      : `💡 The price dropped to ${curPrice} coins — but do you need it?`;
+    document.getElementById('bubble').textContent = last
+      ? `Nice price! Last chance — only ${curPrice} coins! But do you need it? 🤑`
+      : `Wait! Now it's even cheaper — only ${curPrice} coins! Buy now? 🤑`;
+    sndSave(); playVoice(last ? 'rik-bra-pris' : 'rik-rea');
     return; // the child chooses again, the track does not advance
   }
 
