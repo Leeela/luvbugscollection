@@ -620,7 +620,7 @@ function finish(){
   } else {
     const miss=dream.price-money;
     endEmoji.innerHTML='<div style="width:clamp(120px,32vmin,180px);margin:0 auto">'+pigSVG()+'</div>';
-    endTitle.textContent='Out of money!';
+    endTitle.textContent='So close! ⭐';
     endMsg.textContent=`You had ${money} coins, but ${dream.a}${dream.name.toLowerCase()} cost ${dream.price} coins. You were ${miss} coins short. Next time we'll save more! 💜`;
     playVoice('rik-forlite');
   }
@@ -640,6 +640,6 @@ function confetti(){
   }
 }
 </script>
-<script src="bg-musik.js" data-track="ljud/musik-marknad.mp3" data-volume="0.096" data-pos="bottom-left-up" data-label="Music on or off"></script>
+<script src="bg-musik.js" data-track="ljud/musik-spara.mp3" data-volume="1" data-pos="bottom-left-up" data-label="Music on or off"></script>
 </body>
 </html>
