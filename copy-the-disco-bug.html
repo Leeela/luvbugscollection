@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<link rel="manifest" href="/app/manifest.json">
+<meta name="theme-color" content="#2BA89F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LuvBugs">
+<link rel="apple-touch-icon" href="/app/icons/icon-180.png">
+<title>Copy the Disco Bug – tap and dance along for kids | LuvBugs Collection</title>
+<meta name="description" content="Tap a pad and Disco Bug dances! Copy the dance with your body, then tap the next dance. No score, no losing. Dance game for kids aged 3 to 8.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://luvbugscollection.com/copy-the-disco-bug.html" />
+<link rel="alternate" hreflang="sv" href="https://bacillerna.se/harma-dansbacillen.html" />
+<link rel="alternate" hreflang="en" href="https://luvbugscollection.com/copy-the-disco-bug.html" />
+<style>
+/* Fredoka (rubriker) + Nunito (brödtext) självhostade lokalt — inga externa
+   anrop (Google Play Families). Matchar typografin på bacillerna.se. */
+@font-face {
+  font-family: 'Fredoka';
+  src: url('/fonts/Fredoka-VariableFont.ttf') format('truetype');
+  font-weight: 300 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Nunito';
+  src: url('/fonts/Nunito-VariableFont.ttf') format('truetype');
+  font-weight: 400 800;
+  font-display: swap;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --safe-top:    env(safe-area-inset-top,    0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left:   env(safe-area-inset-left,   0px);
+  --safe-right:  env(safe-area-inset-right,  0px);
+
+  /* Karaktärsfärg: turkos (Dansbacillen) */
+  --char-color:      #4ECDC4;
+  --char-color-deep: #2BA89F;
+  --char-color-dark: #1F7A73;
+  --coral:  #FF6B6B;
+  --yellow: #FFD93D;
+  --purple: #B57EDC;
+
+  --font-heading: 'Fredoka', 'Nunito', -apple-system, 'Segoe UI', system-ui, sans-serif;
+  --font-body:    'Nunito', -apple-system, 'Segoe UI', system-ui, sans-serif;
+}
+
+html, body { height: 100%; }
+body {
+  font-family: var(--font-body);
+  color: #fff;
+  height: 100dvh;
+  overflow: hidden;
+  user-select: none;
+  background: #1F7A73;
+}
+
+.bg {
+  position: fixed; inset: 0; z-index: 0;
+  background: linear-gradient(165deg, #6FE3D8 0%, #3FC2B7 46%, #1F8C83 100%);
+}
+.bg::after {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 26%, rgba(255,255,255,0.22) 0%, transparent 55%);
+}
+
+.screen {
+  position: fixed; inset: 0; z-index: 1;
+  display: none; flex-direction: column; align-items: center;
+  padding: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
+}
+.screen.active { display: flex; }
+
+/* ── STARTSIDA ── */
+#screen-menu {
+  justify-content: center; gap: clamp(10px, 2.4vmin, 20px);
+  text-align: center;
+  padding-left: max(18px, var(--safe-left));
+  padding-right: max(18px, var(--safe-right));
+}
+.spotlight {
+  position: relative; width: clamp(150px, 40vmin, 250px); aspect-ratio: 1;
+  display: flex; align-items: center; justify-content: center; border-radius: 50%;
+  background: radial-gradient(circle at 50% 46%, rgba(255,255,255,0.34) 0%, rgba(255,255,255,0.10) 46%, transparent 70%);
+}
+.spotlight img {
+  width: 96%; height: 96%; object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.30));
+}
+#menu-bug { animation: menuBob 2.1s ease-in-out infinite; cursor: pointer; }
+@keyframes menuBob { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-9px) rotate(2deg); } }
+#menu-bug.wave { animation: menuWave 0.6s ease-in-out; }
+@keyframes menuWave { 0%,100% { transform: scale(1) rotate(0); } 30% { transform: scale(1.1) rotate(-6deg); } 65% { transform: scale(1.06) rotate(6deg); } }
+
+#screen-menu h1 {
+  font-family: var(--font-heading); font-size: clamp(30px, 8vmin, 54px); font-weight: 700; line-height: 1.03;
+  color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,0.18), 0 0 22px rgba(255,255,255,0.4);
+}
+#menu-msg { font-size: clamp(14px, 3.6vmin, 19px); color: #fff; max-width: 340px; line-height: 1.5; font-weight: 500; text-shadow: 0 1px 4px rgba(0,0,0,0.22); }
+
+.start-btn {
+  font-family: var(--font-heading); font-weight: 700; border: none; border-radius: 28px;
+  padding: clamp(16px,3.4vmin,22px) clamp(34px,9vw,52px); cursor: pointer; margin-top: 8px;
+  font-size: clamp(20px, 5.6vmin, 30px); color: #10302d;
+  background: var(--yellow); box-shadow: 0 7px 0 #C9A400, 0 0 28px rgba(255,217,61,0.5);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.start-btn:active { transform: translateY(5px); box-shadow: 0 2px 0 #C9A400; }
+.start-btn:focus-visible { outline: 4px solid #fff; outline-offset: 4px; }
+
+#menu-more { margin-top: 2px; font-size: clamp(13px, 3.3vmin, 16px); color: #fff; opacity: 0.9; text-decoration: none; padding: 8px 16px; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+#menu-more:hover { opacity: 1; text-decoration: underline; }
+#menu-more:focus-visible { outline: 3px solid #fff; outline-offset: 2px; border-radius: 10px; }
+
+/* ── SPELSIDA ── */
+#screen-game { justify-content: flex-start; }
+
+#hud {
+  width: 100%; display: grid; grid-template-columns: auto 1fr auto;
+  align-items: center; gap: 10px; padding: 8px 12px; min-height: 54px; flex-shrink: 0; z-index: 4;
+}
+.hud-btn {
+  font-size: 22px; background: rgba(0,0,0,0.16); border: none; cursor: pointer;
+  color: #fff; border-radius: 14px; min-width: 46px; min-height: 46px;
+  display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); line-height: 1;
+}
+.hud-btn:active { background: rgba(0,0,0,0.30); }
+.hud-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
+/* Dansmätaren (stjärnor som fylls, tar aldrig slut) */
+#meter { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+#meter-label { font-family: var(--font-heading); font-weight: 600; font-size: clamp(11px, 2.8vmin, 14px); color: #fff; opacity: 0.92; letter-spacing: 0.3px; }
+#stars { display: flex; gap: 3px; min-height: 1.2em; font-size: clamp(15px, 3.6vw, 20px); flex-wrap: wrap; justify-content: center; max-width: 60vw; }
+.star.pop { animation: dotPop 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes dotPop { 0% { transform: scale(0.4); } 60% { transform: scale(1.35); } 100% { transform: scale(1); } }
+
+/* Scen: video ELLER animerad platshållar-Dansbacillen + pratbubbla */
+#stage {
+  flex-shrink: 0; margin-top: clamp(2px, 1vmin, 8px);
+  height: min(52vh, 142vw); aspect-ratio: 9 / 16; width: auto;
+  position: relative; border-radius: 26px; overflow: hidden;
+  background: #fff;
+  box-shadow: 0 14px 34px rgba(0,0,0,0.28), inset 0 0 0 3px rgba(0,0,0,0.06);
+  display: flex; align-items: center; justify-content: center;
+  transition: box-shadow 0.3s;
+}
+#stage.lit { box-shadow: 0 14px 40px rgba(0,0,0,0.30), inset 0 0 0 4px var(--dance-color, #fff), 0 0 46px var(--dance-glow, rgba(255,255,255,0.5)); }
+
+/* Riktigt klipp (visas bara när det spelar; annars platshållaren).
+   contain + vit scen = hela dansen syns alltid (inget beskärs). */
+#stage-video {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain;
+  opacity: 0; transition: opacity 0.25s; background: #fff;
+}
+#stage.has-video #stage-video { opacity: 1; }
+
+/* Platshållar-Dansbacillen som "dansar" med CSS tills riktiga klipp finns */
+#ph { position: relative; width: 78%; height: 78%; display: flex; align-items: center; justify-content: center; }
+#ph img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.32)); will-change: transform; }
+#stage.has-video #ph { opacity: 0; }
+#ph-badge {
+  position: absolute; top: -4px; right: -4px; font-size: clamp(30px, 9vmin, 54px);
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4)); pointer-events: none;
+}
+
+/* De sex platshållar-danserna (byts ut mot riktiga klipp) */
+.dance-spin  #ph img { animation: dSpin  1.1s linear infinite; }
+.dance-jump  #ph img { animation: dJump  0.5s ease-in-out infinite; }
+.dance-sway  #ph img { animation: dSway  1.3s ease-in-out infinite; }
+.dance-bounce #ph img { animation: dBounce 0.44s ease-in-out infinite; }
+.dance-wiggle #ph img { animation: dWiggle 0.4s ease-in-out infinite; }
+.dance-shake #ph img { animation: dShake 0.24s ease-in-out infinite; }
+@keyframes dSpin  { 0% { transform: rotate(0) scale(1); } 50% { transform: rotate(180deg) scale(1.05); } 100% { transform: rotate(360deg) scale(1); } }
+@keyframes dJump  { 0%,100% { transform: translateY(0) scale(1,1); } 40% { transform: translateY(-16%) scale(0.96,1.06); } 55% { transform: translateY(-16%) scale(0.96,1.06); } }
+@keyframes dSway  { 0%,100% { transform: rotate(-9deg) translateX(-4%); } 50% { transform: rotate(9deg) translateX(4%); } }
+@keyframes dBounce { 0%,100% { transform: scale(1,1) translateY(0); } 50% { transform: scale(1.08,0.9) translateY(6%); } }
+@keyframes dWiggle { 0%,100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
+@keyframes dShake { 0%,100% { transform: translateX(-5%) rotate(-2deg); } 50% { transform: translateX(5%) rotate(2deg); } }
+
+/* Pratbubbla ("Härma mig!" / "Tryck på nästa dans!") */
+#bubble {
+  position: absolute; top: 10px; left: 50%; transform: translateX(-50%) scale(0.6);
+  background: var(--char-color-deep); color: #fff; font-family: var(--font-heading); font-weight: 700;
+  font-size: clamp(16px, 4.2vmin, 25px); padding: 9px 18px; border-radius: 20px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.35), 0 0 0 3px rgba(255,255,255,0.85); white-space: normal; opacity: 0; pointer-events: none;
+  z-index: 3; max-width: 92%; text-align: center;
+}
+#bubble.show { animation: bubbleIn 0.4s cubic-bezier(0.34,1.6,0.5,1) forwards; }
+@keyframes bubbleIn { 0% { opacity: 0; transform: translateX(-50%) scale(0.6); } 100% { opacity: 1; transform: translateX(-50%) scale(1); } }
+
+/* ── DANSPLATTOR ── */
+#pads {
+  flex: 1; width: 100%; display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(7px, 1.8vw, 13px); align-content: center; justify-items: center;
+  padding: clamp(8px,1.8vmin,14px) clamp(12px, 4vw, 26px) calc(12px + var(--safe-bottom));
+  max-width: 500px;
+}
+.pad {
+  width: 100%; aspect-ratio: 1.35 / 1; border: none; border-radius: 20px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(30px, 9vw, 52px); position: relative;
+  background: var(--c); box-shadow: 0 6px 0 var(--cd), 0 6px 16px rgba(0,0,0,0.22);
+  transition: transform 0.08s, box-shadow 0.08s, filter 0.15s;
+}
+.pad:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--cd), 0 2px 8px rgba(0,0,0,0.22); }
+.pad:focus-visible { outline: 4px solid #fff; outline-offset: 3px; }
+.pad.inviting { animation: padPulse 1.5s ease-in-out infinite; }
+@keyframes padPulse { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+.pad.playing { filter: brightness(1.15) saturate(1.2); box-shadow: 0 6px 0 var(--cd), 0 0 26px 4px var(--c); animation: padGlow 0.6s ease-in-out infinite; }
+@keyframes padGlow { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+.pad .emoji { pointer-events: none; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25)); }
+
+/* Konfetti */
+.confetti { position: fixed; top: -20px; width: 12px; height: 16px; border-radius: 3px; z-index: 7; pointer-events: none; will-change: transform; }
+.confetti.go { animation: confFall var(--cd,2.6s) linear forwards; }
+@keyframes confFall { 0% { transform: translateY(0) rotate(0); opacity: 1; } 100% { transform: translateY(115vh) rotate(720deg); opacity: 0.9; } }
+
+@media (prefers-reduced-motion: reduce) {
+  #menu-bug, #menu-bug.wave, .pad.inviting, .pad.playing,
+  #ph img { animation: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+
+<!-- ── MENY ── -->
+<div id="screen-menu" class="screen active">
+  <div class="spotlight">
+    <img id="menu-bug" src="/bilder/dansbacillen.png" alt="Disco Bug ready to dance" onclick="menuTap()">
+  </div>
+  <h1>Copy the Disco Bug</h1>
+  <p id="menu-msg">Tap a pad and Disco Bug dances! Copy the dance with your body. Then tap the next dance. Everyone can join in!</p>
+  <button class="start-btn" onclick="startGame()">Start ▶</button>
+  <a href="/games.html" id="menu-more">🎮 More games</a>
+</div>
+
+<!-- ── SPEL ── -->
+<div id="screen-game" class="screen">
+  <div id="hud">
+    <button class="hud-btn" onclick="goMenu()" aria-label="Back to start">←</button>
+    <div id="meter">
+      <div id="meter-label">Dance stars</div>
+      <div id="stars" aria-label="Dance stars"></div>
+    </div>
+    <button class="hud-btn" id="mute-btn" onclick="toggleMute()" aria-label="Sound on or off">🔊</button>
+  </div>
+
+  <div id="stage">
+    <video id="stage-video" playsinline webkit-playsinline muted preload="none"></video>
+    <div id="ph">
+      <img src="/bilder/dansbacillen.png" alt="Disco Bug dancing">
+      <div id="ph-badge"></div>
+    </div>
+    <div id="bubble"></div>
+  </div>
+
+  <div id="pads" role="group" aria-label="Choose a dance"></div>
+</div>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ══════════════ DANSERNA ══════════════
+   6 danser. `clip` pekar på det riktiga videoklippet (läggs i /danser/,
+   gemener — GitHub Pages är skiftlägeskänsligt). Saknas klippet spelas en
+   animerad platshållar-Dansbacillen (`ph`-klass) i stället, så prototypen
+   funkar redan nu. `emoji` = liten stil-hint på plattan (inga ord för
+   för-läsare). `c`/`cd` = plattans färg. `groove` = platshållar-musikens
+   grundton/tempo (ersätts av klippets egna ljud när det finns). */
+const DANCES = [
+  { key:'balett', emoji:'💃🏻', clip:'/danser/dans1.mp4', ph:'dance-sway',   c:'#B57EDC', cd:'#8B5CB8', groove:{root:392, bpm:96,  busy:false} },
+  { key:'disco',  emoji:'🕺🏿', clip:'/danser/dans2.mp4', ph:'dance-bounce', c:'#FF6B6B', cd:'#D64545', groove:{root:440, bpm:120, busy:true } },
+  { key:'break',  emoji:'🤸🏽', clip:'/danser/dans3.mp4', ph:'dance-spin',   c:'#FF9F1C', cd:'#D97D00', groove:{root:330, bpm:128, busy:true } },
+  { key:'funk',   emoji:'🪩', clip:'/danser/dans4.mp4', ph:'dance-wiggle', c:'#4ECDC4', cd:'#2BA89F', groove:{root:294, bpm:108, busy:true } },
+  { key:'twirl',  emoji:'🙌🏾', clip:'/danser/dans5.mp4', ph:'dance-jump',   c:'#FFD93D', cd:'#C9A400', groove:{root:523, bpm:112, busy:false} },
+  { key:'wave',   emoji:'🙋🏽', clip:'/danser/dans6.mp4', ph:'dance-shake',  c:'#5AA9FF', cd:'#3B7FD1', groove:{root:349, bpm:116, busy:true } }
+];
+const PLACEHOLDER_DUR = 6000;   // platshållar-dansens längd (riktiga klipp styr själva)
+
+/* ══════════════ RÖSTKLIPP (mp3, egna ElevenLabs) ══════════════
+   Preload vid spelstart. Saknat/ej laddat klipp -> tyst; pratbubblan visas
+   ändå (garanterad kanal). Ingen robotröst. Gemen mapp /ljud/harma/,
+   bindestreck (ej understreck -> Jekyll/GitHub Pages 404). */
+/* Röstrepliker: flera varianter per moment som slumpas. Varje rad har filnamn
+   (mp3 i /ljud/harma/, gemener + bindestreck) OCH texten som visas i bubblan —
+   så röst och bubbla alltid matchar. Saknas mp3:n läser webbläsaren texten. */
+const LINES = {
+  start: [ {f:'start-1', t:'Tap a dance!'}, {f:'start-2', t:"Let's dance!"} ],
+  harma: [ {f:'harma-1', t:'Copy me!'}, {f:'harma-2', t:'Do what I do!'},
+           {f:'harma-3', t:'Can you do this?'}, {f:'harma-4', t:'Dance with me!'} ],
+  slut:  [ {f:'slut-1', t:'What a dance!'}, {f:'slut-2', t:'Great job!'},
+           {f:'slut-3', t:"Wow, you're amazing!"}, {f:'slut-4', t:'Tap the next dance!'} ]
+};
+const VOICE = {};
+const lastPick = {};
+let voiceLoaded = false, clipsWarmed = false;
+function mkClip(src) { const a = new Audio(src); a.preload = 'auto'; a.__ok = false; a.addEventListener('canplaythrough', () => a.__ok = true); return a; }
+function loadVoices() {
+  if (voiceLoaded) return; voiceLoaded = true;
+  Object.values(LINES).flat().forEach(l => { VOICE[l.f] = mkClip('/ljud/harma/' + l.f + '.mp3'); });
+}
+function warmClips() {
+  if (clipsWarmed || !voiceLoaded) return; clipsWarmed = true;
+  // iOS/Android: lås upp klippen i användargesten men producera inget ljud.
+  Object.values(VOICE).forEach(a => {
+    try { a.muted = true; const p = a.play(); if (p && p.catch) p.catch(() => {}); a.pause(); a.currentTime = 0; } catch (e) {}
+  });
+}
+/* Picks a random line from a pool (never the same twice in a row), shows the
+   text in the bubble and plays Disco Bug's recorded mp3. NO robot-voice
+   fallback: if the clip is missing/not loaded it stays silent (bubble still
+   shows the text). */
+function sayFrom(pool) {
+  const arr = LINES[pool]; if (!arr || !arr.length) return;
+  let l;
+  do { l = arr[Math.floor(Math.random() * arr.length)]; } while (arr.length > 1 && l.f === lastPick[pool]);
+  lastPick[pool] = l.f;
+  showBubble(l.t);
+  if (muted) return;
+  const a = VOICE[l.f];
+  if (a) { try { a.muted = false; a.currentTime = 0; const p = a.play(); if (p) p.catch(() => {}); } catch (e) {} }
+}
+
+/* ══════════════ WEB AUDIO — platshållar-groove (ingen ljudfil) ══════════════
+   Spelar bara när det RIKTIGA klippet saknas, så prototypen inte är tyst.
+   När ett riktigt klipp spelar används klippets egna ljud i stället. */
+let audioCtx = null, masterGain = null, musicGain = null, noiseBuf = null, muted = false;
+function initAudio() {
+  if (audioCtx) { if (audioCtx.state === 'suspended') audioCtx.resume(); return; }
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = audioCtx.createGain(); masterGain.gain.value = muted ? 0 : 1; masterGain.connect(audioCtx.destination);
+  musicGain = audioCtx.createGain(); musicGain.gain.value = 0; musicGain.connect(masterGain);
+  const len = audioCtx.sampleRate * 0.5;
+  noiseBuf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+  const d = noiseBuf.getChannelData(0);
+  for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, t, dur, peak, type) {
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = type || 'triangle'; o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(peak, t + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(musicGain); o.start(t); o.stop(t + dur + 0.02);
+}
+function kick(t) {
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = 'sine'; o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(48, t + 0.14);
+  g.gain.setValueAtTime(0.42, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
+  o.connect(g); g.connect(musicGain); o.start(t); o.stop(t + 0.18);
+}
+function hat(t) {
+  const n = audioCtx.createBufferSource(); n.buffer = noiseBuf;
+  const hp = audioCtx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 8000;
+  const g = audioCtx.createGain(); g.gain.setValueAtTime(0.07, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.03);
+  n.connect(hp); hp.connect(g); g.connect(musicGain); n.start(t); n.stop(t + 0.05);
+}
+let grooveOn = false, schedTimer = null, nextNoteTime = 0, noteIdx = 0, grv = null, stepDur = 0.25;
+const SCALE = [0, 2, 4, 7, 9, 12, 9, 7];   // durskala-motiv (halvtonssteg från grundton)
+function startGroove(g) {
+  if (!audioCtx) return;
+  grv = g; stepDur = (60 / g.bpm) / 2; noteIdx = 0;
+  nextNoteTime = audioCtx.currentTime + 0.06;
+  musicGain.gain.cancelScheduledValues(audioCtx.currentTime);
+  musicGain.gain.setValueAtTime(0.9, audioCtx.currentTime);
+  grooveOn = true;
+  clearInterval(schedTimer); schedTimer = setInterval(grooveScheduler, 25);
+}
+function grooveScheduler() {
+  if (!grooveOn || !audioCtx) return;
+  const now = audioCtx.currentTime;
+  while (nextNoteTime < now + 0.15) {
+    const i = noteIdx, semis = SCALE[i % SCALE.length];
+    const f = grv.root * Math.pow(2, semis / 12);
+    if (grv.busy) {
+      if (i % 2 === 0) kick(nextNoteTime);
+      hat(nextNoteTime);
+      tone(f, nextNoteTime, 0.20, 0.17, 'triangle');
+      if (i % 4 === 0) tone(grv.root / 2, nextNoteTime, 0.34, 0.13, 'sine');
+    } else {
+      if (i % 4 === 0) kick(nextNoteTime);
+      if (i % 2 === 0) tone(f, nextNoteTime, 0.5, 0.15, 'sine');
+      if (i % 8 === 0) tone(grv.root / 2, nextNoteTime, 0.7, 0.11, 'sine');
+    }
+    noteIdx++; nextNoteTime += stepDur;
+  }
+}
+function stopGroove() {
+  grooveOn = false; clearInterval(schedTimer); schedTimer = null;
+  if (audioCtx && musicGain) { musicGain.gain.cancelScheduledValues(audioCtx.currentTime); musicGain.gain.setTargetAtTime(0.0001, audioCtx.currentTime, 0.03); }
+}
+
+/* ══════════════ SPELFLÖDE ══════════════ */
+let state = 'idle';           // idle | dancing
+let danceTimer = null, currentPad = null, danceCount = 0;
+
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); $(id).classList.add('active'); }
+
+function buildPads() {
+  const wrap = $('pads'); wrap.innerHTML = '';
+  DANCES.forEach((d, i) => {
+    const b = document.createElement('button');
+    b.className = 'pad'; b.style.setProperty('--c', d.c); b.style.setProperty('--cd', d.cd);
+    b.setAttribute('aria-label', 'Dance ' + (i + 1));
+    b.innerHTML = '<span class="emoji">' + d.emoji + '</span>';
+    b.onclick = () => playDance(i);
+    wrap.appendChild(b);
+  });
+}
+function invitePads(on) {
+  [...$('pads').children].forEach(p => p.classList.toggle('inviting', on && !reduce));
+}
+
+function showBubble(text) {
+  const b = $('bubble'); b.textContent = text;
+  b.classList.remove('show'); void b.offsetWidth; b.classList.add('show');
+}
+
+let starCount = 0;
+function addStar() {
+  starCount++;
+  const st = document.createElement('span'); st.className = 'star pop'; st.textContent = '⭐';
+  $('stars').appendChild(st);
+  if (starCount > 16) { const first = $('stars').firstChild; if (first) first.remove(); }
+}
+
+function startGame() {
+  initAudio(); loadVoices(); warmClips();
+  state = 'idle'; danceCount = 0; starCount = 0;
+  $('stars').innerHTML = '';
+  buildPads();
+  show('screen-game');
+  $('mute-btn').textContent = muted ? '🔇' : '🔊';
+  sayFrom('start');
+  setTimeout(() => { if (state === 'idle') invitePads(true); }, 700);
+}
+
+function playDance(i) {
+  clearDance();                       // avbryt ev. pågående dans (jukebox: byt när som helst)
+  const d = DANCES[i];
+  state = 'dancing';
+  invitePads(false);
+
+  // markera plattan + färga scenen
+  const pad = $('pads').children[i]; pad.classList.add('playing'); currentPad = pad;
+  const stage = $('stage');
+  stage.style.setProperty('--dance-color', d.c);
+  stage.style.setProperty('--dance-glow', d.c + '88');
+  stage.classList.add('lit');
+
+  sayFrom('harma');
+
+  // starta ALLTID platshållaren direkt (aldrig blank/tyst scen)
+  $('ph-badge').textContent = d.emoji;
+  stage.className = 'lit ' + d.ph;    // ph-klass driver rätt CSS-dans
+  startGroove(d.groove);
+  danceTimer = setTimeout(() => { if (state === 'dancing') endDance(); }, PLACEHOLDER_DUR);
+
+  // försök spela det riktiga klippet — om det finns tar det över
+  const v = $('stage-video');
+  try {
+    v.src = d.clip; v.currentTime = 0; v.muted = muted; v.load();
+    const p = v.play();
+    if (p) p.then(() => {
+      if (state !== 'dancing') { v.pause(); return; }
+      stage.classList.add('has-video');   // riktigt klipp syns
+      stopGroove();                        // använd klippets egna ljud
+      clearTimeout(danceTimer);            // klippets 'ended' styr längden
+    }).catch(() => {/* inget klipp än -> platshållaren rullar vidare */});
+  } catch (e) {}
+  v.onended = () => { if (state === 'dancing') endDance(); };
+}
+
+function endDance() {
+  clearDance();
+  state = 'idle';
+  danceCount++;
+  addStar();
+  confettiBurst(reduce ? 10 : 22);
+  sayFrom('slut');
+  invitePads(true);
+}
+
+/* Stoppar allt kring en pågående dans (utan att röra state) */
+function clearDance() {
+  clearTimeout(danceTimer); danceTimer = null;
+  stopGroove();
+  const v = $('stage-video');
+  try { v.pause(); v.onended = null; v.removeAttribute('src'); v.load(); } catch (e) {}
+  const stage = $('stage'); stage.className = ''; stage.classList.remove('lit', 'has-video');
+  if (currentPad) { currentPad.classList.remove('playing'); currentPad = null; }
+}
+
+function goMenu() {
+  clearDance(); state = 'idle';
+  show('screen-menu');
+}
+
+/* ══════════════ LJUD PÅ/AV ══════════════ */
+function toggleMute() {
+  muted = !muted;
+  if (masterGain && audioCtx) masterGain.gain.setTargetAtTime(muted ? 0 : 1, audioCtx.currentTime, 0.02);
+  Object.values(VOICE).forEach(a => { a.muted = muted; if (muted) { try { a.pause(); } catch (e) {} } });
+  const v = $('stage-video'); v.muted = muted;
+  $('mute-btn').textContent = muted ? '🔇' : '🔊';
+}
+
+/* ══════════════ ÖVRIGT ══════════════ */
+function confettiBurst(n) {
+  const cols = ['#4ECDC4', '#FF6B6B', '#FFD93D', '#B57EDC', '#5AA9FF', '#FF9F1C', '#ffffff'];
+  for (let i = 0; i < n; i++) {
+    const c = document.createElement('div'); c.className = 'confetti';
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.background = cols[i % cols.length];
+    c.style.setProperty('--cd', (2.1 + Math.random() * 1.6).toFixed(2) + 's');
+    if (Math.random() < 0.5) c.style.borderRadius = '50%';
+    document.body.appendChild(c);
+    requestAnimationFrame(() => c.classList.add('go'));
+    setTimeout(() => c.remove(), 4200);
+  }
+}
+
+function menuTap() {
+  const b = $('menu-bug'); b.classList.remove('wave'); void b.offsetWidth; b.classList.add('wave');
+  initAudio(); loadVoices(); warmClips();
+}
+
+['pointerdown', 'touchstart', 'click'].forEach(ev => window.addEventListener(ev, warmClips, { passive: true }));
+document.addEventListener('visibilitychange', () => { if (!document.hidden && audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); });
+</script>
+</body>
+</html>
