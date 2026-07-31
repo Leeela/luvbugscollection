@@ -186,58 +186,83 @@ body {
   to   { transform: scale(1); opacity: 1; }
 }
 
-/* Dots (level 1) */
-#dots { display: flex; gap: clamp(6px,1.6vw,12px); flex-wrap: wrap; justify-content: center; min-height: 4px; flex: 0 0 auto; }
-.dot {
-  width: clamp(16px,4.4vmin,26px); height: clamp(16px,4.4vmin,26px);
-  border-radius: 50%; background: var(--green);
-  border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.12);
-  transition: opacity 0.2s, transform 0.2s;
-}
-.dot.eaten { opacity: 0.22; transform: scale(0.8); }
-
 /* Counter */
 #counter {
-  font-size: clamp(20px, 5.4vmin, 30px);
+  font-size: clamp(18px, 5vmin, 28px);
   font-weight: 700; color: var(--green); flex: 0 0 auto;
 }
 #counter b { color: var(--green-deep); }
 
-/* Candies */
-#candies {
-  position: relative;
-  display: flex; flex-wrap: wrap; gap: clamp(6px,2vw,14px);
+/* ── Empty boxes to drag candy into ── */
+#slots {
+  display: flex; flex-wrap: wrap; gap: clamp(8px,2.4vw,16px);
   align-items: center; justify-content: center;
-  flex: 0 0 auto; min-height: clamp(70px, 18vmin, 130px);
-  max-width: 560px;
+  flex: 0 0 auto; min-height: clamp(44px, 11vmin, 66px);
+  max-width: 620px; transition: opacity 0.3s;
 }
-.candy {
-  font-size: clamp(40px, 11vmin, 72px);
-  line-height: 1; cursor: pointer; background: none; border: none; padding: 4px;
-  transition: transform 0.12s;
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.16));
-}
-.candy:active { transform: scale(1.18); }
-/* Plus level: two visible groups matching the numbers (4+4 → group of 4 «+» group of 4) */
-.candy-group {
-  display: flex; flex-wrap: wrap; gap: clamp(6px,2vw,14px);
+.slot-group {
+  display: flex; flex-wrap: wrap; gap: clamp(8px,2.4vw,16px);
   align-items: center; justify-content: center;
   padding: clamp(6px,1.6vw,12px);
-  border-radius: 26px;
+  border-radius: 24px;
   background: rgba(123,193,66,0.10);
   box-shadow: inset 0 0 0 3px rgba(123,193,66,0.30);
 }
-.candy-plus {
+.slot {
+  width: clamp(38px,10vmin,62px); height: clamp(38px,10vmin,62px);
+  border-radius: 50%;
+  border: 3px dashed rgba(45,134,89,0.45);
+  background: rgba(255,255,255,0.55);
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(26px,7vmin,44px); line-height: 1;
+  transition: transform 0.15s, border-color 0.15s, background 0.15s;
+}
+.slot.hover {
+  border-color: var(--green); border-style: solid;
+  background: rgba(123,193,66,0.28); transform: scale(1.12);
+}
+.slot.filled {
+  border-style: solid; border-color: rgba(123,193,89,0.55);
+  background: rgba(255,255,255,0.9);
+  animation: slotPop 0.28s cubic-bezier(0.34,1.56,0.64,1);
+  filter: drop-shadow(0 3px 5px rgba(0,0,0,0.14));
+}
+@keyframes slotPop { 0% { transform: scale(0.4); } 100% { transform: scale(1); } }
+.plus-sign {
   font-weight: 700; color: var(--green-deep);
-  font-size: clamp(40px, 11vmin, 80px); line-height: 1;
+  font-size: clamp(34px,9vmin,64px); line-height: 1;
   padding: 0 2px; user-select: none; flex: 0 0 auto;
   text-shadow: 0 3px 0 rgba(255,255,255,0.7);
+}
+
+/* ── Candy pile (draggable candies) ── */
+#tray {
+  display: flex; flex-wrap: wrap; gap: clamp(6px,2vw,14px);
+  align-items: center; justify-content: center;
+  flex: 0 0 auto; min-height: clamp(50px, 13vmin, 90px);
+  max-width: 620px;
+  padding: clamp(4px,1.2vw,10px) clamp(8px,3vw,20px);
+  border-radius: 28px;
+  background: rgba(255,255,255,0.4);
+}
+.candy {
+  font-size: clamp(34px, 9vmin, 58px);
+  line-height: 1; background: none; border: none; padding: 2px;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.16));
+  cursor: grab; touch-action: none;
+  transition: transform 0.12s;
+}
+.candy:active { cursor: grabbing; transform: scale(1.12); }
+.candy.grabbed { opacity: 0.28; }
+.candy.dragging-ghost {
+  cursor: grabbing; z-index: 9999; pointer-events: none;
+  filter: drop-shadow(0 8px 12px rgba(0,0,0,0.28));
 }
 
 /* Candy Bug */
 #bug-wrap {
   flex: 1 1 auto; display: flex; align-items: flex-end; justify-content: center;
-  width: 100%; min-height: clamp(120px, 26vmin, 230px);
+  width: 100%; min-height: clamp(90px, 20vmin, 190px);
 }
 #bug {
   width: clamp(160px, 42vmin, 290px);
@@ -314,7 +339,7 @@ body {
 <div id="screen-menu" class="screen">
   <img id="menu-bug" src="/bilder/godisbacillen-gapar.png" onclick="menuTap()" alt="Candy Bug – tap to chew!">
   <h1>Count with Candy Bug</h1>
-  <p id="menu-sub">Feed Candy Bug the right number of candies and learn to count! 🍬</p>
+  <p id="menu-sub">Drag the right number of candies to the boxes and learn to count! 🍬</p>
   <div class="levels">
     <button class="big-btn lvl-1" onclick="startGame(1)">🟢 Easy <span class="lvl-tag">count 1–5</span></button>
     <button class="big-btn lvl-2" onclick="startGame(2)">🟡 Medium <span class="lvl-tag">count 1–10</span></button>
@@ -333,9 +358,9 @@ body {
   <div id="arena">
     <div id="star-pop">⭐</div>
     <div id="number"></div>
-    <div id="dots"></div>
     <div id="counter"><b id="counter-eaten">0</b> / <span id="counter-target">0</span></div>
-    <div id="candies"></div>
+    <div id="slots"></div>
+    <div id="tray"></div>
     <div id="bug-wrap">
       <img id="bug" src="/bilder/godisbacillen-gapar.png" alt="Candy Bug">
     </div>
@@ -532,7 +557,7 @@ function startGame(lvl) {
   level = lvl;
   stars = 0;
   $('hud-right').textContent = '⭐ 0';
-  $('hud-center').textContent = level === 3 ? 'Work it out and feed!' : 'Feed this many!';
+  $('hud-center').textContent = level === 3 ? 'Work it out and fill the boxes!' : 'Drag candy to the boxes!';
   show('screen-game');
   nextRound();
 }
@@ -566,93 +591,173 @@ function nextRound() {
   num.textContent = display;
   num.classList.remove('pop'); void num.offsetWidth; num.classList.add('pop');
 
-  // Dots (level 1 only)
-  const dots = $('dots');
-  if (level === 1) {
-    dots.innerHTML = Array.from({ length: target }, () => '<div class="dot"></div>').join('');
-  } else {
-    dots.innerHTML = '';
-  }
-
   // Counter
   $('counter-target').textContent = target;
   updateCounter();
 
-  // Candies
-  const box = $('candies');
-  box.innerHTML = '';
-  const makeCandy = () => {
-    const b = document.createElement('button');
-    b.className = 'candy';
-    b.textContent = pick(CANDY_EMOJI);
-    b.addEventListener('click', () => feed(b));
-    return b;
-  };
+  // Empty boxes to fill
+  const slots = $('slots');
+  slots.style.opacity = '';
+  slots.innerHTML = '';
   if (level === 3) {
-    // Two visible groups matching the numbers: addA candies «+» addB candies.
+    // Two groups of boxes matching the numbers: addA boxes «+» addB boxes.
     // The child SEES the addition (4+4) – not just the total.
-    const g1 = document.createElement('div'); g1.className = 'candy-group';
-    for (let i = 0; i < addA; i++) g1.appendChild(makeCandy());
-    const plus = document.createElement('div'); plus.className = 'candy-plus'; plus.textContent = '+';
-    const g2 = document.createElement('div'); g2.className = 'candy-group';
-    for (let i = 0; i < addB; i++) g2.appendChild(makeCandy());
-    box.appendChild(g1); box.appendChild(plus); box.appendChild(g2);
+    const g1 = document.createElement('div'); g1.className = 'slot-group';
+    for (let i = 0; i < addA; i++) g1.appendChild(makeSlot());
+    const plus = document.createElement('div'); plus.className = 'plus-sign'; plus.textContent = '+';
+    const g2 = document.createElement('div'); g2.className = 'slot-group';
+    for (let i = 0; i < addB; i++) g2.appendChild(makeSlot());
+    slots.appendChild(g1); slots.appendChild(plus); slots.appendChild(g2);
   } else {
-    const total = target + extra;
-    for (let i = 0; i < total; i++) box.appendChild(makeCandy());
+    for (let i = 0; i < target; i++) slots.appendChild(makeSlot());
   }
 
+  // Candy pile to drag from (a few more than the boxes → looks like a pile)
+  const tray = $('tray');
+  tray.innerHTML = '';
+  const supply = target + extra;
+  for (let i = 0; i < supply; i++) tray.appendChild(makeCandy());
+}
+
+function makeSlot() {
+  const s = document.createElement('div');
+  s.className = 'slot';
+  return s;
+}
+function makeCandy() {
+  const b = document.createElement('div');
+  b.className = 'candy';
+  b.textContent = pick(CANDY_EMOJI);
+  b.addEventListener('pointerdown', e => startDrag(e, b));
+  return b;
 }
 
 function updateCounter() {
   $('counter-eaten').textContent = eaten;
 }
 
-function feed(el) {
-  if (locked) return;
-  eaten++;
-
-  // Fly into the mouth
-  flyToMouth(el);
-  chompMouth();
-  chompSound();
-  updateCounter();
-
-  // Dim a dot
-  if (level === 1) {
-    const d = $('dots').querySelectorAll('.dot:not(.eaten)')[0];
-    if (d) d.classList.add('eaten');
+/* ── Drag a candy to a box (works with finger + mouse) ── */
+let drag = null;
+function startDrag(e, candyEl) {
+  if (locked || drag) return;
+  e.preventDefault();
+  warmVoices();                       // unlock audio inside the user gesture
+  const r = candyEl.getBoundingClientRect();
+  const ghost = candyEl.cloneNode(true);
+  ghost.classList.add('dragging-ghost');
+  ghost.style.position = 'fixed';
+  ghost.style.margin = '0';
+  ghost.style.width = r.width + 'px';
+  ghost.style.height = r.height + 'px';
+  ghost.style.left = r.left + 'px';
+  ghost.style.top = r.top + 'px';
+  ghost.style.display = 'flex';
+  ghost.style.alignItems = 'center';
+  ghost.style.justifyContent = 'center';
+  document.body.appendChild(ghost);
+  candyEl.classList.add('grabbed');
+  drag = { candyEl, ghost, w: r.width, h: r.height,
+           dx: e.clientX - r.left, dy: e.clientY - r.top };
+  window.addEventListener('pointermove', onDragMove);
+  window.addEventListener('pointerup', onDragEnd);
+  window.addEventListener('pointercancel', onDragEnd);
+}
+function onDragMove(e) {
+  if (!drag) return;
+  drag.ghost.style.left = (e.clientX - drag.dx) + 'px';
+  drag.ghost.style.top  = (e.clientY - drag.dy) + 'px';
+  const slot = slotUnder(e.clientX, e.clientY);
+  document.querySelectorAll('.slot.hover').forEach(s => { if (s !== slot) s.classList.remove('hover'); });
+  if (slot) slot.classList.add('hover');
+}
+function slotUnder(x, y) {
+  const list = document.querySelectorAll('#slots .slot');
+  for (const s of list) {
+    if (s.classList.contains('filled')) continue;
+    const r = s.getBoundingClientRect();
+    if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return s;
   }
-
-  // Count out loud for each candy – continuously all the way to the total.
-  // 2+3 → "one, two, three, four, five" so the child hears the answer while feeding.
-  sayNumber(eaten);
-
-  if (eaten >= target) {
-    locked = true;
-    setTimeout(win, 450);
+  return null;
+}
+function onDragEnd(e) {
+  window.removeEventListener('pointermove', onDragMove);
+  window.removeEventListener('pointerup', onDragEnd);
+  window.removeEventListener('pointercancel', onDragEnd);
+  if (!drag) return;
+  const d = drag; drag = null;
+  const slot = slotUnder(e.clientX, e.clientY);
+  document.querySelectorAll('.slot.hover').forEach(s => s.classList.remove('hover'));
+  if (slot && !locked) {
+    // Snap into the box
+    const sr = slot.getBoundingClientRect();
+    const emoji = d.candyEl.textContent;
+    d.ghost.style.transition = 'left 0.16s ease-out, top 0.16s ease-out';
+    d.ghost.style.left = (sr.left + (sr.width - d.w) / 2) + 'px';
+    d.ghost.style.top  = (sr.top + (sr.height - d.h) / 2) + 'px';
+    setTimeout(() => {
+      d.ghost.remove();
+      slot.textContent = emoji;
+      slot.classList.add('filled');
+      d.candyEl.remove();
+      onCandyPlaced();
+    }, 160);
+  } else {
+    // Back to the pile
+    const r = d.candyEl.getBoundingClientRect();
+    d.ghost.style.transition = 'left 0.18s ease-out, top 0.18s ease-out';
+    d.ghost.style.left = r.left + 'px';
+    d.ghost.style.top  = r.top + 'px';
+    setTimeout(() => { d.ghost.remove(); d.candyEl.classList.remove('grabbed'); }, 190);
   }
 }
 
-function flyToMouth(el) {
-  const box = $('candies');
+function onCandyPlaced() {
+  eaten++;
+  updateCounter();
+  chompMouth();
+  chompSound();
+  // Count out loud for each candy – "one, two, three…" all the way to the total.
+  sayNumber(eaten);
+  if (eaten >= target) {
+    locked = true;
+    setTimeout(feedAll, 550);
+  }
+}
+
+/* ── All candies fly from the boxes into the mouth ── */
+function feedAll() {
+  const filled = document.querySelectorAll('#slots .slot.filled');
   const br = $('bug').getBoundingClientRect();
-  const cr = el.getBoundingClientRect();
-  const pr = box.getBoundingClientRect();
-  // Freeze the candy in place so the others don't jump
-  el.style.position = 'absolute';
-  el.style.left = (cr.left - pr.left) + 'px';
-  el.style.top  = (cr.top  - pr.top)  + 'px';
-  el.style.margin = '0';
-  // Target: Candy Bug's mouth (a little above the image centre)
-  const dx = (br.left + br.width / 2) - (cr.left + cr.width / 2);
-  const dy = (br.top  + br.height * 0.40) - (cr.top + cr.height / 2);
-  void el.offsetWidth;
-  el.style.transition = 'transform 0.32s cubic-bezier(0.5,0,0.7,1), opacity 0.32s';
-  el.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(0.3)';
-  el.style.opacity = '0';
-  el.style.pointerEvents = 'none';
-  setTimeout(() => el.remove(), 340);
+  let n = 0;
+  filled.forEach((s, i) => {
+    const emoji = s.textContent;
+    const sr = s.getBoundingClientRect();
+    const f = document.createElement('div');
+    f.className = 'candy dragging-ghost';
+    f.textContent = emoji;
+    f.style.position = 'fixed';
+    f.style.margin = '0';
+    f.style.width = sr.width + 'px';
+    f.style.height = sr.height + 'px';
+    f.style.left = sr.left + 'px';
+    f.style.top = sr.top + 'px';
+    f.style.display = 'flex';
+    f.style.alignItems = 'center';
+    f.style.justifyContent = 'center';
+    document.body.appendChild(f);
+    s.textContent = '';
+    const dx = (br.left + br.width / 2) - (sr.left + sr.width / 2);
+    const dy = (br.top  + br.height * 0.40) - (sr.top + sr.height / 2);
+    setTimeout(() => {
+      f.style.transition = 'transform 0.34s cubic-bezier(0.5,0,0.7,1), opacity 0.34s';
+      f.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(0.3)';
+      f.style.opacity = '0';
+      chompMouth(); chompSound();
+    }, i * 90);
+    setTimeout(() => f.remove(), i * 90 + 420);
+    n++;
+  });
+  setTimeout(win, n * 90 + 380);
 }
 
 function win() {
@@ -676,11 +781,9 @@ function win() {
   let advanced = false;
   const finish = () => { if (advanced) return; advanced = true; if (reachedEnd) showEnding(); else nextRound(); };
 
-  // Clear remaining candies (and the plus level's empty groups/«+») nicely
-  Array.from($('candies').children).forEach(c => {
-    c.style.transition = 'transform 0.3s, opacity 0.3s';
-    c.style.transform = 'scale(0.4)'; c.style.opacity = '0';
-  });
+  // Empty the candy pile and fade the boxes out nicely
+  $('tray').innerHTML = '';
+  $('slots').style.opacity = '0';
 
   let keys, tts, speakDelay, gapAfter;
   if (level === 3) {
