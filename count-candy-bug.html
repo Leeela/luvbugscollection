@@ -178,8 +178,10 @@ body {
   font-size: clamp(54px, 16vmin, 120px);
   font-weight: 700; color: var(--green-deep);
   line-height: 1; text-shadow: 0 3px 0 rgba(255,255,255,0.7);
-  flex: 0 0 auto;
+  flex: 0 0 auto; max-width: 96vw; text-align: center;
 }
+/* The full equation "2 + 3 = 5" is longer → a bit smaller so it fits on one line */
+#number.equation { font-size: clamp(40px, 12vmin, 92px); }
 #number.pop { animation: numPop 0.4s cubic-bezier(0.34,1.56,0.64,1); }
 @keyframes numPop {
   from { transform: scale(0.3); opacity: 0; }
@@ -589,6 +591,7 @@ function nextRound() {
   // Number display
   const num = $('number');
   num.textContent = display;
+  num.classList.remove('equation');
   num.classList.remove('pop'); void num.offsetWidth; num.classList.add('pop');
 
   // Counter
@@ -787,6 +790,12 @@ function win() {
 
   let keys, tts, speakDelay, gapAfter;
   if (level === 3) {
+    // Show the whole equation "2 + 3 = 5" as he celebrates – the child SEES the answer, not just hears it
+    const num = $('number');
+    num.textContent = addA + ' + ' + addB + ' = ' + target;
+    num.classList.add('equation');
+    num.classList.remove('pop'); void num.offsetWidth; num.classList.add('pop');
+
     keys = [String(addA), 'plus', String(addB), 'lika', String(target), PRAISE_KEYS[pi]];
     tts  = NUM_EN[addA] + ' plus ' + NUM_EN[addB] + ' equals ' + NUM_EN[target] + '! ' + PRAISE[pi];
     speakDelay = 650; gapAfter = 450;
