@@ -691,16 +691,16 @@ function onDragEnd(e) {
     // Snap into the box
     const sr = slot.getBoundingClientRect();
     const emoji = d.candyEl.textContent;
+    // Reserve the box now (so it can't be re-targeted) and remove the source candy
+    slot.classList.add('filled');
+    d.candyEl.remove();
+    // Let the ghost glide into the box; reveal the candy when it lands
     d.ghost.style.transition = 'left 0.16s ease-out, top 0.16s ease-out';
     d.ghost.style.left = (sr.left + (sr.width - d.w) / 2) + 'px';
     d.ghost.style.top  = (sr.top + (sr.height - d.h) / 2) + 'px';
-    setTimeout(() => {
-      d.ghost.remove();
-      slot.textContent = emoji;
-      slot.classList.add('filled');
-      d.candyEl.remove();
-      onCandyPlaced();
-    }, 160);
+    setTimeout(() => { d.ghost.remove(); slot.textContent = emoji; }, 160);
+    // Count out loud NOW, inside the finger gesture – otherwise iOS blocks the voice (silent outside a gesture)
+    onCandyPlaced();
   } else {
     // Back to the pile
     const r = d.candyEl.getBoundingClientRect();
@@ -900,6 +900,23 @@ function warmVoices() {
       }
     } catch (e) {}
   });
+  // Also unlock the end video so its SOUND can play later (iOS needs a gesture).
+  // A short silent play+pause inside the gesture unlocks the element; otherwise
+  // showEnding falls back to muted and the doctor clip plays silently on iPhone.
+  try {
+    const v = $('end-video');
+    if (v) {
+      v.muted = true;
+      const p = v.play();
+      if (p && p.then) {
+        p.then(() => { v.pause(); v.currentTime = 0; v.muted = false; })
+         .catch(() => { v.muted = false; });
+      } else {
+        try { v.pause(); } catch (e) {}
+        v.muted = false;
+      }
+    }
+  } catch (e) {}
 }
 ['pointerdown', 'touchstart', 'click'].forEach(ev =>
   window.addEventListener(ev, warmVoices, { passive: true }));
