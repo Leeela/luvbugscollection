@@ -213,9 +213,12 @@ function drawInstruction() {
 let levelTransition = 0; // 0 = ingen, >0 = countdown frames
 let levelTransitionText = '';
 
+// Each level is its own "world" with its own name and its own candy.
+const WORLD_NAMES = { 1: 'Candy Land', 2: 'Candy Sky', 3: 'Candy Volcano' };
+
 function showLevelTransition(newLevel) {
   levelTransitionText = newLevel <= 3
-    ? `⭐ Level ${newLevel}! ⭐`
+    ? `🌍 ${WORLD_NAMES[newLevel]}`
     : '🏆 CHAMPION! 🏆';
   levelTransition = 150; // 2.5 seconds
 }
@@ -253,7 +256,8 @@ function drawLevelTransition() {
   if (level <= 3) {
     ctx.font = `bold ${Math.min(W * 0.045, 28)}px Arial Rounded MT Bold, Arial`;
     ctx.fillStyle = '#ffeb3b';
-    const subText = level === 2 ? 'Faster! 💨' : level === 3 ? 'Fastest! 🔥' : '';
+    const subText = level === 2 ? 'New candy! 🍬 Faster 💨'
+                  : level === 3 ? 'New candy! 🍬 Fastest 🔥' : '';
     ctx.fillText(subText, 0, 50);
   }
 
@@ -508,14 +512,24 @@ function getImg(obj) {
   return obj.processed || (obj.raw.complete ? obj.raw : null);
 }
 
-const YUMMY_IMGS = [
-  loadImg('Godis2.png'),
-  loadImg('Godis3.png'),
-  loadImg('Godis4.png'),
-  loadImg('Godis5.png'),
-  loadImg('Godis6.png'),
-  loadImg('Godis 4.png'),
-];
+// Load each candy image separately so we can mix a different set per world.
+const IMG_G2  = loadImg('Godis2.png');
+const IMG_G3  = loadImg('Godis3.png');
+const IMG_G4  = loadImg('Godis4.png');
+const IMG_G5  = loadImg('Godis5.png');
+const IMG_G6  = loadImg('Godis6.png');
+const IMG_G4B = loadImg('Godis 4.png');
+
+// ── Each world has its OWN set of candy that falls ───────────────────────────
+// As soon as the child clears a level the candy swaps out → "new candy!" feeling.
+// (The gold candy Godis1 stays the same across all worlds — it's the special one.)
+const LEVEL_YUMMY = {
+  1: [IMG_G2, IMG_G3, IMG_G4],        // Candy Land
+  2: [IMG_G5, IMG_G6, IMG_G4B],       // Candy Sky — completely different candy
+  3: [IMG_G2, IMG_G4, IMG_G5, IMG_G6],// Candy Volcano — everything mixed, the finale
+};
+function getYummyPool() { return LEVEL_YUMMY[level] || LEVEL_YUMMY[3]; }
+
 const GOLD_IMG   = loadImg('Godis1.png');
 const YUCKY_IMGS = [
   loadImg('Morot.png'),
@@ -562,7 +576,8 @@ class Candy {
       this.imgObj = YUCKY_IMGS[Math.floor(Math.random() * YUCKY_IMGS.length)];
     } else {
       this.kind = 'yummy';
-      this.imgObj = YUMMY_IMGS[Math.floor(Math.random() * YUMMY_IMGS.length)];
+      const pool = getYummyPool();
+      this.imgObj = pool[Math.floor(Math.random() * pool.length)];
     }
   }
   update() {
