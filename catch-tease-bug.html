@@ -298,6 +298,31 @@ function stopSfx(key) {
   try { sfx.pause(); sfx.currentTime = 0; } catch (e) {}
 }
 
+// Short buzzing "vibration sound" for the wrong bug – made in the browser (no audio file).
+// Two low buzzes matching the physical vibration [80, 60, 80].
+let buzzCtx = null;
+function playBuzz() {
+  try {
+    buzzCtx = buzzCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (buzzCtx.state === 'suspended') buzzCtx.resume();
+    const now = buzzCtx.currentTime;
+    const buzz = (start, dur) => {
+      const osc = buzzCtx.createOscillator();
+      const gain = buzzCtx.createGain();
+      osc.type = 'square';
+      osc.frequency.value = 120;
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.18, start + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+      osc.connect(gain).connect(buzzCtx.destination);
+      osc.start(start);
+      osc.stop(start + dur + 0.02);
+    };
+    buzz(now, 0.08);
+    buzz(now + 0.14, 0.08);
+  } catch (e) {}
+}
+
 // Mobile (especially iOS) requires each sound to be played inside a user tap
 // at least once, otherwise playback from timers (e.g. the laugh) is blocked.
 // Unlock all sounds on the first tap by playing them silently.
@@ -403,7 +428,7 @@ function catchBug() {
     updateHud();
   } else {
     navigator.vibrate?.([80, 60, 80]);
-    showHitText('Wrong! 😊', '#7BC142');
+    playBuzz();
   }
   hideBug(() => scheduleBug());
 }
