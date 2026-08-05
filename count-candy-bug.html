@@ -260,6 +260,14 @@ body {
   cursor: grabbing; z-index: 9999; pointer-events: none;
   filter: drop-shadow(0 8px 12px rgba(0,0,0,0.28));
 }
+/* Easy level: bigger boxes + candies so little kids can drag more easily.
+   Only raises the lower end (affects iPhone/small screens) – desktop stays at max.
+   Easy only (≤5 boxes) so it fits. */
+#slots.big .slot {
+  width: clamp(58px, 16vmin, 64px); height: clamp(58px, 16vmin, 64px);
+  font-size: clamp(36px, 10vmin, 46px);
+}
+#tray.big .candy { font-size: clamp(54px, 15vmin, 60px); }
 
 /* Candy Bug */
 #bug-wrap {
@@ -518,9 +526,13 @@ function sayClips(keys, ttsFallback, onDone) {
   (function playNext() {
     if (i >= keys.length) { if (onDone) onDone(); return; }
     const key = keys[i++];
-    const dur = voiceEls[key].duration || 0.6;
-    let a;
-    try { a = voiceEls[key].cloneNode(); } catch (e) { if (onDone) onDone(); return; }
+    const a = voiceEls[key];
+    if (!a) { if (onDone) onDone(); return; }
+    const dur = a.duration || 0.6;
+    // Play the ORIGINAL element (NOT a clone). iOS only unlocks elements warmed in a
+    // gesture (warmVoices) – fresh clones are silent/intermittent on iPhone. Originals
+    // can be replayed anytime once unlocked.
+    try { a.pause(); a.currentTime = 0; } catch (e) {}
     voiceActive.push(a);
     let stepped = false;
     // Wait CLIP_GAP sec after the clip goes silent before the next word → clear pause
@@ -602,6 +614,7 @@ function nextRound() {
   const slots = $('slots');
   slots.style.opacity = '';
   slots.innerHTML = '';
+  slots.classList.toggle('big', level === 1);   // bigger boxes on Easy (easier to hit)
   if (level === 3) {
     // Two groups of boxes matching the numbers: addA boxes «+» addB boxes.
     // The child SEES the addition (4+4) – not just the total.
@@ -618,6 +631,7 @@ function nextRound() {
   // Candy pile to drag from (a few more than the boxes → looks like a pile)
   const tray = $('tray');
   tray.innerHTML = '';
+  tray.classList.toggle('big', level === 1);    // bigger candies on Easy
   const supply = target + extra;
   for (let i = 0; i < supply; i++) tray.appendChild(makeCandy());
 }
