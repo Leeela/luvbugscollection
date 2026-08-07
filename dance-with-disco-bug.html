@@ -481,6 +481,20 @@ function tone(freq, t, dur, peak, type) {
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   o.connect(g); g.connect(musicGain); o.start(t); o.stop(t + dur + 0.02);
 }
+/* Soft melody tone (not a "bleep"): slower attack + sustain + gentle release
+   plus a lowpass filter that rounds off the harsh overtones. Makes the melody
+   sing instead of blip. */
+function lead(freq, t, dur, peak) {
+  const o = audioCtx.createOscillator();
+  const lp = audioCtx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2200; lp.Q.value = 0.6;
+  const g = audioCtx.createGain();
+  o.type = 'triangle'; o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.linearRampToValueAtTime(peak, t + 0.05);          // soft attack
+  g.gain.setValueAtTime(peak, t + dur * 0.55);             // small sustain
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);    // gentle release
+  o.connect(lp); lp.connect(g); g.connect(musicGain); o.start(t); o.stop(t + dur + 0.03);
+}
 function kick(t) {
   const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
   o.type = 'sine'; o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(48, t + 0.14);
@@ -537,9 +551,9 @@ function musicScheduler() {
 function scheduleStep(i, t) {
   if (cfg.busy) {
     if (i % 2 === 0) kick(t);                                   // beat on every quarter
-    hat(t);                                                     // hihat on every eighth
-    tone(curMel[i % curMel.length], t, 0.20, 0.18, 'triangle');
-    if (i % 4 === 0) tone(BASS[(i / 4) % BASS.length] / 2, t, 0.34, 0.13, 'sine');
+    if (i % 2 === 1) hat(t);                                    // hihat on the offbeat (less ticky)
+    if (i % 2 === 0) { lead(curMel[melIdx % curMel.length], t, 0.46, 0.17); melIdx++; }  // soft melody on quarters
+    if (i % 4 === 0) tone(BASS[(i / 4) % BASS.length] / 2, t, 0.42, 0.13, 'sine');
   } else {
     if (i % 4 === 0) kick(t);                                   // sparser, calmer
     if (i % 2 === 0) { tone(curMel[melIdx % curMel.length], t, 0.5, 0.16, 'sine'); melIdx++; }
