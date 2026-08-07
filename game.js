@@ -825,21 +825,27 @@ function drawTeeth() {
     ctx.translate(x, y);
     if (isLatest && teethPulse > 0) ctx.scale(pulse, pulse);
 
-    // the tooth
-    ctx.globalAlpha = broken ? 0.32 : 1;
+    // tooth — broken teeth stay VISIBLE (not transparent) but look damaged
+    ctx.globalAlpha = broken ? 0.95 : 1;
     ctx.fillText('🦷', 0, 0);
 
-    // red crack mark on broken teeth
     if (broken) {
-      ctx.globalAlpha = 0.85;
-      ctx.strokeStyle = '#e53935';
-      ctx.lineWidth = Math.max(2, size * 0.09);
-      ctx.lineCap = 'round';
+      ctx.globalAlpha = 1;
+      // dark cavity — clearly shows the tooth is broken
+      ctx.fillStyle = '#5d4037';
       ctx.beginPath();
-      ctx.moveTo(-size * 0.16, -size * 0.30);
-      ctx.lineTo( size * 0.04, -size * 0.02);
-      ctx.lineTo(-size * 0.10,  size * 0.10);
-      ctx.lineTo( size * 0.16,  size * 0.32);
+      ctx.arc(size * 0.10, size * 0.05, size * 0.17, 0, Math.PI * 2);
+      ctx.fill();
+      // bold red crack across the tooth
+      ctx.strokeStyle = '#c62828';
+      ctx.lineWidth = Math.max(2.5, size * 0.12);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(-size * 0.18, -size * 0.32);
+      ctx.lineTo( size * 0.02, -size * 0.04);
+      ctx.lineTo(-size * 0.12,  size * 0.12);
+      ctx.lineTo( size * 0.18,  size * 0.34);
       ctx.stroke();
     }
     ctx.restore();
