@@ -102,6 +102,26 @@ function crackTooth() { brokenTeeth = Math.min(MAX_TEETH, brokenTeeth + 1); teet
 function healTooth()  { brokenTeeth = Math.max(0, brokenTeeth - 1);          teethPulse = 14; }
 
 // ==========================================
+//  STAR COLLECTION — saved between visits (localStorage)
+//  You earn a star each time you clear a world. The collection grows over
+//  time → a reason to come back. No login, no server.
+// ==========================================
+const STARS_KEY = 'bacillerna-godis-stjarnor';
+function loadStars() { const n = parseInt(localStorage.getItem(STARS_KEY) || '0', 10); return isNaN(n) ? 0 : n; }
+function saveStars(n) { try { localStorage.setItem(STARS_KEY, String(n)); } catch (e) {} }
+let totalStars = loadStars();
+let starPulse  = 0;   // pulse on the counter when a star is earned
+let starGain   = 0;   // "+1" float animation
+
+function earnStar() {
+  totalStars++;
+  saveStars(totalStars);
+  starPulse = 40;
+  starGain  = 90;
+  spawnStarBurst();
+}
+
+// ==========================================
 //  VIDEO FILES — lazy loading
 // ==========================================
 // English version: chomp, merMore, salim and the crash video have English voiceovers.
@@ -454,6 +474,8 @@ const crash = {
       // Check that we are still on the same level (prevent double level-up)
       if (level !== levelAtStart) { this.phase = 'idle'; isShowingVideo = false; return; }
 
+      earnStar(); // cleared a world → one star for the collection
+
       if (level < 3) {
         level++;
         // updateMusicTempo();
@@ -650,7 +672,8 @@ class Particle {
     this.vy = -(Math.random() * 9 + 3);
     this.life = 1;
     this.size = 22 + Math.random() * 16;
-    const arr = kind === 'heal' ? ['🦷','✨','💚','🥕','😄','💪']
+    const arr = kind === 'star' ? ['⭐','🌟','✨','💫']
+              : kind === 'heal' ? ['🦷','✨','💚','🥕','😄','💪']
                                  : ['🦷','💥','⚡','😣','🍬'];
     this.emoji = arr[Math.floor(Math.random() * arr.length)];
   }
@@ -669,6 +692,16 @@ class Particle {
 let particles = [];
 function spawnParticles(x, y, kind) {
   for (let i = 0; i < 9; i++) particles.push(new Particle(x, y, kind));
+}
+
+// Star burst when you earn a star — bigger and sparser for a party feel.
+function spawnStarBurst() {
+  for (let i = 0; i < 18; i++) {
+    const p = new Particle(W / 2, H * 0.42, 'star');
+    p.size = 28 + Math.random() * 22;
+    p.vx *= 1.4; p.vy *= 1.15;
+    particles.push(p);
+  }
 }
 
 // ==========================================
@@ -883,6 +916,50 @@ function drawLevelIndicator() {
   ctx.restore();
 }
 
+// Star counter, top-left (below the Home button).
+function drawStarCounter() {
+  const size = Math.min(W * 0.052, 26);
+  const x = 18, y = 104;   // a bit below the Home button so they don't collide
+  const text = '⭐ ' + totalStars;
+  ctx.save();
+  ctx.font = `bold ${size}px Arial Rounded MT Bold, Arial`;
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  const tw = ctx.measureText(text).width;
+
+  const scale = starPulse > 0 ? 1 + Math.sin(starPulse * 0.35) * 0.22 * (starPulse / 40) : 1;
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.beginPath();
+  ctx.roundRect(-8, -size * 0.85, tw + 22, size * 1.7, size * 0.85);
+  ctx.fill();
+  ctx.fillStyle = '#f9a825';
+  ctx.fillText(text, 4, 1);
+  ctx.restore();
+  if (starPulse > 0) starPulse--;
+
+  // "+1 ⭐" floats up right when you earn a star
+  if (starGain > 0) {
+    const t = 1 - starGain / 90;
+    ctx.save();
+    ctx.globalAlpha = starGain < 30 ? starGain / 30 : 1;
+    ctx.font = `bold ${size * 1.15}px Arial Rounded MT Bold, Arial`;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#f9a825';
+    ctx.fillText('+1 ⭐', x + 4, y - 26 - t * 34);
+    ctx.restore();
+    starGain--;
+  }
+}
+
+// Show the collection on the start screen so kids watch it grow between visits.
+(function showStartStars() {
+  const el = document.getElementById('star-collection');
+  if (el && totalStars > 0) el.textContent = '⭐ Your collection: ' + totalStars;
+})();
+
 
 // ==========================================
 //  DRAG & DROP
@@ -1058,6 +1135,7 @@ function loop() {
 
   drawTeeth();
   drawLevelIndicator();
+  drawStarCounter();
   drawInstruction();
   drawLevelTransition();
 
