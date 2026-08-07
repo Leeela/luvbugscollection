@@ -152,10 +152,157 @@ body {
   width: 100%;
   position: relative;
   overflow: hidden;
+  background: #FFF9C4;
+}
+
+/* ── ENVIRONMENT per level ──
+   Easy = plain yellow like today · Medium = forest (day) · Hard = forest (dusk) */
+#screen-game[data-level="medium"] #arena {
+  background: linear-gradient(180deg, #CDEBFB 0%, #E9F7DA 58%, #D2EEAE 100%);
+}
+#screen-game[data-level="hard"] #arena {
+  background: linear-gradient(180deg, #34406B 0%, #6E5F97 52%, #C58A63 100%);
+}
+
+/* Forest scene – sits behind the bug, shown only on medium & hard */
+#forest {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+  display: none;
+}
+#screen-game[data-level="medium"] #forest,
+#screen-game[data-level="hard"]   #forest { display: block; }
+
+/* Sun (day) / moon (dusk) */
+.sun {
+  position: absolute;
+  top: 8%;
+  right: 14%;
+  width: clamp(50px, 14vmin, 110px);
+  height: clamp(50px, 14vmin, 110px);
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, #FFF6C0 0%, #FFE066 55%, rgba(255,224,102,0) 72%);
+  animation: sunPulse 5s ease-in-out infinite;
+}
+@keyframes sunPulse {
+  0%, 100% { transform: scale(1);    opacity: 0.9; }
+  50%      { transform: scale(1.08); opacity: 1;   }
+}
+#screen-game[data-level="hard"] .sun {
+  animation: none;
+  background: radial-gradient(circle at 38% 38%, #FDFBF0 0%, #E7E3F4 60%, rgba(231,227,244,0) 74%);
+}
+
+/* Clouds */
+.cloud {
+  position: absolute;
+  width: clamp(70px, 20vmin, 150px);
+  height: clamp(24px, 6.5vmin, 48px);
+  background: rgba(255,255,255,0.85);
+  border-radius: 50px;
+}
+.cloud::before, .cloud::after {
+  content: '';
+  position: absolute;
+  background: rgba(255,255,255,0.85);
+  border-radius: 50%;
+}
+.cloud::before { width: 55%; height: 150%; top: -55%; left: 12%; }
+.cloud::after  { width: 42%; height: 130%; top: -40%; right: 14%; }
+.c1 { top: 13%; animation: drift 30s linear infinite; }
+.c2 { top: 27%; --s: 0.72; opacity: 0.7;  animation: drift 40s linear infinite; animation-delay: -12s; }
+.c3 { top: 6%;  --s: 0.55; opacity: 0.55; animation: drift 48s linear infinite; animation-delay: -24s; }
+@keyframes drift {
+  from { transform: translateX(-40vw) scale(var(--s, 1)); }
+  to   { transform: translateX(160vw) scale(var(--s, 1)); }
+}
+#screen-game[data-level="hard"] .cloud,
+#screen-game[data-level="hard"] .cloud::before,
+#screen-game[data-level="hard"] .cloud::after { background: rgba(214,208,235,0.4); }
+
+/* Distant treeline (silhouette) */
+.treeline {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 20%;
+  height: clamp(50px, 15vmin, 120px);
+  background: bottom center / auto 100% repeat-x
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='100' viewBox='0 0 120 100'><g fill='%2382B44E'><polygon points='22,8 4,92 40,92'/><polygon points='22,34 8,92 36,92'/><polygon points='60,0 40,92 80,92'/><polygon points='60,28 46,92 74,92'/><polygon points='98,14 78,92 118,92'/></g></svg>");
+  opacity: 0.5;
+}
+#screen-game[data-level="hard"] .treeline { filter: brightness(0.4) saturate(0.7); opacity: 0.55; }
+
+/* Forest floor */
+.floor {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 22%;
+  background: linear-gradient(180deg, #9BD45E 0%, #7CB944 42%, #6AA838 100%);
+  box-shadow: inset 0 6px 0 rgba(255,255,255,0.18);
+  border-radius: 42% 42% 0 0 / 14% 14% 0 0;
+}
+#screen-game[data-level="hard"] .floor {
+  background: linear-gradient(180deg, #5E7A4A 0%, #47603A 45%, #38502F 100%);
+}
+
+/* Stars – dusk only (hard) */
+.star {
+  position: absolute;
+  color: #FFFDF2;
+  font-size: clamp(9px, 2.4vmin, 15px);
+  opacity: 0;
+}
+#screen-game[data-level="hard"] .star { animation: twinkle 3s ease-in-out infinite; }
+.st1 { top: 14%; left: 20%; animation-delay: 0s;   }
+.st2 { top: 24%; left: 66%; animation-delay: 0.8s; }
+.st3 { top: 9%;  left: 44%; animation-delay: 1.6s; }
+.st4 { top: 30%; left: 84%; animation-delay: 2.2s; }
+@keyframes twinkle {
+  0%, 100% { transform: scale(0.6); opacity: 0.2;  }
+  50%      { transform: scale(1.1); opacity: 0.95; }
+}
+
+/* Hiding spots (stump/spruce/stone/bush) – IN FRONT of the bug so it peeks out from behind */
+#spots {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  display: none;
+}
+#screen-game[data-level="medium"] #spots,
+#screen-game[data-level="hard"]   #spots { display: block; }
+.spot {
+  position: absolute;
+  transform: translateX(-50%) scale(var(--sc, 1));
+  transform-origin: bottom center;
+  width: clamp(88px, 21vmin, 148px);
+}
+.spot .obj {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 5px 5px rgba(0,0,0,0.18));
+}
+#screen-game[data-level="hard"] #spots { filter: brightness(0.72) saturate(0.9); }
+
+/* Warm glow behind the bug when it pops */
+#bug-glow {
+  position: absolute;
+  z-index: 2;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, rgba(255,224,102,0.7) 0%, rgba(255,224,102,0) 70%);
+  pointer-events: none;
+  display: none;
+  transition: opacity 0.25s ease;
 }
 
 #bug {
   position: absolute;
+  z-index: 3;
   width: clamp(80px, 20vmin, 150px);
   height: auto;
   cursor: pointer;
@@ -165,6 +312,8 @@ body {
 }
 #bug.pop-in  { animation: popIn  0.28s cubic-bezier(0.34,1.56,0.64,1) forwards; }
 #bug.pop-out { animation: popOut 0.22s ease-in forwards; }
+#bug.peek-in  { animation: peekIn  0.32s cubic-bezier(0.34,1.45,0.6,1) forwards; }
+#bug.peek-out { animation: peekOut 0.20s ease-in forwards; }
 
 @keyframes popIn {
   from { transform: scale(0) rotate(-15deg); opacity: 0; }
@@ -174,9 +323,19 @@ body {
   from { transform: scale(1); opacity: 1; }
   to   { transform: scale(0) rotate(15deg); opacity: 0; }
 }
+/* Peek out from behind the hiding spot (medium) */
+@keyframes peekIn {
+  from { transform: translateY(46%); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+@keyframes peekOut {
+  from { transform: translateY(0);   opacity: 1; }
+  to   { transform: translateY(46%); opacity: 0; }
+}
 
 #hit-text {
   position: absolute;
+  z-index: 5;
   font-size: clamp(28px, 9vmin, 60px);
   font-weight: 700;
   color: #E55A40;
@@ -185,8 +344,8 @@ body {
   text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
 }
 @keyframes floatUp {
-  from { transform: translateY(0) scale(1); opacity: 1; }
-  to   { transform: translateY(-50px) scale(1.3); opacity: 0; }
+  from { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
+  to   { transform: translateX(-50%) translateY(-50px) scale(1.3); opacity: 0; }
 }
 
 /* ── RESULT ── */
@@ -244,6 +403,20 @@ body {
     <div id="hud-right"></div>
   </div>
   <div id="arena">
+    <div id="forest" aria-hidden="true">
+      <div class="sun"></div>
+      <div class="cloud c1"></div>
+      <div class="cloud c2"></div>
+      <div class="cloud c3"></div>
+      <span class="star st1">✦</span>
+      <span class="star st2">✦</span>
+      <span class="star st3">✦</span>
+      <span class="star st4">✦</span>
+      <div class="treeline"></div>
+      <div class="floor"></div>
+    </div>
+    <div id="spots"></div>
+    <div id="bug-glow"></div>
     <img id="bug" src="/bilder/retbacillen.png" alt="" onclick="catchBug()">
     <div id="hit-text"></div>
   </div>
@@ -263,9 +436,10 @@ body {
 
 <script>
 const LEVELS = {
-  easy:   { showTime: 3400, missDelay: 900, lives: Infinity, countdown: 0 },
-  medium: { showTime: 1900, missDelay: 650, lives: 3,        countdown: 0 },
-  hard:   { showTime: 900,  missDelay: 350, lives: Infinity, countdown: 60 },
+  //  env: null = free pop (like today) · 'peek' = peek from behind a hiding spot · 'move' = chase
+  easy:   { showTime: 3400, missDelay: 900, lives: Infinity, countdown: 0,  env: null   },
+  medium: { showTime: 1900, missDelay: 650, lives: 3,        countdown: 0,  env: 'peek' },
+  hard:   { showTime: 2800, missDelay: 550, lives: Infinity, countdown: 60, env: 'move' },
 };
 const NEXT_LEVEL = { easy: 'medium', medium: 'hard', hard: null };
 const NEXT_LABEL = { easy: '😏 Try Medium!', medium: '😤 Try Hard!', hard: null };
@@ -353,6 +527,51 @@ const DISTRACTORS = [
 const REAL_CHANCE = 0.35;
 let isRealBug = true;
 
+// ── FOREST: hiding spots (pure SVG, no image files) ──
+const OBJ_SVG = {
+  stump: `<svg class="obj" viewBox="0 0 100 88" xmlns="http://www.w3.org/2000/svg">
+    <path d="M24 28 h52 v38 q0 12 -26 12 q-26 0 -26 -12 z" fill="#7A4A24"/>
+    <ellipse cx="50" cy="28" rx="26" ry="9" fill="#A66B33"/>
+    <ellipse cx="50" cy="28" rx="16" ry="5" fill="#8A5528"/>
+    <ellipse cx="50" cy="28" rx="7"  ry="2.2" fill="#A66B33"/>
+    <path d="M31 44 q6 4 0 8 M69 46 q-6 4 0 8" stroke="#5E3A1C" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  </svg>`,
+  spruce: `<svg class="obj" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+    <rect x="44" y="96" width="12" height="20" rx="3" fill="#7A4A24"/>
+    <polygon points="50,6 20,52 80,52"  fill="#3E8E4A"/>
+    <polygon points="50,30 14,80 86,80" fill="#348040"/>
+    <polygon points="50,56 10,104 90,104" fill="#2C7137"/>
+  </svg>`,
+  stone: `<svg class="obj" viewBox="0 0 100 66" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10 60 q-4 -30 26 -40 q30 -10 46 8 q16 16 6 32 z" fill="#9AA3AA"/>
+    <path d="M22 38 q10 -12 26 -12" stroke="#C3CAD0" stroke-width="5" fill="none" stroke-linecap="round"/>
+  </svg>`,
+  bush: `<svg class="obj" viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="30" cy="40" r="22" fill="#3E9E4E"/>
+    <circle cx="64" cy="36" r="26" fill="#379145"/>
+    <circle cx="48" cy="50" r="22" fill="#31843E"/>
+    <circle cx="78" cy="50" r="15" fill="#3E9E4E"/>
+    <rect x="8" y="56" width="86" height="13" rx="6.5" fill="#2C7137"/>
+  </svg>`,
+};
+// x = center in % of the arena, bottom = % from the floor, sc = depth scale
+const SPOTS = [
+  { type: 'stump',  x: 16, bottom: 7,  sc: 1.05 },
+  { type: 'bush',   x: 45, bottom: 4,  sc: 1.1  },
+  { type: 'stone',  x: 76, bottom: 8,  sc: 0.95 },
+  { type: 'spruce', x: 28, bottom: 19, sc: 0.8  },
+  { type: 'bush',   x: 63, bottom: 22, sc: 0.72 },
+  { type: 'spruce', x: 86, bottom: 16, sc: 0.85 },
+];
+function buildForest() {
+  const c = $('spots');
+  if (!c) return;
+  c.innerHTML = SPOTS.map(s =>
+    `<div class="spot" style="left:${s.x}%;bottom:${s.bottom}%;--sc:${s.sc}">${OBJ_SVG[s.type]}</div>`
+  ).join('');
+}
+buildForest();
+
 function updateHud() {
   $('hud-right').textContent = '⭐ ' + score;
   if (lives !== Infinity) {
@@ -372,6 +591,7 @@ function startGame(lvlKey) {
   lives  = level.lives;
   timeLeft = level.countdown;
   active = true;
+  $('screen-game').dataset.level = lvlKey;
   show('screen-game');
   updateHud();
 
@@ -394,27 +614,134 @@ function scheduleBug() {
 function showBug() {
   if (!active) return;
   stopSfx('nanana');   // cut any leftover nanana so it isn't heard on the next figure
-  const bug   = $('bug');
-  const arena = $('arena');
-  const bw = bug.offsetWidth  || 120;
-  const bh = bug.offsetHeight || 120;
-  const margin = 20;
-
-  const x = margin + Math.random() * Math.max(0, arena.offsetWidth  - bw - margin * 2);
-  const y = margin + Math.random() * Math.max(0, arena.offsetHeight - bh - margin * 2);
+  const bug = $('bug');
 
   isRealBug = Math.random() < REAL_CHANCE;
   bug.src = isRealBug
     ? '/bilder/retbacillen.png'
     : DISTRACTORS[Math.floor(Math.random() * DISTRACTORS.length)];
-
-  bug.style.left = x + 'px';
-  bug.style.top  = y + 'px';
   bug.style.display = 'block';
-  bug.className = 'pop-in';
+
+  if (level.env === 'peek') {
+    // Medium: peek out from behind a random hiding spot
+    bug.style.zIndex = '3';
+    placeBugAtSpot();
+    bug.className = 'peek-in';
+    positionGlow();
+  } else if (level.env === 'move') {
+    // Hard: zoom diagonally or in a circle – chase it!
+    bug.style.zIndex = '6';   // in front of the forest hiding spots
+    bug.style.width  = '';
+    hideGlow();
+    startBugMotion();
+  } else {
+    // Easy: free pop, exactly like today
+    bug.style.zIndex = '3';
+    bug.style.width  = '';
+    const arena = $('arena');
+    const bw = bug.offsetWidth  || 120;
+    const bh = bug.offsetHeight || 120;
+    const aw = arena.offsetWidth;
+    const ah = arena.offsetHeight;
+    const margin = 20;
+    bug.style.left = (margin + Math.random() * Math.max(0, aw - bw - margin * 2)) + 'px';
+    bug.style.top  = (margin + Math.random() * Math.max(0, ah - bh - margin * 2)) + 'px';
+    bug.className = 'pop-in';
+    positionGlow();
+  }
 
   if (isRealBug) speak('nanana');
   bugTimer = setTimeout(missedBug, level.showTime);
+}
+
+// Place the bug so it peeks out from behind a hiding spot (medium)
+function placeBugAtSpot() {
+  const bug   = $('bug');
+  const arena = $('arena');
+  const spots = document.querySelectorAll('#spots .spot');
+  if (!spots.length) return;
+  const obj = spots[Math.floor(Math.random() * spots.length)].querySelector('.obj');
+  const aR  = arena.getBoundingClientRect();
+  const oR  = obj.getBoundingClientRect();
+  const bugW = oR.width * 0.82;
+  bug.style.width = bugW + 'px';
+  const bugH = bug.offsetHeight || bugW;
+  const objCx = oR.left + oR.width / 2 - aR.left;
+  const objTop = oR.top - aR.top;
+  bug.style.left = (objCx - bugW / 2) + 'px';
+  // the bug's lower part overlaps the hiding spot's top ~28% → looks like it's hiding
+  bug.style.top  = (objTop + oR.height * 0.28 - bugH) + 'px';
+}
+
+// ── CHASE mode (hard): diagonal bounce or circular path ──
+let motionRAF = null;
+function startBugMotion() {
+  const bug   = $('bug');
+  const arena = $('arena');
+  const aw = arena.offsetWidth, ah = arena.offsetHeight;
+  const bw = bug.offsetWidth  || 110, bh = bug.offsetHeight || 110;
+  bug.className = 'pop-in';
+
+  const circular = Math.random() < 0.5;
+  let last = null;
+
+  if (circular) {
+    const cx = aw / 2 - bw / 2, cy = ah / 2 - bh / 2;
+    const rx = Math.min(aw, ah) * 0.30, ry = Math.min(aw, ah) * 0.26;
+    let ang = Math.random() * Math.PI * 2;
+    const w = 0.0042 * (Math.random() < 0.5 ? 1 : -1);   // rad/ms (~1.5s per lap)
+    const step = t => {
+      if (!active) return;
+      if (last === null) last = t;
+      ang += w * (t - last); last = t;
+      bug.style.left = (cx + Math.cos(ang) * rx) + 'px';
+      bug.style.top  = (cy + Math.sin(ang) * ry) + 'px';
+      motionRAF = requestAnimationFrame(step);
+    };
+    motionRAF = requestAnimationFrame(step);
+  } else {
+    let x = Math.random() * (aw - bw), y = Math.random() * (ah - bh);
+    const speed = Math.max(aw, ah) * 0.00062;             // px/ms
+    const ang = Math.random() * Math.PI * 2;
+    let vx = Math.cos(ang) * speed, vy = Math.sin(ang) * speed;
+    bug.style.left = x + 'px'; bug.style.top = y + 'px';
+    const step = t => {
+      if (!active) return;
+      if (last === null) last = t;
+      const dt = t - last; last = t;
+      x += vx * dt; y += vy * dt;
+      if (x <= 0)        { x = 0;        vx =  Math.abs(vx); }
+      if (x >= aw - bw)  { x = aw - bw;  vx = -Math.abs(vx); }
+      if (y <= 0)        { y = 0;        vy =  Math.abs(vy); }
+      if (y >= ah - bh)  { y = ah - bh;  vy = -Math.abs(vy); }
+      bug.style.left = x + 'px'; bug.style.top = y + 'px';
+      motionRAF = requestAnimationFrame(step);
+    };
+    motionRAF = requestAnimationFrame(step);
+  }
+}
+function stopBugMotion() {
+  if (motionRAF) { cancelAnimationFrame(motionRAF); motionRAF = null; }
+}
+
+// Glow behind the bug
+function positionGlow() {
+  const glow = $('bug-glow'), bug = $('bug'), arena = $('arena');
+  const aR = arena.getBoundingClientRect();
+  const bR = bug.getBoundingClientRect();
+  if (!bR.width) return;
+  const w = bR.width * 1.6, h = bR.height * 1.6;
+  glow.style.width  = w + 'px';
+  glow.style.height = h + 'px';
+  glow.style.left = (bR.left - aR.left + bR.width  / 2 - w / 2) + 'px';
+  glow.style.top  = (bR.top  - aR.top  + bR.height / 2 - h / 2) + 'px';
+  glow.style.display = 'block';
+  glow.style.opacity = '1';
+}
+function hideGlow() {
+  const glow = $('bug-glow');
+  glow.style.opacity = '0';
+  setTimeout(() => { glow.style.display = 'none'; }, 220);
 }
 
 function catchBug() {
@@ -452,22 +779,28 @@ function missedBug() {
 }
 
 function hideBug(cb) {
+  stopBugMotion();
+  hideGlow();
   const bug = $('bug');
-  bug.className = 'pop-out';
+  bug.className = (level && level.env === 'peek') ? 'peek-out' : 'pop-out';
   setTimeout(() => {
     bug.style.display = 'none';
     bug.className = '';
+    bug.style.zIndex = '';
     if (cb) cb();
   }, 220);
 }
 
 function showHitText(text, color) {
-  const bug = $('bug');
-  const hit = $('hit-text');
+  const bug   = $('bug');
+  const hit   = $('hit-text');
+  const arena = $('arena');
+  const aR = arena.getBoundingClientRect();
+  const bR = bug.getBoundingClientRect();
   hit.textContent = text || 'Got ya!';
   hit.style.color = color || '#E55A40';
-  hit.style.left   = (parseInt(bug.style.left)  + 20) + 'px';
-  hit.style.top    = (parseInt(bug.style.top)   - 10) + 'px';
+  hit.style.left = (bR.left - aR.left + bR.width / 2) + 'px';
+  hit.style.top  = (bR.top  - aR.top  - 6) + 'px';
   hit.style.display = 'block';
   hit.style.animation = 'none';
   void hit.offsetWidth;
@@ -477,9 +810,11 @@ function showHitText(text, color) {
 
 function stopGame() {
   active = false;
+  stopBugMotion();
   clearTimeout(bugTimer);
   clearTimeout(nextTimer);
   clearInterval(countdownInterval);
+  hideGlow();
   $('bug').style.display = 'none';
 }
 

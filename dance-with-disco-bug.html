@@ -361,7 +361,18 @@ const STANDARD = [
   { key:'giant',          emoji:'🦖',  name:'Giant Dance',     text:'Dance like a giant dinosaur! Big heavy stomps!' },
   { key:'mouse',          emoji:'🐭',  name:'Mouse Dance',     text:'Dance teeny tiny like a mouse! Small, small moves!' },
   { key:'washingmachine', emoji:'🌪️', name:'Washing Machine', text:'Dance like a washing machine on spin!' },
-  { key:'balloon',        emoji:'🎈',  name:'Balloon Dance',   text:'Dance like a balloon floating up to the ceiling!' }
+  { key:'balloon',        emoji:'🎈',  name:'Balloon Dance',   text:'Dance like a balloon floating up to the ceiling!' },
+  { key:'katt',           emoji:'🐱',  name:'Cat Dance',       text:'Sneak softly and stretch like a cat!' },
+  { key:'bebis',          emoji:'👶',  name:'Baby Dance',      text:'Crawl and wobble like a little baby!' },
+  { key:'regn',           emoji:'🌧️', name:'Rain Dance',      text:'Wiggle your fingers like rain and splash in the puddles!' },
+  { key:'sol',            emoji:'☀️',  name:'Sun Dance',       text:'Stretch your arms out wide and shine like the sun!' },
+  { key:'sim',            emoji:'🏊',  name:'Swim Dance',      text:'Swim through the air with big swimming strokes!' },
+  { key:'fagel',          emoji:'🐦',  name:'Bird Dance',      text:'Flap your arms like wings and fly like a bird!' },
+  { key:'popcorn',        emoji:'🍿',  name:'Popcorn Dance',   text:'Crouch down and pop up like popcorn!' },
+  { key:'superhjalte',    emoji:'🦸',  name:'Superhero Dance', text:'Fly and pose like a superhero!' },
+  { key:'pingvin',        emoji:'🐧',  name:'Penguin Dance',   text:'Waddle from side to side like a penguin!' },
+  { key:'raket',          emoji:'🚀',  name:'Rocket Dance',    text:'Count down… three, two, one… and blast off!' },
+  { key:'disco',          emoji:'🕺',  name:'Disco Dance',     text:'Point up to the ceiling, one arm at a time!' }
 ];
 const LUGNT = [
   { key:'finger',    emoji:'🖐️', name:'Finger Dance',    text:'Let just your fingers dance!' },
@@ -369,7 +380,13 @@ const LUGNT = [
   { key:'shoulder',  emoji:'🤷',  name:'Shoulder Dance',  text:'Let your shoulders dance up and down!' },
   { key:'head',      emoji:'🎵',  name:'Head Sway',       text:'Sway your head softly to the beat!' },
   { key:'toe',       emoji:'🦶',  name:'Toe Dance',       text:'Sit still and let just your toes dance!' },
-  { key:'breathing', emoji:'🌬️', name:'Breathing Dance', text:'Breathe in, stretch up slowly, breathe out and sink down!' }
+  { key:'breathing', emoji:'🌬️', name:'Breathing Dance', text:'Breathe in, stretch up slowly, breathe out and sink down!' },
+  { key:'trott',     emoji:'😴',  name:'Tired Dance',     text:'Stretch, yawn big and dance super sleepily!' },
+  { key:'ogon',      emoji:'👀',  name:'Eye Dance',       text:'Keep your body still and let just your eyes dance around!' },
+  { key:'vinka',     emoji:'👋',  name:'Wave Dance',      text:'Wave softly and slowly with your hands!' },
+  { key:'kattstrack', emoji:'🐈', name:'Cat Stretch',     text:'Stretch slowly and cozily like a cat!' },
+  { key:'vag',       emoji:'🌊',  name:'Ocean Waves',     text:'Make soft waves with your arms, like the sea!' },
+  { key:'mane',      emoji:'🌙',  name:'Moon Walk',       text:'Walk super slowly, like on the moon!' }
 ];
 const CHEERS = ['cheer-1','cheer-2','cheer-3','cheer-4'];
 
@@ -386,6 +403,7 @@ function loadVoices() {
   CHEERS.forEach(c => { VOICE[c] = mkClip('/ljud/dance/' + c + '.mp3'); });
   VOICE.welcome = mkClip('/ljud/dance/welcome.mp3');
   VOICE.finale  = mkClip('/ljud/dance/finale.mp3');
+  VOICE.freeze  = mkClip('/ljud/dance/freeze.mp3');
 }
 function warmClips() {
   if (clipsWarmed || !voiceLoaded) return;
@@ -428,9 +446,32 @@ function initAudio() {
 }
 
 const NOTE = { C4:261.63, D4:293.66, E4:329.63, G4:392.00, A4:440.00, C5:523.25, D5:587.33, E5:659.25, G5:784.00, A5:880.00 };
-const MELODY_STD  = [NOTE.C5, NOTE.E5, NOTE.G5, NOTE.E5, NOTE.A5, NOTE.G5, NOTE.E5, NOTE.D5, NOTE.C5, NOTE.E5, NOTE.D5, NOTE.G4];
-const MELODY_CALM = [NOTE.C5, NOTE.E5, NOTE.G4, NOTE.A4, NOTE.G4, NOTE.E5, NOTE.D5, NOTE.C5];
+
+/* Several "songs": each round picks a random melody (+ its own tempo) so it
+   sounds like different tunes. Never the same song twice in a row (pickSong). */
+const SONGS_STD = [
+  { bpm:116, mel:[NOTE.C5, NOTE.E5, NOTE.G5, NOTE.E5, NOTE.A5, NOTE.G5, NOTE.E5, NOTE.D5, NOTE.C5, NOTE.E5, NOTE.D5, NOTE.G4] },
+  { bpm:120, mel:[NOTE.G4, NOTE.A4, NOTE.C5, NOTE.D5, NOTE.E5, NOTE.D5, NOTE.C5, NOTE.A4, NOTE.G4, NOTE.A4, NOTE.C5, NOTE.E5] },
+  { bpm:108, mel:[NOTE.C5, NOTE.D5, NOTE.E5, NOTE.G5, NOTE.A5, NOTE.G5, NOTE.E5, NOTE.D5, NOTE.C5, NOTE.G4, NOTE.A4, NOTE.C5] },
+  { bpm:124, mel:[NOTE.E5, NOTE.G5, NOTE.A5, NOTE.G5, NOTE.E5, NOTE.D5, NOTE.C5, NOTE.D5, NOTE.E5, NOTE.G5, NOTE.E5, NOTE.C5] },
+  { bpm:112, mel:[NOTE.A4, NOTE.C5, NOTE.D5, NOTE.E5, NOTE.G5, NOTE.E5, NOTE.D5, NOTE.C5, NOTE.A4, NOTE.G4, NOTE.A4, NOTE.C5] }
+];
+const SONGS_CALM = [
+  { bpm:80, mel:[NOTE.C5, NOTE.E5, NOTE.G4, NOTE.A4, NOTE.G4, NOTE.E5, NOTE.D5, NOTE.C5] },
+  { bpm:72, mel:[NOTE.E5, NOTE.D5, NOTE.C5, NOTE.D5, NOTE.E5, NOTE.E5, NOTE.D5, NOTE.C5] },
+  { bpm:76, mel:[NOTE.G4, NOTE.A4, NOTE.C5, NOTE.E5, NOTE.D5, NOTE.C5, NOTE.A4, NOTE.G4] },
+  { bpm:70, mel:[NOTE.C5, NOTE.D5, NOTE.E5, NOTE.G5, NOTE.E5, NOTE.D5, NOTE.C5, NOTE.G4] }
+];
 const BASS = [NOTE.C4, NOTE.G4, NOTE.A4, NOTE.G4];
+let curMel = SONGS_STD[0].mel, lastSongIdx = -1;
+function pickSong() {
+  const bank = (mode === 'lugnt') ? SONGS_CALM : SONGS_STD;
+  let i;
+  do { i = Math.floor(Math.random() * bank.length); }
+  while (bank.length > 1 && i === lastSongIdx);
+  lastSongIdx = i;
+  return bank[i];
+}
 
 function tone(freq, t, dur, peak, type) {
   const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
@@ -467,7 +508,9 @@ const MODE = {
 
 function startMusic() {
   cfg = MODE[mode];
-  stepDur = (60 / cfg.bpm) / 2;          // eighth notes
+  const song = pickSong();               // random song each round
+  curMel = song.mel;
+  stepDur = (60 / song.bpm) / 2;         // eighth notes
   noteIdx = 0; melIdx = 0;
   nextNoteTime = audioCtx.currentTime + 0.08;
   // random dance length 15–30 s -> stop is placed in the scheduler
@@ -495,11 +538,11 @@ function scheduleStep(i, t) {
   if (cfg.busy) {
     if (i % 2 === 0) kick(t);                                   // beat on every quarter
     hat(t);                                                     // hihat on every eighth
-    tone(MELODY_STD[i % MELODY_STD.length], t, 0.20, 0.18, 'triangle');
+    tone(curMel[i % curMel.length], t, 0.20, 0.18, 'triangle');
     if (i % 4 === 0) tone(BASS[(i / 4) % BASS.length] / 2, t, 0.34, 0.13, 'sine');
   } else {
     if (i % 4 === 0) kick(t);                                   // sparser, calmer
-    if (i % 2 === 0) { tone(MELODY_CALM[melIdx % MELODY_CALM.length], t, 0.5, 0.16, 'sine'); melIdx++; }
+    if (i % 2 === 0) { tone(curMel[melIdx % curMel.length], t, 0.5, 0.16, 'sine'); melIdx++; }
     if (i % 8 === 0) tone(BASS[(i / 8) % BASS.length] / 2, t, 0.7, 0.11, 'sine');
   }
 }
@@ -689,7 +732,8 @@ function setHero(s) {
 function freeze(soft) {
   state = 'freeze';
   setHero('frozen');
-  freezeSound(soft);                     // FREEZE sound exactly when the text appears
+  freezeSound(soft);                     // FREEZE sound effect exactly when the text appears
+  playClip('freeze');                    // Disco Bug shouts "FREEZE!" (missing -> silent, text still shows)
   const f = $('freeze');
   f.className = 'show ' + (soft ? 'soft' : 'pop');
   setInstruction('');

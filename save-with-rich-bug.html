@@ -615,8 +615,8 @@ function finish(){
     endEmoji.textContent=dream.emoji;
     endTitle.textContent='You could afford it! 🎉';
     endMsg.textContent=`You saved enough and bought ${dream.a}${dream.name.toLowerCase()}! You had ${money} coins. What a saver! 💜`;
-    sndWin(); confetti();
-    playVoice('rik-vinst');
+    playVoice('rik-vinst'); confetti();
+    setTimeout(sndWin, 500); // let the voice start first so the jingle doesn't drown it (mobile)
   } else {
     const miss=dream.price-money;
     endEmoji.innerHTML='<div style="width:clamp(120px,32vmin,180px);margin:0 auto">'+pigSVG()+'</div>';
