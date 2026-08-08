@@ -420,6 +420,8 @@ function warmClips() {
       a.currentTime = 0;
     } catch (e) {}
   });
+  // unlock the music-track elements in the same user gesture (iOS)
+  trackEls.concat(calmTrackEls).forEach(a => { try { a.muted = true; const p = a.play(); if (p && p.catch) p.catch(() => {}); a.pause(); a.currentTime = 0; } catch (e) {} });
 }
 function playClip(key) {
   if (muted) return;
@@ -428,6 +430,19 @@ function playClip(key) {
   try { a.muted = false; a.currentTime = 0; const p = a.play(); if (p) p.catch(() => {}); } catch (e) {}
 }
 function randomCheer() { return CHEERS[Math.floor(Math.random() * CHEERS.length)]; }
+
+/* ══════════════ REAL MUSIC TRACKS (mp3) — disco for Standard, gentle for Calm ══════════════
+   Alternates every round (never the same one twice in a row) and stops ABRUPTLY at the freeze.
+   Fallback: a missing track -> silent, but the freeze still happens (driven by the timer). */
+const MUSIC_TRACKS = ['/ljud/dance/musik-1.mp3','/ljud/dance/musik-2.mp3','/ljud/dance/musik-3.mp3','/ljud/dance/musik-4.mp3','/ljud/dance/musik-5.mp3','/ljud/dance/musik-6.mp3','/ljud/dance/musik-7.mp3'];
+const CALM_TRACKS  = ['/ljud/dance/lugn-1.mp3','/ljud/dance/lugn-2.mp3'];
+let trackEls = [], calmTrackEls = [], tracksLoaded = false, lastTrack = -1, curTrack = null, trackStopTimer = null;
+function loadTracks() {
+  if (tracksLoaded) return;
+  tracksLoaded = true;
+  MUSIC_TRACKS.forEach(src => { const a = new Audio(src); a.preload = 'auto'; a.loop = true; a.volume = 0.72; trackEls.push(a); });
+  CALM_TRACKS.forEach(src => { const a = new Audio(src); a.preload = 'auto'; a.loop = true; a.volume = 0.5; calmTrackEls.push(a); });
+}
 
 /* ══════════════ WEB AUDIO — generated music (no audio files for music) ══════════════ */
 let audioCtx = null, masterGain = null, musicGain = null, noiseBuf = null;
@@ -520,9 +535,26 @@ const MODE = {
   lugnt:    { busy: false, bpm: 80  }
 };
 
+/* ── Real tracks: pick a new one (not the same twice) from the right list, play, stop at freeze ── */
+function startTrack() {
+  const pool = (mode === 'lugnt') ? calmTrackEls : trackEls;
+  let i; do { i = Math.floor(Math.random() * pool.length); } while (pool.length > 1 && i === lastTrack);
+  lastTrack = i; curTrack = pool[i];
+  try { curTrack.muted = muted; curTrack.currentTime = 0; const p = curTrack.play(); if (p) p.catch(() => {}); } catch (e) {}
+  const danceLen = 15 + Math.random() * 15;               // random dance length 15–30 s
+  clearTimeout(trackStopTimer);
+  trackStopTimer = setTimeout(stopTrackIntoFreeze, danceLen * 1000);
+}
+function stopTrackIntoFreeze() {
+  clearTimeout(trackStopTimer); trackStopTimer = null;
+  if (curTrack) { try { curTrack.pause(); } catch (e) {} }   // sudden stop -> FREEZE (soft in Calm)
+  freeze(mode === 'lugnt');
+}
 function startMusic() {
   cfg = MODE[mode];
-  const song = pickSong();               // random song each round
+  const pool = (mode === 'lugnt') ? calmTrackEls : trackEls;
+  if (pool.length) { startTrack(); return; }   // real tracks (disco in Standard, gentle in Calm)
+  const song = pickSong();               // fallback: generated music if no tracks exist
   curMel = song.mel;
   stepDur = (60 / song.bpm) / 2;         // eighth notes
   noteIdx = 0; melIdx = 0;
@@ -662,6 +694,7 @@ function meterStep() {
 function startGame() {
   initAudio();
   loadVoices();
+  loadTracks();
   warmClips();
   pool = (mode === 'lugnt') ? LUGNT : STANDARD;
   lastKey = null; danceTurns = 0; state = 'idle';
@@ -773,6 +806,8 @@ function stopAll() {
   musicOn = false;
   clearInterval(schedTimer); schedTimer = null;
   clearTimeout(freezeTimer); freezeTimer = null;
+  clearTimeout(trackStopTimer); trackStopTimer = null;
+  if (curTrack) { try { curTrack.pause(); } catch (e) {} }
   if (audioCtx && musicGain) { musicGain.gain.cancelScheduledValues(audioCtx.currentTime); musicGain.gain.setTargetAtTime(0.0001, audioCtx.currentTime, 0.02); }
   document.querySelectorAll('.wheel-ring').forEach(r => r.classList.remove('spin'));
   hideFreeze();
@@ -806,6 +841,7 @@ function toggleMute() {
   muted = !muted;
   if (masterGain && audioCtx) masterGain.gain.setTargetAtTime(muted ? 0 : 1, audioCtx.currentTime, 0.02);
   Object.values(VOICE).forEach(a => { a.muted = muted; if (muted) { try { a.pause(); } catch (e) {} } });
+  trackEls.concat(calmTrackEls).forEach(a => { a.muted = muted; });
   $('mute-btn').textContent = muted ? '🔇' : '🔊';
 }
 
@@ -826,7 +862,7 @@ function confettiBurst(n) {
 
 function menuTap() {
   const b = $('menu-bug'); b.classList.remove('wave'); void b.offsetWidth; b.classList.add('wave');
-  initAudio(); loadVoices(); warmClips();
+  initAudio(); loadVoices(); loadTracks(); warmClips();
 }
 
 pickMode(mode);   // highlight the default mode (Calm if reduced-motion)
