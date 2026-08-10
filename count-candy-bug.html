@@ -349,7 +349,7 @@ body {
 <div id="screen-menu" class="screen">
   <img id="menu-bug" src="/bilder/godisbacillen-gapar.png" onclick="menuTap()" alt="Candy Bug – tap to chew!">
   <h1>Count with Candy Bug</h1>
-  <p id="menu-sub">Drag the right number of candies to the boxes and learn to count! 🍬</p>
+  <p id="menu-sub">Drag the right number of candies to the circles and learn to count! 🍬</p>
   <div class="levels">
     <button class="big-btn lvl-1" onclick="startGame(1)">🟢 Easy <span class="lvl-tag">count 1–5</span></button>
     <button class="big-btn lvl-2" onclick="startGame(2)">🟡 Medium <span class="lvl-tag">count 1–10</span></button>
@@ -571,7 +571,7 @@ function startGame(lvl) {
   level = lvl;
   stars = 0;
   $('hud-right').textContent = '⭐ 0';
-  $('hud-center').textContent = level === 3 ? 'Work it out and fill the boxes!' : 'Drag candy to the boxes!';
+  $('hud-center').textContent = level === 3 ? 'Work it out and fill the circles!' : 'Drag candy to the circles!';
   show('screen-game');
   nextRound();
 }
