@@ -909,35 +909,32 @@ function warmVoices() {
     const a = voiceEls[k];
     if (!a) return;
     // load() forces iOS to fetch metadata (readyState → 1) without needing play().
-    // play()+pause() then unlocks playback within the user gesture.
+    // Muted + SYNCHRONOUS pause = silent even if iOS ignores the muted flag. An async
+    // pause in .then() let all 15 clips play AUDIBLY at once on iPhone – a synchronous
+    // pause stops the clip before it can be heard. muted=false after the pause is silent.
     try { a.load(); } catch (e) {}
     try {
       a.muted = true;
       const p = a.play();
-      if (p && p.then) {
-        p.then(() => { a.pause(); a.currentTime = 0; a.muted = false; })
-         .catch(() => { a.muted = false; });
-      } else {
-        try { a.pause(); } catch (e) {}
-        a.muted = false;
-      }
+      if (p && p.catch) p.catch(() => {});
+      a.pause();
+      a.currentTime = 0;
+      a.muted = false;
     } catch (e) {}
   });
   // Also unlock the end video so its SOUND can play later (iOS needs a gesture).
-  // A short silent play+pause inside the gesture unlocks the element; otherwise
-  // showEnding falls back to muted and the doctor clip plays silently on iPhone.
+  // ALSO a synchronous pause: an async pause in .then() could fire LATER – after
+  // showEnding() had already started the doctor clip – and reset currentTime → the
+  // video "froze" on the first frame. A synchronous pause never races playback.
   try {
     const v = $('end-video');
     if (v) {
       v.muted = true;
       const p = v.play();
-      if (p && p.then) {
-        p.then(() => { v.pause(); v.currentTime = 0; v.muted = false; })
-         .catch(() => { v.muted = false; });
-      } else {
-        try { v.pause(); } catch (e) {}
-        v.muted = false;
-      }
+      if (p && p.catch) p.catch(() => {});
+      v.pause();
+      v.currentTime = 0;
+      v.muted = false;
     }
   } catch (e) {}
 }
