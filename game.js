@@ -477,14 +477,11 @@ const crash = {
       earnStar(); // cleared a world → one star for the collection
 
       if (level < 3) {
-        level++;
-        // updateMusicTempo();
-        candyEaten = 0;
-        candies = [];
-        for (let i = 0; i < 5; i++) candies.push(new Candy(true));
+        // Between worlds: brush Candy Bug's teeth clean before the next world.
+        // brushing.finish() handles level++ and the transition once all teeth are clean.
         this.phase = 'idle';
         isShowingVideo = false;
-        showLevelTransition(level);
+        brushing.start();
       } else {
         candyEaten = 0;
         candies = candies.filter(c => !c.eaten);
@@ -511,6 +508,7 @@ window.restartGame = function() {
   fsOverlay.classList.remove('active');
   isShowingVideo = false;
   crash.phase = 'idle';
+  brushing.active = false;
   candyEaten = 0;
   candies = [];
   particles = [];
@@ -962,6 +960,225 @@ function drawStarCounter() {
 
 
 // ==========================================
+//  BRUSHING BREAK — between the worlds 🦷
+//  Faithful port of the Dentist game's brushing screen: the child rubs
+//  Candy Bug's triangular teeth clean (brown dirt → white) before the next
+//  world. Resets the broken teeth from the previous world.
+// ==========================================
+const brushBugImg = new Image();
+brushBugImg.src = 'godisbacillen-gapar.png';
+
+const brushing = {
+  active: false,
+  teeth: [],
+  pointerDown: false,
+  px: -1, py: -1, prevPx: -1, prevPy: -1,
+  celebrating: false, celebrateTimer: 0,
+  sparkles: [],
+
+  get PR() { return Math.round(Math.min(W, H) * 0.07); },
+
+  start() {
+    const NUM = 4;
+    const PR = this.PR;
+    const tw = PR * 1.9, th = PR * 2.8, gap = PR * 0.55;
+    const totalW = NUM * tw + (NUM - 1) * gap;
+    const sx = (W - totalW) / 2;
+    // Anchor the teeth's TOP just below the character (which ends ~0.48H) with a
+    // fixed margin — tips grow downward with th, so it holds on every screen.
+    const ty = H * 0.55 + th;
+    this.teeth = Array.from({ length: NUM }, (_, i) => ({
+      x: sx + i * (tw + gap), y: ty - th, w: tw, h: th, dirty: 100, sparkled: false,
+    }));
+    this.pointerDown = false;
+    this.px = this.py = this.prevPx = this.prevPy = -1;
+    this.celebrating = false;
+    this.celebrateTimer = 0;
+    this.sparkles = [];
+    this.active = true;
+  },
+
+  // ── Pointer (fed from the canvas' existing event listeners) ──
+  onDown(p) {
+    if (this.celebrating) return;
+    this.pointerDown = true;
+    this.px = this.prevPx = p.x;
+    this.py = this.prevPy = p.y;
+  },
+  onMove(p) {
+    if (!this.pointerDown || this.celebrating) return;
+    this.prevPx = this.px; this.prevPy = this.py;
+    this.px = p.x; this.py = p.y;
+  },
+  onUp() { this.pointerDown = false; },
+
+  // ── Update ──
+  update() {
+    if (!this.active) return;   // guard: never run after finish()
+    const PR = this.PR;
+    this.sparkles = this.sparkles.filter(s => {
+      s.x += s.vx; s.y += s.vy; s.vy += 0.18; s.life--; return s.life > 0;
+    });
+    if (this.celebrating) {
+      this.celebrateTimer++;
+      if (this.celebrateTimer > 100) this.finish();
+      return;
+    }
+    if (!this.pointerDown) return;
+    const dx = this.px - this.prevPx;
+    const dy = this.py - this.prevPy;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    this.prevPx = this.px; this.prevPy = this.py;   // stop cleaning while the finger holds still
+    this.teeth.forEach(t => {
+      const over = this.px > t.x - PR * 0.4 && this.px < t.x + t.w + PR * 0.4 &&
+                   this.py > t.y - PR * 0.5 && this.py < t.y + t.h + PR * 0.5;
+      if (!over) return;
+      t.dirty = Math.max(0, t.dirty - dist * 0.9 - 0.8);
+      if (t.dirty === 0 && !t.sparkled) {
+        t.sparkled = true;
+        for (let i = 0; i < 10; i++) this.sparkles.push({
+          x: t.x + t.w / 2 + (Math.random() - .5) * t.w,
+          y: t.y + t.h * .4,
+          vx: (Math.random() - .5) * 7, vy: -(Math.random() * 4 + 2),
+          life: 55, size: PR * (0.1 + Math.random() * 0.2),
+          color: ['#fffde7', '#fff9c4', '#f0f4c3', '#ffffff'][Math.floor(Math.random() * 4)],
+        });
+      }
+    });
+    if (this.teeth.every(t => t.dirty === 0)) {
+      this.celebrating = true;
+      this.celebrateTimer = 0;
+      brokenTeeth = 0;   // clean teeth → reset last world's damage
+      for (let i = 0; i < 40; i++) this.sparkles.push({
+        x: W / 2 + (Math.random() - .5) * W * .8,
+        y: H * .5 + (Math.random() - .5) * H * .5,
+        vx: (Math.random() - .5) * 9, vy: -(Math.random() * 7 + 2),
+        life: 90, size: PR * (0.2 + Math.random() * .4),
+        color: ['#ffeb3b', '#ff4081', '#00e5ff', '#69f0ae', '#ff6e40', '#ff85b3'][Math.floor(Math.random() * 6)],
+      });
+    }
+  },
+
+  // ── Draw ──
+  step() {
+    this.update();
+    const PR = this.PR;
+
+    // Background
+    const bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#e3f2fd'); bg.addColorStop(1, '#fce4ec');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+    // Heading
+    ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    if (this.celebrating) {
+      ctx.fillStyle = '#43a047';
+      ctx.font = `bold ${Math.round(H * .06)}px Arial`;
+      ctx.fillText('🎉 BRAVOOOO! 🎉', W / 2, H * .07);
+      ctx.font = `${Math.round(H * .035)}px Arial`;
+      ctx.fillStyle = '#388e3c';
+      ctx.fillText('Super brushing! 🦷✨', W / 2, H * .13);
+    } else {
+      ctx.fillStyle = '#e91e63';
+      ctx.font = `bold ${Math.round(H * .055)}px Arial`;
+      ctx.fillText('🦷 BRUSH THE TEETH!', W / 2, H * .07);
+      ctx.fillStyle = '#5d4037';
+      ctx.font = `${Math.round(H * .03)}px Arial`;
+      ctx.fillText('Rub back and forth with your finger!', W / 2, H * .13);
+    }
+
+    // Candy Bug image (real character)
+    const imgH = H * 0.32;
+    if (brushBugImg.complete && brushBugImg.naturalWidth > 0) {
+      const aspect = brushBugImg.naturalWidth / brushBugImg.naturalHeight;
+      const imgW = imgH * aspect;
+      ctx.drawImage(brushBugImg, W / 2 - imgW / 2, H * 0.16, imgW, imgH);
+    }
+
+    // Arrow pointing down to the brush-teeth
+    if (!this.celebrating) {
+      ctx.fillStyle = '#e91e63';
+      ctx.font = `${Math.round(H * .045)}px Arial`;
+      ctx.fillText('👇', W / 2, H * .48);
+    }
+
+    // Brush-teeth (triangular like Candy Bug's own fangs)
+    const toothShapes = [0.5, 0.42, 0.58, 0.45, 0.55, 0.5];
+    this.teeth.forEach((t, idx) => {
+      const tipX = t.x + t.w * toothShapes[idx];
+      const toothPath = () => {
+        ctx.beginPath();
+        ctx.moveTo(t.x, t.y);
+        ctx.lineTo(t.x + t.w, t.y);
+        ctx.lineTo(tipX, t.y + t.h);
+        ctx.closePath();
+      };
+      ctx.fillStyle = '#ffffff';
+      toothPath(); ctx.fill();
+      ctx.strokeStyle = '#bdbdbd'; ctx.lineWidth = 1.5;
+      toothPath(); ctx.stroke();
+      if (t.dirty > 0) {
+        ctx.save();
+        toothPath(); ctx.clip();
+        ctx.fillStyle = `rgba(160,100,20,${(t.dirty / 100) * 0.78})`;
+        ctx.fillRect(t.x - 2, t.y - 2, t.w + 4, t.h + 4);
+        ctx.restore();
+      }
+      if (t.dirty === 0) {
+        ctx.fillStyle = 'rgba(255,253,200,0.9)';
+        ctx.beginPath();
+        ctx.arc(tipX - t.w * 0.12, t.y + t.h * 0.18, t.w * 0.14, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+
+    // Sparkles
+    this.sparkles.forEach(s => {
+      ctx.globalAlpha = Math.max(0, s.life / 65);
+      ctx.fillStyle = s.color;
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.size || PR * .15, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+
+    // Toothbrush cursor while the finger is down
+    if (this.pointerDown && this.px >= 0) {
+      const bw = PR * .7, bh = PR * 2.8;
+      ctx.fillStyle = '#80d8ff';
+      ctx.beginPath(); ctx.roundRect(this.px - bw / 2, this.py - bh, bw, bh, bw / 2); ctx.fill();
+      ctx.fillStyle = 'white';
+      for (let i = 0; i < 4; i++) {
+        ctx.beginPath();
+        ctx.arc(this.px - bw * .3 + i * (bw * .2), this.py - bh + PR * .35, PR * .12, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Progress bar
+    const cleanN = this.teeth.filter(t => t.dirty === 0).length;
+    const prog = cleanN / this.teeth.length;
+    const bW = W * .72, bH = H * .03, bX = (W - bW) / 2, bY = H * .86;
+    ctx.fillStyle = '#e0e0e0'; ctx.beginPath(); ctx.roundRect(bX, bY, bW, bH, bH / 2); ctx.fill();
+    if (prog > 0) {
+      ctx.fillStyle = '#43a047'; ctx.beginPath(); ctx.roundRect(bX, bY, bW * prog, bH, bH / 2); ctx.fill();
+    }
+    ctx.fillStyle = '#5d4037'; ctx.font = `bold ${Math.round(H * .026)}px Arial`;
+    ctx.fillText(`🦷 ${cleanN}/${this.teeth.length} brushed`, W / 2, bY - H * .01);
+  },
+
+  finish() {
+    this.active = false;
+    this.celebrating = false;
+    brokenTeeth = 0;
+    level++;
+    // updateMusicTempo();
+    candyEaten = 0;
+    candies = [];
+    for (let i = 0; i < 5; i++) candies.push(new Candy(true));
+    showLevelTransition(level);
+  },
+};
+
+// ==========================================
 //  DRAG & DROP
 // ==========================================
 let draggingCandy = null, dragOffX = 0, dragOffY = 0;
@@ -973,6 +1190,7 @@ function getPos(e) {
 function onDown(e) {
   e.preventDefault();
   const p = getPos(e);
+  if (brushing.active) { brushing.onDown(p); return; }
   requestAnimationFrame(() => {
     if (isShowingVideo || crash.isActive || levelTransition > 0) return;
     for (let i = candies.length - 1; i >= 0; i--) {
@@ -987,12 +1205,14 @@ function onDown(e) {
 }
 function onMove(e) {
   e.preventDefault();
+  if (brushing.active) { brushing.onMove(getPos(e)); return; }
   if (!draggingCandy) return;
   const p = getPos(e);
   draggingCandy.x = p.x + dragOffX;
   draggingCandy.y = p.y + dragOffY;
 }
 function onUp() {
+  if (brushing.active) { brushing.onUp(); return; }
   if (!draggingCandy) return;
   const m = bug.getMouthPos();
   if (Math.hypot(draggingCandy.x - m.x, draggingCandy.y - m.y) < bug.getMouthRadius() + 20) {
@@ -1110,6 +1330,9 @@ function draggingNear(kind) {
 //  GAME LOOP
 // ==========================================
 function loop() {
+  // The brushing break between worlds takes over the whole screen
+  if (brushing.active) { brushing.step(); requestAnimationFrame(loop); return; }
+
   ctx.clearRect(0, 0, W, H);
   drawBackground();
 
