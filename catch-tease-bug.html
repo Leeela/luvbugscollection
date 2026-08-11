@@ -457,9 +457,20 @@ function show(id) {
 
 const SFX = {
   nanana: new Audio('/ljud/nanana.mp3'),
+  catchme: new Audio('/ljud/catch-me-if-you-can.mp3'),
   aj:     new Audio('/ljud/aj.mp3'),
   skratt: new Audio('/ljud/skratt.mp3'),
 };
+
+// Taunt sounds alternated when the Tease Bug appears: "na-na-na" → "Catch me if you can!" → …
+const TAUNTS = ['nanana', 'catchme'];
+let tauntIdx = 0;
+function playTaunt() {
+  const key = TAUNTS[tauntIdx % TAUNTS.length];
+  tauntIdx++;
+  speak(key);
+}
+function stopTaunts() { TAUNTS.forEach(stopSfx); }
 function speak(key) {
   const sfx = SFX[key];
   if (!sfx) return;
@@ -613,7 +624,7 @@ function scheduleBug() {
 
 function showBug() {
   if (!active) return;
-  stopSfx('nanana');   // cut any leftover nanana so it isn't heard on the next figure
+  stopTaunts();   // cut any leftover taunt so it isn't heard on the next figure
   const bug = $('bug');
 
   isRealBug = Math.random() < REAL_CHANCE;
@@ -650,7 +661,7 @@ function showBug() {
     positionGlow();
   }
 
-  if (isRealBug) speak('nanana');
+  if (isRealBug) playTaunt();
   bugTimer = setTimeout(missedBug, level.showTime);
 }
 
@@ -689,7 +700,7 @@ function startBugMotion() {
     const cx = aw / 2 - bw / 2, cy = ah / 2 - bh / 2;
     const rx = Math.min(aw, ah) * 0.30, ry = Math.min(aw, ah) * 0.26;
     let ang = Math.random() * Math.PI * 2;
-    const w = 0.0042 * (Math.random() < 0.5 ? 1 : -1);   // rad/ms (~1.5s per lap)
+    const w = 0.00378 * (Math.random() < 0.5 ? 1 : -1);   // rad/ms (~1.5s per lap) – 10% slower
     const step = t => {
       if (!active) return;
       if (last === null) last = t;
@@ -701,7 +712,7 @@ function startBugMotion() {
     motionRAF = requestAnimationFrame(step);
   } else {
     let x = Math.random() * (aw - bw), y = Math.random() * (ah - bh);
-    const speed = Math.max(aw, ah) * 0.00062;             // px/ms
+    const speed = Math.max(aw, ah) * 0.000558;            // px/ms – 10% slower
     const ang = Math.random() * Math.PI * 2;
     let vx = Math.cos(ang) * speed, vy = Math.sin(ang) * speed;
     bug.style.left = x + 'px'; bug.style.top = y + 'px';
@@ -749,7 +760,7 @@ function catchBug() {
   clearTimeout(bugTimer);
   if (isRealBug) {
     score++;
-    stopSfx('nanana');
+    stopTaunts();
     speak('aj');
     showHitText('Got ya! 😤', '#E55A40');
     updateHud();
@@ -763,7 +774,7 @@ function catchBug() {
 function missedBug() {
   if (!active) return;
   if (isRealBug) {
-    stopSfx('nanana');
+    stopTaunts();
     speak('skratt');
     hideBug(() => {
       if (lives !== Infinity) {
