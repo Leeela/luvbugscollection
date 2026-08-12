@@ -192,6 +192,75 @@ body{
   background:linear-gradient(135deg,var(--rik-deep),var(--rik)); color:#fff; cursor:pointer;
   box-shadow:0 6px 20px rgba(83,74,183,0.4); transition:transform .1s; }
 .play-btn:active{ transform:scale(0.95); }
+
+/* ── WORK / ALLOWANCE ── */
+#screen-work{ justify-content:flex-start; gap:clamp(5px,1.4vmin,10px); text-align:center;
+  background:linear-gradient(160deg,#f7f6ff 0%,#eeedfe 70%,#cecbf6 100%);
+  padding:calc(var(--safe-top) + 10px) clamp(14px,4vmin,28px) clamp(10px,3vmin,20px); overflow-y:auto; }
+.work-head{ text-align:center; }
+.week-badge{ display:inline-block; background:linear-gradient(135deg,var(--rik-deep),var(--rik)); color:#fff;
+  font-weight:800; border-radius:16px; padding:5px 16px; font-size:clamp(0.85rem,2.6vmin,1.05rem); margin-bottom:4px; }
+#screen-work h2{ font-size:clamp(19px,4.8vmin,30px); color:var(--rik-dark); }
+#screen-work p{ font-size:clamp(13px,3vmin,17px); color:var(--rik-deep); margin-top:2px; }
+.pig-mini{ width:clamp(80px,19vmin,116px); margin:2px auto; }
+.pig-mini svg{ width:100%; height:auto; overflow:visible; }
+.chore-grid{ display:flex; flex-wrap:wrap; gap:clamp(8px,2.2vmin,14px); justify-content:center; max-width:520px; margin:4px auto; }
+.chore-card{ font-family:'Fredoka',sans-serif; background:#fff; border:3px solid var(--rik-mid); border-radius:20px; cursor:pointer;
+  padding:clamp(9px,2.2vmin,14px) clamp(8px,2vmin,12px); text-align:center; width:clamp(90px,24vmin,124px);
+  display:flex; flex-direction:column; align-items:center; gap:3px; transition:transform .12s,border-color .12s,opacity .3s; }
+.chore-card:active{ transform:scale(0.94); }
+.chore-card:hover{ border-color:var(--rik); }
+.chore-card .c-emoji{ font-size:clamp(1.9rem,6.6vmin,2.9rem); }
+.chore-card .c-name{ font-size:clamp(0.76rem,2.3vmin,0.94rem); font-weight:700; color:var(--rik-dark); line-height:1.15; }
+.chore-card .c-pay{ background:linear-gradient(135deg,var(--save-deep),#22c55e); color:#fff; font-weight:800;
+  border-radius:12px; padding:2px 10px; font-size:clamp(0.72rem,2.2vmin,0.88rem); }
+.chore-card.done{ opacity:.55; border-color:#22c55e; cursor:default; }
+.chore-card.done .c-pay{ background:#16a34a; }
+#workHint{ font-size:clamp(0.8rem,2.4vmin,1rem); color:var(--rik-deep); font-weight:600; min-height:1.2em; }
+
+/* Week chip + need/surprise badge on the game screen */
+.week-chip{ margin-top:6px; display:inline-block; background:var(--rik-deep); color:#fff; font-weight:700;
+  border-radius:14px; padding:3px 12px; font-size:clamp(0.72rem,2.2vmin,0.9rem); }
+.tempt.is-need{ border-color:#22c55e; background:#f4fff7; }
+.need-badge{ position:absolute; top:-14px; left:-8px; background:#16a34a; color:#fff; font-weight:800;
+  font-size:clamp(0.72rem,2.3vmin,0.9rem); padding:4px 12px; border-radius:14px; transform:rotate(-8deg);
+  box-shadow:0 3px 8px rgba(22,163,74,0.35); }
+.surprise-badge{ position:absolute; top:-14px; left:-8px; background:#E0592C; color:#fff; font-weight:800;
+  font-size:clamp(0.72rem,2.3vmin,0.9rem); padding:4px 12px; border-radius:14px; transform:rotate(-8deg);
+  box-shadow:0 3px 8px rgba(184,70,31,0.35); animation:pulseB 1s ease-in-out infinite; }
+
+/* Pantry meter (food) */
+.pantry-row{ width:100%; max-width:560px; display:flex; align-items:center; gap:8px;
+  padding:clamp(2px,0.8vmin,6px) clamp(14px,3.5vmin,24px) 0; flex-shrink:0; }
+.pantry-lbl{ font-size:clamp(0.72rem,2.1vmin,0.9rem); font-weight:700; color:var(--rik-deep); white-space:nowrap; }
+.pantry-bar{ flex:1; height:clamp(11px,2.6vmin,14px); background:var(--rik-mid); border-radius:8px; overflow:hidden; }
+.pantry-fill{ height:100%; border-radius:8px; width:100%; transition:width .6s ease, background .4s; }
+.pantry-fill.ok{  background:linear-gradient(90deg,#22c55e,#16a34a); }
+.pantry-fill.mid{ background:linear-gradient(90deg,#facc15,#eab308); }
+.pantry-fill.low{ background:linear-gradient(90deg,#f97316,#dc2626); animation:pantryPulse 1s ease-in-out infinite; }
+@keyframes pantryPulse{ 0%,100%{opacity:1} 50%{opacity:.6} }
+
+/* ── CHORE MINI-GAME (drag & drop) ── */
+#screen-choretask{ justify-content:flex-start; text-align:center; gap:clamp(4px,1.2vmin,10px);
+  background:linear-gradient(160deg,#f7f6ff 0%,#eeedfe 70%,#cecbf6 100%);
+  padding:calc(var(--safe-top) + 12px) clamp(12px,3.5vmin,24px) clamp(10px,3vmin,20px); }
+.ct-head{ text-align:center; }
+.ct-title{ font-size:clamp(20px,5vmin,30px); color:var(--rik-dark); font-weight:800; }
+.ct-verb{ font-size:clamp(13px,3.2vmin,18px); color:var(--rik-deep); font-weight:600; margin-top:2px; }
+.ct-arena{ position:relative; width:100%; max-width:520px; flex:1; margin:6px auto; touch-action:none; overflow:hidden; }
+.ct-target{ position:absolute; left:50%; top:28%; transform:translate(-50%,-50%);
+  width:clamp(96px,28vmin,150px); height:clamp(96px,28vmin,150px); border-radius:50%;
+  border:5px dashed var(--rik-mid); background:#fff; display:flex; align-items:center; justify-content:center;
+  font-size:clamp(3rem,13vmin,5rem); box-shadow:0 6px 18px rgba(83,74,183,.12); transition:border-color .15s, transform .15s; }
+.ct-target.hot{ border-color:#22c55e; transform:translate(-50%,-50%) scale(1.08); }
+.ct-item{ position:absolute; transform:translate(-50%,-50%); font-size:clamp(2.6rem,11vmin,4rem);
+  cursor:grab; touch-action:none; user-select:none; -webkit-user-select:none; line-height:1;
+  filter:drop-shadow(0 3px 6px rgba(0,0,0,.2)); }
+.ct-item.drag{ cursor:grabbing; z-index:20; filter:drop-shadow(0 8px 14px rgba(0,0,0,.3)); }
+.ct-cancel{ align-self:center; font-family:'Fredoka',sans-serif; font-weight:700; border:2px solid var(--rik-mid);
+  background:#fff; color:var(--rik-deep); border-radius:20px; padding:8px 20px; font-size:clamp(0.9rem,2.6vmin,1.05rem);
+  cursor:pointer; }
+.ct-cancel:active{ transform:scale(0.95); }
 </style>
 </head>
 <body>
@@ -216,6 +285,30 @@ body{
   <div class="goal-grid" id="goalGrid"></div>
 </div>
 
+<!-- WORK / ALLOWANCE -->
+<div class="screen" id="screen-work">
+  <div class="work-head">
+    <div class="week-badge" id="workWeek">Week 1</div>
+    <h2>Time to work! 💪</h2>
+    <p>Help out at home — every chore earns you allowance.</p>
+  </div>
+  <div class="pig-mini" id="workPig"></div>
+  <div class="money-num"><span id="workMoney">0</span> coins</div>
+  <div class="chore-grid" id="choreGrid"></div>
+  <p id="workHint">Tap the chores to work!</p>
+  <button class="play-btn" id="workDone" onclick="finishWork()">✅ Done – go shopping!</button>
+</div>
+
+<!-- CHORE MINI-GAME (drag & drop) -->
+<div class="screen" id="screen-choretask">
+  <div class="ct-head">
+    <div class="ct-title" id="ctTitle">Chore</div>
+    <div class="ct-verb" id="ctVerb"></div>
+  </div>
+  <div class="ct-arena" id="ctArena"></div>
+  <button class="ct-cancel" onclick="closeChoreTask()">← Back</button>
+</div>
+
 <!-- GAME -->
 <div class="screen" id="screen-game">
   <button class="back-btn" onclick="show('screen-menu')" aria-label="Back">←</button>
@@ -225,6 +318,7 @@ body{
       <div class="money-num"><span id="moneyNum">0</span> coins</div>
       <div class="money-lbl">in your piggy bank</div>
       <div class="goal-chip"><span id="goalEmoji">🎮</span> goal: <span class="gc-price" id="goalPrice">0</span> coins</div>
+      <div class="week-chip" id="weekChip" style="display:none">Week 1</div>
     </div>
   </div>
 
@@ -236,6 +330,11 @@ body{
     </div>
   </div>
 
+  <div class="pantry-row" id="pantryRow" style="display:none">
+    <span class="pantry-lbl">🛍️ Pantry</span>
+    <div class="pantry-bar"><div class="pantry-fill ok" id="pantryFill"></div></div>
+  </div>
+
   <div class="char-row">
     <img src="/bilder/rikedomsbacillen.png" class="char-img run" id="charImg" alt="Rich Bug">
     <div class="bubble" id="bubble">Let's save! 💜</div>
@@ -244,8 +343,8 @@ body{
   <div class="stage" id="stage"></div>
 
   <div class="btn-row" id="btnRow">
-    <button class="action-btn btn-save" id="btnSave" onclick="resolve(false)">💰 SAVE</button>
-    <button class="action-btn btn-buy"  id="btnBuy"  onclick="resolve(true)">🛒 BUY</button>
+    <button class="action-btn btn-save" id="btnSave" onclick="onSave()">💰 SAVE</button>
+    <button class="action-btn btn-buy"  id="btnBuy"  onclick="onBuy()">🛒 BUY</button>
   </div>
 
   <div class="feedback neutral" id="feedback">Save or buy?</div>
@@ -263,12 +362,51 @@ body{
 
 <script>
 /* ── DATA ── */
-const DREAMS = [
+// Dream items per mode (cheaper on Medium, pricier on Hard — matches how much you can save)
+const DREAMS_SIMPLE = [
   { emoji:'🧸', name:'Big teddy bear', price:30,  a:'a ' },
   { emoji:'🛼', name:'Roller skates',  price:45,  a:''   },
   { emoji:'🎮', name:'Video game',     price:60,  a:'a ' },
   { emoji:'🚲', name:'Bike',           price:75,  a:'a ' },
   { emoji:'💻', name:'Computer',       price:100, a:'a ' },
+];
+const DREAMS_MEDEL = [
+  { emoji:'🧸', name:'Teddy bear',    price:25, a:'a ' },
+  { emoji:'🎨', name:'Paint set',     price:35, a:'a ' },
+  { emoji:'🛼', name:'Roller skates', price:45, a:''   },
+];
+const DREAMS_SVAR = [
+  { emoji:'🎮', name:'Video game', price:30, a:'a ' },
+  { emoji:'🚲', name:'Bike',       price:45, a:'a ' },
+  { emoji:'💻', name:'Computer',   price:58, a:'a ' },
+];
+
+// Chores you do at home to earn allowance — each chore is a little drag-and-drop mini-game
+const CHORES = [
+  { emoji:'🧹', name:'Sweep the floor',  items:['🍂','🕸️','🍚'], target:'🗑️', verb:'Sweep the mess into the bin!' },
+  { emoji:'🍽️', name:'Do the dishes',    items:['🍽️','🍴','🥛'], target:'🚰', verb:'Put the dishes in the sink!' },
+  { emoji:'🪴', name:'Water the plants',  items:['💧','💧','💧'], target:'🌱', grow:['🌱','🌿','🌷','🌸'], verb:'Water the plant so it grows!' },
+  { emoji:'🧸', name:'Tidy the toys',     items:['🧸','🚗','⚽'], target:'📦', verb:'Put the toys in the box!' },
+  { emoji:'🗑️', name:'Take out trash',   items:['🍌','🥫','🗞️'], target:'🗑️', verb:'Throw it in the trash can!' },
+  { emoji:'🧺', name:'Fold laundry',      items:['👕','🧦','🩳'], target:'🧺', verb:'Put the laundry in the basket!' },
+];
+
+// Needs: things you MUST buy (food & clothes)
+const NEEDS_FOOD = [
+  { emoji:'🍎', name:'Food for the week' },
+  { emoji:'🥦', name:'Vegetables' },
+  { emoji:'🍞', name:'Bread & milk' },
+];
+const NEEDS_CLOTHES = [
+  { emoji:'🧥', name:'New jacket' },
+  { emoji:'👟', name:'Shoes' },
+  { emoji:'🧦', name:'Warm socks' },
+];
+// Unexpected costs (Hard only)
+const SURPRISES = [
+  { emoji:'🩹', name:'Band-aid – you fell!' },
+  { emoji:'🌂', name:'Umbrella – it\'s raining!' },
+  { emoji:'🔧', name:'Fix the bike' },
 ];
 
 const TEMPTATIONS = [
@@ -280,7 +418,7 @@ const TEMPTATIONS = [
   { emoji:'🍫', name:'Chocolate',  price:6  },
   { emoji:'🪀', name:'Yo-yo',      price:9  },
   { emoji:'🚗', name:'Toy car',    price:12 },
-  { emoji:'🎨', name:'Crayons',    price:10 },
+  { emoji:'🖍️', name:'Crayons',    price:10 },
   { emoji:'🦖', name:'Dinosaur',   price:14 },
   { emoji:'⚽', name:'Ball',       price:11 },
   { emoji:'🪁', name:'Kite',       price:13 },
@@ -289,9 +427,13 @@ const TEMPTATIONS = [
 ];
 
 const LEVELS = {
-  latt:  { count:6,  buffer:16, sale:false, reoffer:false },
-  medel: { count:9,  buffer:9,  sale:false, reoffer:false },
-  svar:  { count:12, buffer:4,  sale:true,  reoffer:true  },
+  // Easy = unchanged simple mode (skip temptations, reach the goal)
+  latt:  { mode:'simple', count:6, buffer:16, sale:false, reoffer:false },
+  // Medium/Hard = weekly loop: work → pay needs → resist temptations
+  medel: { mode:'weeks', weeks:3, chorePay:5, foodPrice:5, clothesPrice:10, wants:2, foodConsume:75,
+           clothesWeeks:[1], sale:false, reoffer:false, surprise:false },
+  svar:  { mode:'weeks', weeks:4, chorePay:6, foodPrice:6, clothesPrice:10, surprisePrice:12, wants:3, foodConsume:80,
+           clothesWeeks:[1,3], surpriseWeek:2, sale:true, reoffer:true, surprise:true },
 };
 
 const B_SAVE = ['Nice saving! 💪','Smart! The coins stay put. 👏','Yes! Saving up for your dream! 🎯','Great choice — keep saving! ✨'];
@@ -301,7 +443,19 @@ const B_SALE = ["Oh, it's cheap! But do you need it? 🤔","Cheap — but it's s
 
 /* ── STATE ── */
 const MAX_DROPS=2;
-let level, cfg, dream, startMoney, money, idx, order, streak, drops=0, curPrice=0, busy=false, autoTimer=null;
+let level, cfg, dream, dreamPool, startMoney, money, idx, order, streak, drops=0, curPrice=0, busy=false, autoTimer=null;
+// Weekly mode (Medium/Hard)
+let week, queue, qIdx, curEvent, choresDone;
+// Pantry (food meter)
+const FOOD_MAX=100;
+let foodLevel=FOOD_MAX;
+function renderPantry(){
+  const fill=document.getElementById('pantryFill'); if(!fill) return;
+  const pct=Math.max(0,Math.min(100,foodLevel));
+  fill.style.width=pct+'%';
+  fill.className='pantry-fill '+(pct<30?'low':pct<60?'mid':'ok');
+  document.getElementById('pantryRow').setAttribute('aria-label','Pantry '+Math.round(pct)+'%');
+}
 
 function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -331,13 +485,39 @@ const sndKaching = ()=>tone([1046,1318,1568],0.45,0.25);
 const sndWin   = ()=>tone([784,988,1319,1568],0.5,0.28);
 const sndStar  = ()=>tone([1319,1760,2093],0.3,0.2);
 
+// A single voice channel: a new line always stops the previous one (never two at once)
+let curVoice=null;
 function playVoice(name){
-  try{ new Audio('/ljud/rost/rikedomsbacillen/EN/'+name+'.mp3').play().catch(()=>{}); }catch(e){}
+  try{
+    if(curVoice){ curVoice.pause(); curVoice=null; }
+    const a=new Audio('/ljud/rost/rikedomsbacillen/EN/'+name+'.mp3');
+    curVoice=a;
+    a.play().catch(()=>{});
+    return a;
+  }catch(e){ return null; }
+}
+// Silence any lingering voice (so an old line doesn't play over the next item)
+function stopVoice(){ if(curVoice){ try{ curVoice.pause(); }catch(e){} curVoice=null; } }
+// Run cb when voice v has finished (or after maxWait if audio is blocked)
+function afterVoice(v, cb, maxWait){
+  let done=false;
+  const go=()=>{ if(done)return; done=true; cb(); };
+  if(v && v.addEventListener){
+    v.addEventListener('ended', ()=>setTimeout(go, 200));
+    setTimeout(go, maxWait||4000);
+  } else {
+    setTimeout(go, 1000);
+  }
 }
 
 /* ── FLOW ── */
+function dreamsForLevel(){ return level==='latt'?DREAMS_SIMPLE : level==='medel'?DREAMS_MEDEL : DREAMS_SVAR; }
+
 function chooseLevel(lv){
-  level=lv; cfg=LEVELS[lv];
+  level=lv; cfg=LEVELS[lv]; dreamPool=dreamsForLevel();
+  document.getElementById('goal-sub').textContent = cfg.mode==='weeks'
+    ? 'Work, earn allowance and save smart — what do you dream of?'
+    : 'You got your allowance. Pick a dream!';
   buildGoals();
   show('screen-goal');
   playVoice('rik-valj');
@@ -346,7 +526,7 @@ function chooseLevel(lv){
 function buildGoals(){
   const grid=document.getElementById('goalGrid');
   grid.innerHTML='';
-  DREAMS.forEach((d,i)=>{
+  dreamPool.forEach((d,i)=>{
     const c=document.createElement('div');
     c.className='goal-card';
     c.onclick=()=>chooseDream(i);
@@ -356,11 +536,17 @@ function buildGoals(){
 }
 
 function chooseDream(i){
-  dream=DREAMS[i];
+  dream=dreamPool[i];
+  if(cfg.mode==='weeks') return startWeeks();
+  return startSimple();
+}
+
+/* ── EASY: simple mode (unchanged) ── */
+function startSimple(){
   startMoney=dream.price+cfg.buffer;
   money=startMoney;
   idx=0; streak=0; busy=false;
-  order=shuffle(TEMPTATIONS).slice(0,cfg.count);
+  order=shuffle(TEMPTATIONS).slice(0,cfg.count).map(t=>({...t}));
   if(cfg.sale && order.length){
     order[Math.floor(Math.random()*order.length)].sale=true;
   }
@@ -368,6 +554,8 @@ function chooseDream(i){
   document.getElementById('goalPrice').textContent=dream.price;
   document.getElementById('trackGoal').textContent=dream.emoji;
   document.getElementById('moneyNum').textContent=money;
+  document.getElementById('weekChip').style.display='none';
+  document.getElementById('pantryRow').style.display='none';
   document.getElementById('charImg').classList.add('run');
   renderPig();
   updateTrack();
@@ -375,6 +563,431 @@ function chooseDream(i){
   show('screen-game');
   playVoice('rik-start');
   setTimeout(spawn, 700);
+}
+
+/* ── MEDIUM/HARD: work → needs → temptations, week by week ── */
+function startWeeks(){
+  startMoney=Math.round(dream.price*1.25);  // piggy bank display max
+  money=0; streak=0; busy=false;
+  document.getElementById('goalEmoji').textContent=dream.emoji;
+  document.getElementById('goalPrice').textContent=dream.price;
+  document.getElementById('trackGoal').textContent=dream.emoji;
+  document.getElementById('moneyNum').textContent=0;
+  document.getElementById('weekChip').style.display='inline-block';
+  document.getElementById('pantryRow').style.display='flex';
+  foodLevel=FOOD_MAX; renderPantry();
+  startWeek(1);
+}
+
+function startWeek(w){
+  week=w; choresDone=0; busy=false;
+  document.getElementById('workWeek').textContent='Week '+week+' of '+cfg.weeks;
+  document.getElementById('workMoney').textContent=money;
+  document.getElementById('workPig').innerHTML=pigSVG();
+  const grid=document.getElementById('choreGrid'); grid.innerHTML='';
+  shuffle(CHORES).slice(0,5).forEach(c=>{
+    const el=document.createElement('button');
+    el.className='chore-card';
+    el.innerHTML=`<span class="c-emoji">${c.emoji}</span><span class="c-name">${c.name}</span><span class="c-pay">+${cfg.chorePay} 🪙</span>`;
+    el._chore=c;
+    el.onclick=()=>onChoreCard(el);
+    grid.appendChild(el);
+  });
+  document.getElementById('workHint').textContent='Tap the chores to work!';
+  show('screen-work');
+  playVoice('rik-jobba');
+}
+
+// Tap a chore card → open the drag-and-drop mini-game (you must actually DO the chore to earn coins)
+function onChoreCard(el){
+  if(el.classList.contains('done')) return;
+  openChoreTask(el._chore, el);
+}
+
+// Reward: runs ONLY when the mini-game is complete → coins fly into the piggy bank
+function finishChore(el){
+  if(el.classList.contains('done')) return;
+  el.classList.add('done'); el.disabled=true;
+  el.querySelector('.c-pay').textContent='✔ Done';
+  choresDone++;
+  money+=cfg.chorePay;
+  document.getElementById('workMoney').textContent=money;
+  document.getElementById('workPig').innerHTML=pigSVG();
+  flyCoinToWorkPig(el);
+  sndKaching();   // coin sound (no voice: you're working, not saving)
+  document.getElementById('workHint').textContent='Nice work! Do more or tap Done. 💪';
+}
+
+/* ── CHORE MINI-GAME: drag 3 things to the target ── */
+let ctChore=null, ctCardEl=null, ctRemaining=0, ctDelivered=0;
+
+function openChoreTask(chore, cardEl){
+  ctChore=chore; ctCardEl=cardEl; ctDelivered=0; ctRemaining=chore.items.length;
+  document.getElementById('ctTitle').textContent=chore.emoji+' '+chore.name;
+  document.getElementById('ctVerb').textContent=chore.verb;
+  const arena=document.getElementById('ctArena'); arena.innerHTML='';
+  const tgt=document.createElement('div'); tgt.className='ct-target'; tgt.id='ctTarget';
+  tgt.textContent = chore.grow ? chore.grow[0] : chore.target;
+  arena.appendChild(tgt);
+  show('screen-choretask');            // show first so the arena has a size
+  chore.items.forEach((em,i)=>{
+    const it=document.createElement('div'); it.className='ct-item'; it.textContent=em;
+    arena.appendChild(it);
+    positionItemHome(it, i, chore.items.length);
+    attachDrag(it);
+  });
+}
+
+function positionItemHome(it, i, n){
+  const arena=document.getElementById('ctArena');
+  const w=arena.clientWidth||320, h=arena.clientHeight||360;
+  const x=(w/(n+1))*(i+1), y=h*0.80;
+  it.style.left=x+'px'; it.style.top=y+'px';
+  it.dataset.hx=x; it.dataset.hy=y;
+}
+
+function attachDrag(it){
+  let dragging=false, ox=0, oy=0;
+  const arena=document.getElementById('ctArena');
+  it.addEventListener('pointerdown', e=>{
+    if(it.classList.contains('delivered')) return;
+    dragging=true; try{ it.setPointerCapture(e.pointerId); }catch(_){}
+    it.classList.add('drag');
+    const r=arena.getBoundingClientRect();
+    ox=e.clientX-(r.left+parseFloat(it.style.left));
+    oy=e.clientY-(r.top+parseFloat(it.style.top));
+    e.preventDefault();
+  });
+  it.addEventListener('pointermove', e=>{
+    if(!dragging) return;
+    const r=arena.getBoundingClientRect();
+    it.style.left=(e.clientX-r.left-ox)+'px';
+    it.style.top=(e.clientY-r.top-oy)+'px';
+    const t=document.getElementById('ctTarget');
+    if(t) t.classList.toggle('hot', overTarget(it));
+  });
+  const end=e=>{
+    if(!dragging) return; dragging=false;
+    it.classList.remove('drag');
+    try{ it.releasePointerCapture(e.pointerId); }catch(_){}
+    const t=document.getElementById('ctTarget'); if(t) t.classList.remove('hot');
+    if(overTarget(it)) deliver(it); else returnHome(it);
+  };
+  it.addEventListener('pointerup', end);
+  it.addEventListener('pointercancel', end);
+}
+
+function overTarget(it){
+  const tEl=document.getElementById('ctTarget'); if(!tEl) return false;
+  const t=tEl.getBoundingClientRect(), r=it.getBoundingClientRect();
+  const cx=r.left+r.width/2, cy=r.top+r.height/2, pad=20;
+  return cx>t.left-pad && cx<t.right+pad && cy>t.top-pad && cy<t.bottom+pad;
+}
+
+function returnHome(it){
+  it.style.transition='left .25s, top .25s';
+  it.style.left=it.dataset.hx+'px'; it.style.top=it.dataset.hy+'px';
+  setTimeout(()=>{ it.style.transition=''; }, 260);
+}
+
+function deliver(it){
+  it.classList.add('delivered'); it.style.pointerEvents='none';
+  it.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:'translate(-50%,-50%) scale(.2)',opacity:0}],{duration:300,easing:'ease-in'});
+  setTimeout(()=>it.remove(),300);
+  ctDelivered++; ctRemaining--;
+  sndKaching(); targetPop();
+  const t=document.getElementById('ctTarget');
+  if(ctChore.grow && t) t.textContent=ctChore.grow[Math.min(ctDelivered, ctChore.grow.length-1)];
+  if(ctRemaining<=0) setTimeout(completeChoreTask, 380);
+}
+
+function targetPop(){
+  const t=document.getElementById('ctTarget'); if(!t) return;
+  t.animate([{transform:'translate(-50%,-50%) scale(1)'},{transform:'translate(-50%,-50%) scale(1.15)'},{transform:'translate(-50%,-50%) scale(1)'}],{duration:280,easing:'ease-out'});
+}
+
+function choreCoinBurst(){
+  const arena=document.getElementById('ctArena'); if(!arena) return;
+  const r=arena.getBoundingClientRect();
+  for(let i=0;i<8;i++){
+    const el=document.createElement('div'); el.className='fly-coin'; el.textContent=i%2?'🪙':'⭐';
+    el.style.left=(r.left+r.width*0.5)+'px'; el.style.top=(r.top+r.height*0.28)+'px';
+    document.body.appendChild(el);
+    const dx=(Math.random()*160-80), dy=(Math.random()*-120-30);
+    el.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${dx}px,${dy}px) scale(.4)`,opacity:0}],{duration:800,easing:'ease-out'});
+    setTimeout(()=>el.remove(),800);
+  }
+}
+
+function completeChoreTask(){
+  choreCoinBurst(); sndStar();
+  const card=ctCardEl;
+  setTimeout(()=>{ show('screen-work'); finishChore(card); }, 650);
+}
+
+// Close without finishing → no reward (you said you'd work but didn't do it)
+function closeChoreTask(){ show('screen-work'); }
+
+function finishWork(){
+  if(choresDone===0){
+    document.getElementById('workHint').textContent='Do at least one chore first — that earns allowance! 💪';
+    return;
+  }
+  buildWeekEvents();
+  busy=true; setBtns(false);   // lock buttons until first temptation shows
+  document.getElementById('moneyNum').textContent=money;
+  document.getElementById('weekChip').textContent='Week '+week+'/'+cfg.weeks;
+  document.getElementById('charImg').classList.remove('cheer');
+  document.getElementById('charImg').classList.add('run');
+  renderPig(); updateTrack();
+  document.getElementById('feedback').className='feedback neutral';
+  document.getElementById('feedback').textContent='Shop smart!';
+  document.getElementById('bubble').textContent='Great work! Pay for your needs and save the rest. 💜';
+  renderPantry();                        // show the pantry (full since last week)
+  show('screen-game');
+  const v=playVoice('rik-bra-jobbat');
+  // Wait until "Great work" has played → then food drops and the first need appears (no voice clash)
+  afterVoice(v, ()=>{ consumeWeekFood(); setTimeout(nextEvent, 700); }, 4000);
+}
+
+// Food gets eaten during the week → the pantry drops
+function consumeWeekFood(){
+  foodLevel=Math.max(0, foodLevel - cfg.foodConsume);
+  renderPantry();
+  document.getElementById('bubble').textContent = foodLevel<30
+    ? 'Look — the pantry is almost empty! We need to buy food. 🛍️'
+    : 'A week has passed and some food ran out.';
+}
+
+function buildWeekEvents(){
+  const ev=[];
+  // Needs: food every week (refills the pantry)
+  ev.push({kind:'need', food:true, ...pick(NEEDS_FOOD), price:cfg.foodPrice});
+  // Needs: clothes some weeks
+  if(cfg.clothesWeeks.includes(week)) ev.push({kind:'need', ...pick(NEEDS_CLOTHES), price:cfg.clothesPrice});
+  // Unexpected cost (Hard only, a certain week)
+  if(cfg.surprise && week===cfg.surpriseWeek) ev.push({kind:'surprise', ...pick(SURPRISES), price:cfg.surprisePrice});
+  // Temptations (wants)
+  const wants=shuffle(TEMPTATIONS).slice(0,cfg.wants)
+    .map(w=>({kind:'want', emoji:w.emoji, name:w.name, price:w.price}));
+  if(cfg.sale && wants.length) wants[Math.floor(Math.random()*wants.length)].sale=true;
+  queue=shuffle(ev.concat(wants));
+  qIdx=0;
+}
+
+function nextEvent(){
+  if(qIdx>=queue.length){ endWeek(); return; }
+  stopVoice();               // silence any lingering voice from the previous item
+  busy=false; drops=0;
+  curEvent=queue[qIdx]; curPrice=curEvent.price;
+  const isNeed=curEvent.kind!=='want';
+  const priceHtml=curEvent.sale
+    ? `<span class="t-oldprice">${curEvent.price+6} coins</span> ${curEvent.price} coins`
+    : `${curEvent.price} coins`;
+  document.getElementById('stage').innerHTML=`
+    <div class="tempt in active ${isNeed?'is-need':''}" id="tempt">
+      ${curEvent.sale?'<div class="sale-badge">SALE!</div>':''}
+      ${curEvent.kind==='need'?'<div class="need-badge">✔ Need</div>':''}
+      ${curEvent.kind==='surprise'?'<div class="surprise-badge">Uh-oh!</div>':''}
+      <span class="t-emoji">${curEvent.emoji}</span>
+      <div class="t-name">${curEvent.name}</div>
+      <div class="t-price"><span id="temptPrice">🪙 ${priceHtml}</span></div>
+    </div>`;
+  const fb=document.getElementById('feedback'); fb.className='feedback neutral';
+  const bub=document.getElementById('bubble');
+  if(curEvent.kind==='need'){
+    if(curEvent.food){
+      fb.textContent='The pantry is empty — buy food!';
+      bub.textContent = foodLevel<30 ? 'Out of food! Buy groceries to fill the pantry. 🛍️' : 'Time to restock the pantry with food. 🍎';
+      playVoice('rik-kop-mat');
+    } else {
+      fb.textContent='This is a need. Buy it!';
+      bub.textContent='Clothes are a need — we buy those first! 🧥';
+      playVoice('rik-behov');
+    }
+  } else if(curEvent.kind==='surprise'){
+    fb.textContent='Uh-oh! An unexpected cost you have to pay.';
+    bub.textContent='Good thing you saved — it covers the surprise! 💪';
+    playVoice('rik-ovantat');
+  } else {
+    fb.textContent='Do you need it — or save for your dream?';
+    bub.textContent=curEvent.sale?pick(B_SALE):'Do you want to buy, or save for your dream? 🤔';
+    if(curEvent.sale) playVoice('rik-rea');
+  }
+  setBtnMode(curEvent.kind);
+  setBtns(true);
+}
+
+/* SAVE/BUY buttons route here */
+function onSave(){ if(cfg && cfg.mode==='weeks') resolveEvent(false); else resolve(false); }
+function onBuy(){  if(cfg && cfg.mode==='weeks') resolveEvent(true);  else resolve(true);  }
+
+function resolveEvent(bought){
+  if(busy || !curEvent) return;
+  const e=curEvent;
+
+  // Can't buy a temptation you can't afford (needs are covered further down)
+  if(bought && e.kind==='want' && money < curPrice){
+    busy=true; setBtns(false);
+    const fb=document.getElementById('feedback'); fb.className='feedback neutral';
+    fb.textContent=`You only have ${money} coins — ${e.name.toLowerCase()} costs ${curPrice}. Can't afford it!`;
+    document.getElementById('bubble').textContent="You can't afford it — let's keep saving! 💪";
+    const tempt=document.getElementById('tempt');
+    if(tempt){ tempt.classList.remove('active'); tempt.classList.add('save-out'); }
+    sndSave(); sparkPig(); playVoice('rik-inte-rad');
+    qIdx++; updateTrack();
+    setTimeout(nextEvent, 1500);
+    return;
+  }
+
+  // Needs/surprise: saving isn't allowed — gentle correction, then buy anyway
+  if(!bought && e.kind!=='want'){
+    busy=true; setBtns(false);
+    const fb=document.getElementById('feedback'); fb.className='feedback neutral';
+    fb.textContent = e.kind==='surprise'
+      ? "This can't be skipped — it has to be paid."
+      : 'But this is a need! We always buy needs.';
+    document.getElementById('bubble').textContent = e.kind==='surprise'
+      ? 'Unexpected, but it must be paid. Good thing you saved! 💜'
+      : 'We need food and clothes every week. 🍎';
+    playVoice(e.kind==='surprise'?'rik-ovantat':'rik-behov');
+    setTimeout(()=>{ busy=false; applyEvent(true); }, 1150);
+    return;
+  }
+
+  // Hard: saving a temptation drops its price (comes back cheaper)
+  if(!bought && e.kind==='want' && cfg.reoffer && drops<MAX_DROPS){
+    drops++;
+    const prev=curPrice;
+    curPrice=Math.max(2, curPrice-Math.max(2,Math.round(curPrice*0.35)));
+    const pr=document.getElementById('temptPrice');
+    if(pr) pr.innerHTML=`🪙 <span class="t-oldprice">${prev} coins</span> ${curPrice} coins`;
+    const tp=document.getElementById('tempt');
+    if(tp){ tp.classList.remove('drop'); void tp.offsetWidth; tp.classList.add('drop'); }
+    const last=drops===MAX_DROPS;
+    const fb0=document.getElementById('feedback'); fb0.className='feedback neutral';
+    fb0.textContent=last
+      ? `🔥 Lowest price — ${curPrice} coins. But do you need it?`
+      : `💡 The price dropped to ${curPrice} coins — but do you need it?`;
+    document.getElementById('bubble').textContent=last
+      ? `Last chance — just ${curPrice} coins! But do you need it? 🤑`
+      : `Now it's even cheaper — just ${curPrice} coins! Buy it? 🤑`;
+    sndSave(); playVoice(last?'rik-bra-pris':'rik-rea');
+    return;
+  }
+
+  applyEvent(bought);
+}
+
+function applyEvent(bought){
+  busy=true;
+  if(autoTimer){ clearTimeout(autoTimer); autoTimer=null; }
+  setBtns(false);
+  const e=curEvent;
+  const fb=document.getElementById('feedback');
+  const tempt=document.getElementById('tempt');
+  tempt.classList.remove('active');
+
+  if(bought){
+    const pay=Math.min(money, curPrice);          // piggy can't go below zero
+    money-=pay;
+    tempt.classList.add('buy-out');
+    if(e.kind==='want'){
+      streak=0;
+      fb.className='feedback bad';
+      fb.textContent=`🛒 You bought ${e.name.toLowerCase()} for ${curPrice} coins. ${money} coins left.`;
+      document.getElementById('bubble').textContent=pick(B_BUY);
+      playVoice('rik-kop');
+    } else {
+      streak=0;
+      fb.className='feedback good';
+      if(e.food){
+        foodLevel=FOOD_MAX; renderPantry();   // pantry full again
+        fb.textContent=`🛍️ You restocked the pantry with ${e.name.toLowerCase()} (${curPrice} coins). ${money} coins left.`;
+        document.getElementById('bubble').textContent='The pantry is full again — now there\'s enough food! 🍎';
+        playVoice('rik-skafferi');
+      } else if(e.kind==='surprise'){
+        fb.textContent=`🔧 You paid (${curPrice} coins). Smart to have saved! ${money} coins left.`;
+        document.getElementById('bubble').textContent='Glad the money was there! 💪';
+        playVoice('rik-ovantat');
+      } else {
+        fb.textContent=`✅ Good — needs first! You bought ${e.name.toLowerCase()} (${curPrice} coins). ${money} coins left.`;
+        document.getElementById('bubble').textContent='Smart — needs before wants! 👏';
+        playVoice('rik-behov');
+      }
+    }
+    flyCoins(curPrice); renderPig(); pigPulse(true);
+    sndBuy(); sndKaching(); countTo(money);
+  } else {
+    // saved a temptation = good
+    streak++;
+    tempt.classList.add('save-out');
+    fb.className='feedback good';
+    fb.textContent = (drops>0)
+      ? `💪 Strong! You resisted all the way. ${money} coins left to save.`
+      : `💰 Nice saving! You kept ${curPrice} coins for your dream. ${money} coins left.`;
+    sndSave(); sparkPig();
+    if(streak>0 && streak%3===0){
+      document.getElementById('bubble').textContent=pick(B_STREAK);
+      pigPulse(false); sndStar(); starBurst(); playVoice('rik-streak');
+    } else {
+      document.getElementById('bubble').textContent=pick(B_SAVE);
+      playVoice('rik-spara');
+    }
+  }
+  qIdx++;
+  updateTrack();
+  setTimeout(nextEvent, 1500);
+}
+
+function endWeek(){
+  if(week>=cfg.weeks){ finishWeeks(); return; }
+  document.getElementById('stage').innerHTML='';
+  setBtns(false);
+  document.getElementById('feedback').className='feedback neutral';
+  document.getElementById('feedback').textContent=`Week ${week} done!`;
+  document.getElementById('bubble').textContent=`Week ${week} done! You have ${money} coins saved. New week, new work! 💪`;
+  const v=playVoice('rik-ny-vecka');
+  afterVoice(v, ()=>startWeek(week+1), 4000);   // wait until "Week done" has played
+}
+
+function finishWeeks(){
+  document.getElementById('charImg').classList.remove('run');
+  document.getElementById('charImg').classList.add('cheer');
+  const won=money>=dream.price;
+  const endEmoji=document.getElementById('end-emoji');
+  const endTitle=document.getElementById('end-title');
+  const endMsg=document.getElementById('end-msg');
+  if(won){
+    endEmoji.textContent=dream.emoji;
+    endTitle.textContent='You did it! 🎉';
+    endMsg.textContent=`After ${cfg.weeks} weeks of work, food, clothes and smart choices you saved up for ${dream.a}${dream.name.toLowerCase()}! You had ${money} coins left. What a saver! 💜`;
+    playVoice('rik-vinst'); confetti();
+    setTimeout(sndWin, 500);
+  } else {
+    const miss=dream.price-money;
+    endEmoji.innerHTML='<div style="width:clamp(120px,32vmin,180px);margin:0 auto">'+pigSVG()+'</div>';
+    endTitle.textContent='So close! ⭐';
+    endMsg.textContent=`You saved ${money} coins, but ${dream.a}${dream.name.toLowerCase()} cost ${dream.price}. You were ${miss} coins short. Work a bit more and say no to more temptations next time! 💜`;
+    playVoice('rik-forlite');
+  }
+  show('screen-end');
+}
+
+/* Coin flies from a chore into the piggy bank */
+function flyCoinToWorkPig(fromEl){
+  const pig=document.getElementById('workPig'); if(!pig) return;
+  const pr=pig.getBoundingClientRect(), fr=fromEl.getBoundingClientRect();
+  const el=document.createElement('div'); el.className='fly-coin'; el.textContent='🪙';
+  const sx=fr.left+fr.width/2, sy=fr.top+fr.height/2;
+  el.style.left=sx+'px'; el.style.top=sy+'px';
+  document.body.appendChild(el);
+  const dx=(pr.left+pr.width/2)-sx, dy=(pr.top+pr.height/2)-sy;
+  el.animate([
+    {transform:'translate(0,0) scale(1)',opacity:1},
+    {transform:`translate(${dx}px,${dy}px) scale(.5)`,opacity:.15}
+  ],{duration:600,easing:'cubic-bezier(.4,.1,.7,1)'});
+  setTimeout(()=>el.remove(),600);
 }
 
 /* Piggy bank with visible coin level + goal line */
@@ -388,10 +1001,13 @@ function pigSVG(){
   const reached=money>=dream.price;
   // Build a pile of coin circles filling the belly from the bottom up
   const coinR=8, rowH=11.5, gap=3;
+  const maxRows=Math.floor((yBase-yTop)/rowH);                          // rows that fit in the belly
+  const rows = money<=0 ? 0 : Math.max(1, Math.round(ratio*maxRows));   // at least 1 row as soon as you have coins
   let coins='';
-  for(let y=yBase-coinR; y>fillTop; y-=rowH){
+  for(let r=0; r<rows; r++){
+    const y=yBase-coinR - r*rowH;
     const dy=Math.abs(y-cy);
-    if(dy>=R-6) continue;
+    if(dy>=R-7) continue;
     const halfW=Math.sqrt((R-7)*(R-7)-dy*dy);
     const n=Math.max(1,Math.floor((halfW*2)/(coinR*2+gap)));
     const startX=cx-((n-1)*(coinR*2+gap))/2;
@@ -444,13 +1060,16 @@ function pigPulse(spend){
 }
 
 function updateTrack(){
-  const p=cfg.count? idx/cfg.count : 0;
+  let p;
+  if(cfg && cfg.mode==='weeks'){ p=dream? Math.min(1, money/dream.price) : 0; }
+  else { p=cfg && cfg.count? idx/cfg.count : 0; }
   document.getElementById('trackFill').style.width=(p*100)+'%';
   document.getElementById('trackRunner').style.left=(p*100)+'%';
 }
 
 function spawn(){
   if(idx>=cfg.count){ finish(); return; }
+  stopVoice();               // silence any lingering voice from the previous item
   busy=false;
   const it=order[idx];
   drops=0; curPrice=it.price;
@@ -469,6 +1088,7 @@ function spawn(){
   document.getElementById('feedback').textContent='Save or buy?';
   document.getElementById('bubble').textContent = it.sale ? pick(B_SALE) : (idx===0?"Don't be fooled — save! 😉":'Buy, or save? 🤔');
   if(it.sale) playVoice('rik-rea');
+  setBtnMode('want');   // Easy = temptations only, both buttons
   setBtns(true);
   // No auto-skip: the game always waits for the child's choice (save/buy).
 }
@@ -478,9 +1098,35 @@ function setBtns(on){
   document.getElementById('btnBuy').disabled=!on;
 }
 
+// Need/surprise = BUY button only (food/clothes MUST be bought, no misleading SAVE). Want = both.
+function setBtnMode(kind){
+  const save=document.getElementById('btnSave'), buy=document.getElementById('btnBuy');
+  if(kind==='surprise'){
+    save.style.display='none'; buy.textContent='🛒 Pay – you must';
+  } else if(kind==='need'){
+    save.style.display='none'; buy.textContent='🛒 Buy – you need it';
+  } else {
+    save.style.display=''; save.textContent='💰 SAVE'; buy.textContent='🛒 BUY';
+  }
+}
+
 function resolve(bought){
   if(busy) return;
   const it=order[idx];
+
+  // Can't buy something you can't afford
+  if(bought && money < curPrice){
+    busy=true; setBtns(false);
+    const fbn=document.getElementById('feedback'); fbn.className='feedback neutral';
+    fbn.textContent=`You only have ${money} coins — ${it.name.toLowerCase()} costs ${curPrice}. Can't afford it!`;
+    document.getElementById('bubble').textContent="You can't afford it — let's keep saving! 💪";
+    const tp2=document.getElementById('tempt');
+    if(tp2){ tp2.classList.remove('active'); tp2.classList.add('save-out'); }
+    sndSave(); playVoice('rik-inte-rad');
+    idx++; updateTrack();
+    setTimeout(spawn, 1600);
+    return;
+  }
 
   // Hard: saving drops the price — the temptation comes back cheaper (but you still don't need it!)
   if(!bought && cfg.reoffer && drops<MAX_DROPS){
