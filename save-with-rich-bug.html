@@ -377,9 +377,9 @@ const DREAMS_MEDEL = [
   { emoji:'🛼', name:'Roller skates', price:45, a:''   },
 ];
 const DREAMS_SVAR = [
-  { emoji:'🎮', name:'Video game', price:30, a:'a ' },
-  { emoji:'🚲', name:'Bike',       price:45, a:'a ' },
-  { emoji:'💻', name:'Computer',   price:58, a:'a ' },
+  { emoji:'🎮', name:'Video game', price:60,  a:'a ' },
+  { emoji:'🚲', name:'Bike',       price:90,  a:'a ' },
+  { emoji:'💻', name:'Computer',   price:115, a:'a ' },
 ];
 
 // A little pile of dirt (there's no good emoji for floor dirt)
@@ -436,7 +436,7 @@ const LEVELS = {
   // Medium/Hard = weekly loop: work → pay needs → resist temptations
   medel: { mode:'weeks', weeks:3, chorePay:5, foodPrice:5, clothesPrice:10, wants:2, foodConsume:75,
            clothesWeeks:[1], sale:false, reoffer:false, surprise:false },
-  svar:  { mode:'weeks', weeks:4, chorePay:6, foodPrice:6, clothesPrice:10, surprisePrice:12, wants:3, foodConsume:80,
+  svar:  { mode:'weeks', weeks:4, chorePay:10, foodPrice:6, clothesPrice:10, surprisePrice:12, wants:3, foodConsume:80,
            clothesWeeks:[1,3], surpriseWeek:2, sale:true, reoffer:true, surprise:true },
 };
 
@@ -449,7 +449,7 @@ const B_SALE = ["Oh, it's cheap! But do you need it? 🤔","Cheap — but it's s
 const MAX_DROPS=2;
 let level, cfg, dream, dreamPool, startMoney, money, idx, order, streak, drops=0, curPrice=0, busy=false, autoTimer=null;
 // Weekly mode (Medium/Hard)
-let week, queue, qIdx, curEvent, choresDone;
+let week, queue, qIdx, curEvent, choresDone, workAgainForEvent=false;
 // Pantry (food meter)
 const FOOD_MAX=100;
 let foodLevel=FOOD_MAX;
@@ -488,6 +488,26 @@ const sndBuy   = ()=>tone([520,300],0.35,0.25);          /* falling = money out 
 const sndKaching = ()=>tone([1046,1318,1568],0.45,0.25);
 const sndWin   = ()=>tone([784,988,1319,1568],0.5,0.28);
 const sndStar  = ()=>tone([1319,1760,2093],0.3,0.2);
+// Victory fanfare: rising "ta-ta-ta-daaa" + triumphant chord
+function sndFanfare(){
+  try{
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const t0=ctx.currentTime;
+    const blow=(freq,start,dur,vol=0.2,type='triangle')=>{
+      const o=ctx.createOscillator(), g=ctx.createGain();
+      o.type=type; o.frequency.value=freq; o.connect(g); g.connect(ctx.destination);
+      const t=t0+start;
+      g.gain.setValueAtTime(0.0001,t);
+      g.gain.exponentialRampToValueAtTime(vol,t+0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      o.start(t); o.stop(t+dur+0.03);
+    };
+    blow(523.25,0.00,0.16); blow(659.25,0.17,0.16); blow(783.99,0.34,0.16);
+    blow(1046.50,0.52,0.95,0.24);
+    blow(523.25,0.52,1.0,0.14); blow(659.25,0.52,1.0,0.14); blow(783.99,0.55,1.0,0.14);
+    blow(1567.98,0.70,0.5,0.10); blow(2093.00,0.80,0.5,0.09);
+  }catch(e){}
+}
 
 // A single voice channel: a new line always stops the previous one (never two at once)
 let curVoice=null;
@@ -584,11 +604,10 @@ function startWeeks(){
   startWeek(1);
 }
 
-function startWeek(w){
-  week=w; choresDone=0; busy=false;
-  document.getElementById('workWeek').textContent='Week '+week+' of '+cfg.weeks;
-  document.getElementById('workMoney').textContent=money;
-  document.getElementById('workPig').innerHTML=pigSVG();
+// Colour the money number red when negative (debt)
+function mcolor(){ ['moneyNum','workMoney'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.color = money<0 ? '#dc2626' : ''; }); }
+
+function renderChoreGrid(){
   const grid=document.getElementById('choreGrid'); grid.innerHTML='';
   shuffle(CHORES).slice(0,5).forEach(c=>{
     const el=document.createElement('button');
@@ -598,7 +617,27 @@ function startWeek(w){
     el.onclick=()=>onChoreCard(el);
     grid.appendChild(el);
   });
+}
+
+function startWeek(w){
+  week=w; choresDone=0; busy=false; workAgainForEvent=false;
+  document.getElementById('workWeek').textContent='Week '+week+' of '+cfg.weeks;
+  document.getElementById('workMoney').textContent=money; mcolor();
+  document.getElementById('workPig').innerHTML=pigSVG();
+  renderChoreGrid();
   document.getElementById('workHint').textContent='Tap the chores to work!';
+  show('screen-work');
+  playVoice('rik-jobba');
+}
+
+// Extra work round mid-shopping (Medium: earn enough for a need you can't afford)
+function startWorkRound(){
+  choresDone=0; busy=false;
+  document.getElementById('workWeek').textContent='Week '+week+' — work more!';
+  document.getElementById('workMoney').textContent=money; mcolor();
+  document.getElementById('workPig').innerHTML=pigSVG();
+  renderChoreGrid();
+  document.getElementById('workHint').textContent='Earn more coins — then you pay!';
   show('screen-work');
   playVoice('rik-jobba');
 }
@@ -616,7 +655,7 @@ function finishChore(el){
   el.querySelector('.c-pay').textContent='✔ Done';
   choresDone++;
   money+=cfg.chorePay;
-  document.getElementById('workMoney').textContent=money;
+  document.getElementById('workMoney').textContent=money; mcolor();
   document.getElementById('workPig').innerHTML=pigSVG();
   flyCoinToWorkPig(el);
   sndKaching();   // coin sound (no voice: you're working, not saving)
@@ -739,9 +778,25 @@ function finishWork(){
     document.getElementById('workHint').textContent='Do at least one chore first — that earns allowance! 💪';
     return;
   }
+  // Extra work round done (Medium): back to the pending need, pay now
+  if(workAgainForEvent){
+    workAgainForEvent=false;
+    busy=true; setBtns(false);
+    document.getElementById('moneyNum').textContent=money; mcolor();
+    document.getElementById('charImg').classList.remove('cheer');
+    document.getElementById('charImg').classList.add('run');
+    renderPig(); updateTrack();
+    document.getElementById('feedback').className='feedback neutral';
+    document.getElementById('feedback').textContent='Pay for the need now!';
+    document.getElementById('bubble').textContent='Now you have more money — pay for the need! 💜';
+    show('screen-game');
+    const v2=playVoice('rik-bra-jobbat');
+    afterVoice(v2, nextEvent, 4000);   // re-show the same need (qIdx unchanged)
+    return;
+  }
   buildWeekEvents();
   busy=true; setBtns(false);   // lock buttons until first temptation shows
-  document.getElementById('moneyNum').textContent=money;
+  document.getElementById('moneyNum').textContent=money; mcolor();
   document.getElementById('weekChip').textContent='Week '+week+'/'+cfg.weeks;
   document.getElementById('charImg').classList.remove('cheer');
   document.getElementById('charImg').classList.add('run');
@@ -828,6 +883,16 @@ function nextEvent(){
 function onSave(){ if(cfg && cfg.mode==='weeks') resolveEvent(false); else resolve(false); }
 function onBuy(){  if(cfg && cfg.mode==='weeks') resolveEvent(true);  else resolve(true);  }
 
+// Medium: can't afford a need → go work more, keep the need (qIdx/curEvent unchanged)
+function goWorkMore(){
+  workAgainForEvent=true; busy=true; setBtns(false);
+  const fb=document.getElementById('feedback'); fb.className='feedback neutral';
+  fb.textContent=`You only have ${money} coins — it costs ${curPrice}. Earn more first!`;
+  document.getElementById('bubble').textContent='We need more money first — time to work a bit more! 💪';
+  const v=playVoice('rik-behov');
+  afterVoice(v, startWorkRound, 4000);
+}
+
 function resolveEvent(bought){
   if(busy || !curEvent) return;
   const e=curEvent;
@@ -843,6 +908,14 @@ function resolveEvent(bought){
     sndSave(); sparkPig(); playVoice('rik-inte-rad');
     qIdx++; updateTrack();
     afterVoice(curVoice, nextEvent, 5000);   // wait until the line has finished
+    return;
+  }
+
+  // Need/surprise you can't afford:
+  //  Medium → go work more first, then pay the same need
+  //  Hard   → buy anyway, go into the red (debt to work off)
+  if(bought && e.kind!=='want' && money < curPrice && level==='medel'){
+    goWorkMore();
     return;
   }
 
@@ -895,8 +968,8 @@ function applyEvent(bought){
   tempt.classList.remove('active');
 
   if(bought){
-    const pay=Math.min(money, curPrice);          // piggy can't go below zero
-    money-=pay;
+    money-=curPrice;                     // a need costs the full price (can go negative on Hard = debt)
+    const kvar = money<0 ? `You owe ${-money} coins — work them off! 😮` : `${money} coins left.`;
     tempt.classList.add('buy-out');
     if(e.kind==='want'){
       streak=0;
@@ -906,24 +979,24 @@ function applyEvent(bought){
       playVoice('rik-kop');
     } else {
       streak=0;
-      fb.className='feedback good';
+      fb.className = money<0 ? 'feedback bad' : 'feedback good';
       if(e.food){
         foodLevel=FOOD_MAX; renderPantry();   // pantry full again
-        fb.textContent=`🛍️ You restocked the pantry with ${e.name.toLowerCase()} (${curPrice} coins). ${money} coins left.`;
-        document.getElementById('bubble').textContent='The pantry is full again — now there\'s enough food! 🍎';
+        fb.textContent=`🛍️ You restocked the pantry with ${e.name.toLowerCase()} (${curPrice} coins). ${kvar}`;
+        document.getElementById('bubble').textContent = money<0 ? 'Food had to go on credit — work the coins back! 💪' : 'The pantry is full again — now there\'s enough food! 🍎';
         playVoice('rik-skafferi');
       } else if(e.kind==='surprise'){
-        fb.textContent=`🔧 You paid (${curPrice} coins). Smart to have saved! ${money} coins left.`;
-        document.getElementById('bubble').textContent='Glad the money was there! 💪';
+        fb.textContent=`🔧 You paid ${curPrice} coins. ${kvar}`;
+        document.getElementById('bubble').textContent = money<0 ? 'Oops, now you owe — work the coins back! 💪' : 'Glad the money was there! 💪';
         playVoice('rik-ovantat');
       } else {
-        fb.textContent=`✅ Good — needs first! You bought ${e.name.toLowerCase()} (${curPrice} coins). ${money} coins left.`;
-        document.getElementById('bubble').textContent='Smart — needs before wants! 👏';
+        fb.textContent=`✅ Good — needs first! You bought ${e.name.toLowerCase()} (${curPrice} coins). ${kvar}`;
+        document.getElementById('bubble').textContent = money<0 ? 'Needs come first — but now you owe, work more! 💪' : 'Smart — needs before wants! 👏';
         playVoice('rik-behov');
       }
     }
     flyCoins(curPrice); renderPig(); pigPulse(true);
-    sndBuy(); sndKaching(); countTo(money);
+    sndBuy(); sndKaching(); countTo(money); mcolor();
   } else {
     // saved a temptation = good
     streak++;
@@ -969,7 +1042,7 @@ function finishWeeks(){
     endTitle.textContent='You did it! 🎉';
     endMsg.textContent=`After ${cfg.weeks} weeks of work, food, clothes and smart choices you saved up for ${dream.a}${dream.name.toLowerCase()}! You had ${money} coins left. What a saver! 💜`;
     playVoice('rik-vinst'); confetti();
-    setTimeout(sndWin, 500);
+    setTimeout(sndFanfare, 350);
   } else {
     const miss=dream.price-money;
     endEmoji.innerHTML='<div style="width:clamp(120px,32vmin,180px);margin:0 auto">'+pigSVG()+'</div>';
@@ -1067,7 +1140,7 @@ function pigPulse(spend){
 
 function updateTrack(){
   let p;
-  if(cfg && cfg.mode==='weeks'){ p=dream? Math.min(1, money/dream.price) : 0; }
+  if(cfg && cfg.mode==='weeks'){ p=dream? Math.max(0, Math.min(1, money/dream.price)) : 0; }
   else { p=cfg && cfg.count? idx/cfg.count : 0; }
   document.getElementById('trackFill').style.width=(p*100)+'%';
   document.getElementById('trackRunner').style.left=(p*100)+'%';
@@ -1250,6 +1323,7 @@ function countTo(target){
   const el=document.getElementById('moneyNum');
   let cur=parseInt(el.textContent,10)||0;
   const step=cur>target?-1:1;
+  el.style.color = target<0 ? '#dc2626' : '';
   const timer=setInterval(()=>{
     if(cur===target){ clearInterval(timer); return; }
     cur+=step; el.textContent=cur;
@@ -1268,7 +1342,7 @@ function finish(){
     endTitle.textContent='You could afford it! 🎉';
     endMsg.textContent=`You saved enough and bought ${dream.a}${dream.name.toLowerCase()}! You had ${money} coins. What a saver! 💜`;
     playVoice('rik-vinst'); confetti();
-    setTimeout(sndWin, 500); // let the voice start first so the jingle doesn't drown it (mobile)
+    setTimeout(sndFanfare, 350); // let the voice start first so the jingle doesn't drown it (mobile)
   } else {
     const miss=dream.price-money;
     endEmoji.innerHTML='<div style="width:clamp(120px,32vmin,180px);margin:0 auto">'+pigSVG()+'</div>';
@@ -1281,14 +1355,14 @@ function finish(){
 
 function confetti(){
   const em=['🎉','⭐','💜','🪙','✨','🎊'];
-  for(let i=0;i<32;i++){
+  for(let i=0;i<60;i++){
     const el=document.createElement('div');
     el.className='confetti'; el.textContent=em[Math.floor(Math.random()*em.length)];
     el.style.left=Math.random()*100+'vw';
     el.style.animationDuration=(2+Math.random()*2)+'s';
-    el.style.animationDelay=(Math.random()*0.6)+'s';
+    el.style.animationDelay=(Math.random()*0.9)+'s';
     document.body.appendChild(el);
-    setTimeout(()=>el.remove(),4200);
+    setTimeout(()=>el.remove(),4900);
   }
 }
 </script>
