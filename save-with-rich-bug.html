@@ -508,6 +508,7 @@ function afterVoice(v, cb, maxWait){
   const go=()=>{ if(done)return; done=true; cb(); };
   if(v && v.addEventListener){
     v.addEventListener('ended', ()=>setTimeout(go, 200));
+    v.addEventListener('error', ()=>setTimeout(go, 200));
     setTimeout(go, maxWait||4000);
   } else {
     setTimeout(go, 1000);
@@ -841,7 +842,7 @@ function resolveEvent(bought){
     if(tempt){ tempt.classList.remove('active'); tempt.classList.add('save-out'); }
     sndSave(); sparkPig(); playVoice('rik-inte-rad');
     qIdx++; updateTrack();
-    setTimeout(nextEvent, 1500);
+    afterVoice(curVoice, nextEvent, 5000);   // wait until the line has finished
     return;
   }
 
@@ -942,7 +943,7 @@ function applyEvent(bought){
   }
   qIdx++;
   updateTrack();
-  setTimeout(nextEvent, 1500);
+  afterVoice(curVoice, nextEvent, 5000);   // wait until the line has finished
 }
 
 function endWeek(){
@@ -1129,7 +1130,7 @@ function resolve(bought){
     if(tp2){ tp2.classList.remove('active'); tp2.classList.add('save-out'); }
     sndSave(); playVoice('rik-inte-rad');
     idx++; updateTrack();
-    setTimeout(spawn, 1600);
+    afterVoice(curVoice, spawn, 5000);   // wait until the line has finished
     return;
   }
 
@@ -1194,7 +1195,7 @@ function resolve(bought){
 
   idx++;
   updateTrack();
-  setTimeout(spawn, 1600);
+  afterVoice(curVoice, spawn, 5000);   // wait until the line has finished
 }
 
 /* Coins jump OUT of the piggy bank when buying */
