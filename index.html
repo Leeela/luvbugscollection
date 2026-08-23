@@ -223,6 +223,7 @@
   .hero-group-wrap img {
     width: 100%;
     height: auto;
+    aspect-ratio: 1866 / 314;
     display: block;
   }
 
@@ -269,8 +270,9 @@
 
   /* === VALUES GRID === */
   .values-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 24px;
     margin-top: 32px;
   }
@@ -280,6 +282,7 @@
     border-radius: var(--radius-lg);
     padding: 32px 28px;
     text-align: center;
+    flex: 0 1 340px;
     text-decoration: none;
     color: inherit;
     transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
@@ -454,7 +457,7 @@
   }
 
   @media (max-width: 720px) {
-    .values-grid { grid-template-columns: 1fr; }
+    .value-card { flex-basis: 100%; }
     .char-grid { grid-template-columns: 1fr; }
     .saga-list { grid-template-columns: 1fr; }
     .feature-grid { grid-template-columns: 1fr; }
@@ -601,7 +604,7 @@
   <!-- HERO -->
   <section class="hero">
     <div class="hero-group-wrap">
-      <img src="bilder/bacillerna-i-rad.png" alt="All the Luv Bugs together">
+      <img src="bilder/bacillerna-i-rad.png" alt="All the Luv Bugs together" width="1866" height="314" loading="eager" fetchpriority="high">
     </div>
     <div class="hero-eyebrow">Welcome to the Luv Bugs</div>
     <h1>MEET THE LUV BUGS!</h1>
