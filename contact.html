@@ -96,6 +96,22 @@
   .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.15); }
   .btn-primary { background: var(--char-color); color: white; }
   .btn-primary:hover { background: var(--char-color-deep); }
+  .btn-copy { background: white; color: var(--char-color-text-on-light); border: 2px solid var(--char-color); }
+  .btn-copy:hover { background: var(--char-color-light); }
+  .btn-copy.copied { background: var(--candy-light); border-color: var(--candy); color: var(--candy-text-on-light); }
+
+  .email-card { margin-top: 32px; background: var(--color-bg-soft); border: 1px solid var(--color-border-strong); border-radius: var(--radius-lg); padding: 28px 32px; }
+  .email-label { display: block; font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--color-text-tertiary); margin-bottom: 8px; }
+  .email-address { display: inline-block; font-family: var(--font-heading); font-weight: 600; font-size: 26px; color: var(--char-color-deep); text-decoration: none; word-break: break-all; line-height: 1.3; }
+  .email-address:hover { text-decoration: underline; }
+  .email-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  .email-actions .btn { margin-top: 20px; }
+  .email-note { font-size: 14px; color: var(--color-text-tertiary); margin: 18px 0 0 0; line-height: 1.6; }
+  @media (max-width: 720px) {
+    .email-card { padding: 22px 20px; }
+    .email-address { font-size: 20px; }
+    .email-actions .btn { width: 100%; text-align: center; }
+  }
 
   @media (max-width: 720px) {
     .hero-dark { padding: 48px 20px 64px; }
@@ -173,11 +189,17 @@
     <div class="section-inner">
 
       <h2 class="section-title">Reach out</h2>
-      <p class="prose">Want to collaborate, ask educational questions, write about the Luv Bugs in the press, or just say hi? Send us an email. We'll reply as soon as we can.</p>
+      <p class="prose">Want to collaborate, ask educational questions, write about the Luv Bugs in the press, or just say hi? Email us at the address below — we'll reply as soon as we can.</p>
 
-      <p style="margin-top: 32px;">
-        <a class="btn btn-primary" href="mailto:hello@luvbugscollection.com">Send an email</a>
-      </p>
+      <div class="email-card">
+        <span class="email-label">Email us</span>
+        <a class="email-address" href="mailto:hello@luvbugscollection.com" id="email-link">hello@luvbugscollection.com</a>
+        <div class="email-actions">
+          <button type="button" class="btn btn-copy" id="copy-email" data-email="hello@luvbugscollection.com">Copy address</button>
+          <a class="btn btn-primary" href="mailto:hello@luvbugscollection.com">Open in mail app</a>
+        </div>
+        <p class="email-note">No mail app on this device? Copy the address and paste it into webmail such as Gmail, Outlook or iCloud.</p>
+      </div>
 
       <p class="prose" style="margin-top: 40px;">You can also follow the Luv Bugs on social media. Links are at the bottom of every page.</p>
 
@@ -222,6 +244,51 @@
     <div class="footer-bottom">© 2026 <strong>LUV BUGS</strong> — Luv Bugs Collection</div>
   </footer>
 
+<script>
+  (function () {
+    var btn = document.getElementById('copy-email');
+    if (!btn) return;
+    var original = btn.textContent;
+    var resetTimer;
+
+    function feedback(message) {
+      clearTimeout(resetTimer);
+      btn.textContent = message;
+      btn.classList.add('copied');
+      resetTimer = setTimeout(function () {
+        btn.textContent = original;
+        btn.classList.remove('copied');
+      }, 2500);
+    }
+
+    function fallbackCopy(text) {
+      var field = document.createElement('textarea');
+      field.value = text;
+      field.setAttribute('readonly', '');
+      field.style.position = 'fixed';
+      field.style.opacity = '0';
+      document.body.appendChild(field);
+      field.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
+      document.body.removeChild(field);
+      return ok;
+    }
+
+    btn.addEventListener('click', function () {
+      var email = btn.getAttribute('data-email');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(email).then(function () {
+          feedback('Copied!');
+        }, function () {
+          feedback(fallbackCopy(email) ? 'Copied!' : email);
+        });
+      } else {
+        feedback(fallbackCopy(email) ? 'Copied!' : email);
+      }
+    });
+  })();
+</script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "ed976efd0efe494b82f446b3970b03e9"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
