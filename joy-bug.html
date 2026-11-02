@@ -463,10 +463,12 @@
   .find-section { background: white; }
   .find-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 18px;
     margin-top: 32px;
   }
+  .find-grid > .find-card { grid-column: span 2; }
+  .find-grid > .find-card.listen { grid-column: span 3; }
   .find-card {
     background: var(--color-bg-soft);
     border: 2px solid var(--color-border);
@@ -503,6 +505,7 @@
   }
   @media (max-width: 720px) {
     .find-grid { grid-template-columns: 1fr; }
+    .find-grid > .find-card, .find-grid > .find-card.listen { grid-column: auto; }
   }
 
   /* === MEET THE OTHERS === */
@@ -826,10 +829,16 @@
       <h2 class="section-title">The Joy Bug stories are on Spotify and Apple Podcast. Follow for more!</h2>
 
       <div class="find-grid">
-        <a class="find-card" href="https://open.spotify.com/show/0Y8e5AT5HGGHG5ZS92SfXT" target="_blank">
+        <a class="find-card listen" href="https://open.spotify.com/show/0Y8e5AT5HGGHG5ZS92SfXT" target="_blank">
           <div class="find-emoji">🎙️</div>
           <h4>Listen on Spotify</h4>
           <p>Joy Bug is out now. Press play and let the Joy Rush spread.</p>
+          <span class="arrow">Listen now →</span>
+        </a>
+        <a class="find-card listen" href="https://podcasts.apple.com/us/podcast/candy-bug/id1895298876" target="_blank">
+          <div class="find-emoji">🎧</div>
+          <h4>Listen on Apple Podcast</h4>
+          <p>All the Luv Bugs stories, Joy Bug included. Follow the show for new episodes.</p>
           <span class="arrow">Listen now →</span>
         </a>
         <a class="find-card" href="https://www.tiktok.com/@luvbugscollection" target="_blank">
